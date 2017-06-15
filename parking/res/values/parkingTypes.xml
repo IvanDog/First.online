@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+     <string-array name="parkingTypeArray">
+     <item>普通停车</item>  
+     <item>免费停车</item>  
+    </string-array>
+</resources>

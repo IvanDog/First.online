@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Strings related to main -->
+    <string name="arrivingButton">车辆\n到达</string>
+    <string name="leavingButton">车辆\n离开</string>
+    <string name="parkingSpaceButton">泊位\n管理</string>
+     <string name="button4">历史\n查询</string>
+     <string name="button5">考勤\n签到</string>
+     <string name="button6">个人\n中心</string>
+</resources>

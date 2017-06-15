@@ -1,0 +1,5 @@
+<resources>
+    <string name="paymentSuccessNotify">恭喜您，成功收款5元！</string>
+    <string name="printPreview">打印凭条</string>
+    <string name="paymentSuccess">收款成功</string>
+</resources>

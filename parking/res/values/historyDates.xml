@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+     <string-array name="historyDateArray">
+     <item>2017-04-24</item>  
+     <item>2017-04-25</item>  
+     <item>2017-04-26</item>  
+     <item>2017-04-27</item>  
+     <item>2017-04-28</item>  
+     <item>2017-04-29</item>  
+     <item>2017-04-30</item>  
+     <item>2017-05-01</item>  
+     <item>2017-05-02</item>  
+     <item>2017-05-03</item>
+    <item>2017-05-04</item>  
+     <item>2017-05-05</item>    
+    </string-array>
+</resources>

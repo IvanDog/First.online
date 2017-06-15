@@ -1,0 +1,17 @@
+<resources>
+        <string name="park_name_fixed">易华录停车场</string>
+    <string name="park_number_fixed">P1234</string>
+     <string name="user_number_fixed">101884</string>
+     <string name="work_time_fixed">9:00-17:30</string>
+    <string name="work_start_time_fixed">上班时间:9:00</string>
+    <string name="work_end_time_fixed">下班时间:17:30</string>
+     <string name="work_start_location_fixed">天津市津南区八里台工业园区</string>
+     <string name="work_end_location_fixed">天津市津南区八里台工业园区</string>
+      <string name="location_state">考勤范围内</string>
+    <string name="fee_scale_fixed">5元/次</string>
+    <string name="free_expense_fixed">0元</string>
+    <string name="expense_fixed">5元</string>
+    <string name="charge_standard_fixed">收费依据:[2017]天津市停车收费1号文件</string>
+    <string name="supervise_telephone_fixed">监督电话: 4008 110 630</string>
+    <string name="payment_success_notify_fixed">恭喜您，成功收款</string>
+</resources>

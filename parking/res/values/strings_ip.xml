@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Strings related to IP -->
+    <string name="ip">10.150.27.23</string>
+</resources>

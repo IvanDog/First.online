@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.parking"
+    android:versionCode="1"
+    android:sharedUserId="android.uid.system"
+    android:versionName="1.0" >
+    <uses-permission android:name="android.permission.SERIAL_PORT"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>  
+   <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />  
+   <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/> 
+   <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+   
+   <!--高德权限-->
+<!--地图包、搜索包需要的基础权限-->
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+<!--定位包、导航包需要的额外权限（注：基础权限也需要）-->
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+<uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
+<uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="17" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_icon"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="9fd0f965c5b011c38a79d65e3d141b40" />
+        <!--声明定位service-->
+        <service android:name="com.amap.api.location.APSService"></service>
+        <activity
+            android:name="com.example.parking.LoginActivity"
+            android:theme="@style/LabelTheme"
+            android:label="录停车"
+            android:windowSoftInputMode="adjustPan|stateHidden" >
+            <intent-filter>  
+            <action android:name="android.intent.action.MAIN" />  
+            <category android:name="android.intent.category.LAUNCHER" />  
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.example.parking.MainActivity"
+            android:theme="@style/LabelTheme"
+            android:label="做最贴心的停车引导者">
+        </activity>
+        <activity
+            android:name="com.example.parking.InputLicenseActivity"
+            android:theme="@style/LabelTheme"
+            android:label="输入牌照" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.parking.MainActivity" >
+            </meta-data>
+        </activity>
+        <activity
+            android:name="com.example.parking.ParkingInformationActivity"
+            android:theme="@style/LabelTheme"
+            android:label="车辆入场" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.parking.InputLicenseActivity" >
+            </meta-data>
+        </activity>
+        <activity
+            android:name="com.example.parking.ParkingSpaceActivity"
+            android:theme="@style/LabelTheme"
+            android:label="泊位管理" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.parking.MainActivity" >
+            </meta-data>
+        </activity>
+        <activity
+            android:name="com.example.parking.TestLeavingActivity"
+            android:label="This is LeavingActivity" >
+        </activity>
+         <activity
+            android:name="com.example.parking.ParkingSpaceDetailActivity"
+            android:theme="@style/LabelTheme"
+            android:label="泊位详情" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.parking.ParkingSpaceActivity" >
+            </meta-data>
+        </activity>
+        <activity
+            android:name="com.example.parking.TodayRecordActivity"
+            android:theme="@style/LabelTheme"
+            android:label="今日记录">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.parking.ParkingSpaceActivity" >
+            </meta-data>
+        </activity>
+         <activity
+            android:name="com.example.parking.ParkingHistorySearchActivity"
+            android:theme="@style/LabelTheme"
+            android:label="历史记录" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.parking.MainActivity" >
+            </meta-data>
+        </activity>
+        <activity
+            android:name="com.example.parking.LeavingActivity"
+            android:theme="@style/LabelTheme"
+            android:label="车辆离场" >
+        </activity>
+        <activity
+            android:name="com.example.parking.PrintPreviewActivity"
+            android:theme="@style/LabelTheme"
+            android:label="打印预览" >
+        </activity>
+        <activity
+            android:name="com.example.parking.MobilePaymentActivity"
+            android:theme="@style/LabelTheme"
+            android:label="移动支付" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.parking.LeavingActivity" >
+            </meta-data>
+        </activity>
+        <activity
+            android:name="com.example.parking.MobilePaymentSuccessActivity"
+            android:theme="@style/LabelTheme"
+            android:label="收款成功" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.parking.MobilePaymentActivity" >
+            </meta-data>
+        </activity>
+         <activity
+            android:name="com.example.parking.WorkAttendanceActivity"
+            android:theme="@style/LabelTheme"
+            android:label="考勤打卡" >
+        </activity>
+         <activity
+            android:name="com.example.parking.UserCenterActivity"
+            android:theme="@style/LabelTheme"
+            android:label="用户中心" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.parking.MainActivity" >
+            </meta-data>
+        </activity>
+         <activity
+            android:name="com.example.parking.MessageCenterActivity"
+            android:theme="@style/LabelTheme"
+            android:label="消息中心" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.parking.UserCenterActivity" >
+            </meta-data>
+        </activity>
+        <activity
+            android:name="com.example.parking.ResetPasswdActivity"
+            android:theme="@style/LabelTheme"
+             android:label="重置密码" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.parking.UserCenterActivity" >
+            </meta-data>
+        </activity>
+    </application>
+
+</manifest>

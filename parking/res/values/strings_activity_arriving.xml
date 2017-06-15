@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Strings related to arriving -->
+    <string name="letter">字母</string>
+    <string name="number">数字</string>
+    <string name="location">地区</string>
+    
+    <string name="one">1</string>
+    <string name="two">2</string>
+    <string name="three">3</string>
+    <string name="four">4</string>
+    <string name="five">5</string>
+    <string name="six">6</string>
+    <string name="seven">7</string>
+    <string name="eight">8</string>
+    <string name="nine">9</string>
+    <string name="zero">0</string>
+    
+    <string name="A">A</string>
+    <string name="B">B</string>
+    <string name="C">C</string>
+    <string name="D">D</string>
+    <string name="E">E</string>
+    <string name="F">F</string>
+    <string name="G">G</string>
+    <string name="H">H</string>
+    <string name="I">I</string>
+    <string name="J">J</string>
+    <string name="K">K</string>
+    <string name="L">L</string>
+    <string name="M">M</string>
+    <string name="N">N</string>
+    <string name="O">O</string>
+    <string name="P">P</string>
+    <string name="Q">Q</string>
+    <string name="R">R</string>
+    <string name="S">S</string>
+    <string name="T">T</string>
+    <string name="U">U</string>
+    <string name="V">V</string>
+    <string name="W">W</string>
+    <string name="X">X</string>
+    <string name="Y">Y</string>
+    <string name="Z">Z</string>
+
+    <string name="Tianjin">津</string>
+    <string name="Beijing">京</string>
+    <string name="Shanghai">沪</string>
+    <string name="Hebei">冀</string>
+    <string name="Shandong">鲁</string>
+    <string name="Shanxi">晋</string>
+    <string name="Chongqing">渝</string>
+    <string name="Sichuan">川</string>
+    <string name="Liaoning">辽</string>
+    <string name="Jilin">吉</string>
+    <string name="Heilongjiang">黑</string>
+    <string name="Neimenggu">蒙</string> 
+    <string name="Jiangsu">苏</string>
+    <string name="Zhejiang">浙</string>
+    <string name="Anhui">皖</string>
+    <string name="Fujian">闽</string>
+    <string name="Jiangxi">赣</string>
+    <string name="Henan">豫</string>  
+    <string name="Hubei">鄂</string>
+    <string name="Hunan">湘</string>
+    <string name="Guangdong">粤</string>
+    <string name="Guangxi">桂</string>
+    <string name="Hainan">琼</string>
+    <string name="Guizhou">黔</string>
+    <string name="Yunnan">云</string>
+    <string name="Xizang">藏</string>
+    <string name="Gansu">甘</string>
+    <string name="Shanxixi">陕</string>
+    <string name="Qinghai">青</string>
+    <string name="Ningxia">宁</string>
+    <string name="Xinjiang">新</string>
+    
+    <string name="scan">扫描牌照</string>
+    <string name="next">下一步</string>
+    
+     <string name="backspace">删</string>
+</resources>

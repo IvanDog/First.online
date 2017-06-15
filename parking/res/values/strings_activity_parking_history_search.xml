@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dateTitle">日期：</string>
+    <string name="search">查询</string>
+    <string name="payment_state_unfinished">未付</string>
+    <string name="payment_state_finished_mobile">移动支付</string>
+    <string name="payment_state_finished_cash">现金支付</string>
+    <string name="payment_state_finished_account">余额支付</string>
+    <string name="payment_state_unfinished_leave">逃费</string>
+</resources>
