@@ -8,11 +8,12 @@
     <string name="expenseLeaving">结算费用: 5元</string>
     <string name="paymentTypeTitleLeaving">支付方式: </string>
     <string name="paymentInformationTitleLeaving">收费信息: </string>
-      <string name="cashPayment">现金</string>
+      <string name="posPayment">pos机</string>
+     <string name="netSettlementPayment">联网结算</string>
       <string name="alipayPayment">支付宝</string>
       <string name="wechatpayPayment">微信</string>
      <string name="printLeaving">打印凭条</string>
-      <string name="confirmPaymentLeaving">结算</string>
+      <string name="confirmPaymentLeaving">确认支付</string>
       <string name="escapeLeaving">逃费</string>
       <string name="paymentInformationTitle">结算信息</string>
 </resources>

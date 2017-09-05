@@ -46,6 +46,8 @@ public class UserCenterActivity extends Activity {
 	private ListView mListView;
     private UserLogoutTask mLogoutTask = null;
     private static final String FILE_NAME_TOKEN = "save_pref_token";
+    private static final String FILE_NAME_COLLECTOR = "save_pref_collector";
+	public static String LOG_TAG = "UserCenterActivity";
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
@@ -168,9 +170,12 @@ public class UserCenterActivity extends Activity {
 		  String strurl = "http://" + 	this.getString(R.string.ip) + ":8080/park/collector/userCenter/logout";
 		  HttpPost request = new HttpPost(strurl);
 		  request.addHeader("Accept","application/json");
-		  request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+		  //request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+		  request.setHeader("Content-Type", "application/json; charset=utf-8");
 		  JSONObject param = new JSONObject();
-		  param.put("token", readToken());
+		  CommonRequestHeader header = new CommonRequestHeader();
+		  header.addRequestHeader(CommonRequestHeader.REQUEST_COLLECTOR_LOGOUT_CODE, readAccount(), readToken());
+		  param.put("header", header);
 		  StringEntity se = new StringEntity(param.toString(), "UTF-8");
 		  request.setEntity(se);
 		  try{
@@ -178,11 +183,9 @@ public class UserCenterActivity extends Activity {
 			  int code = httpResponse.getStatusLine().getStatusCode();
 			  if(code==HttpStatus.SC_OK){
 				  String strResult = EntityUtils.toString(httpResponse.getEntity());
-				  Log.e("clientLogout","strResult is " + strResult);
+				  Log.e(LOG_TAG,"clientLogout->strResult is " + strResult);
 				  CommonResponse res = new CommonResponse(strResult);
 				  String resCode = res.getResCode();
-				  Log.e("clientLogout","resCode is  " + res.getResCode());
-				  Log.e("clientLogout","resMsg is  " + res.getResMsg());
 				  toastWrapper(res.getResMsg());
 				  if(resCode.equals("100")){
 					  return true;
@@ -190,7 +193,7 @@ public class UserCenterActivity extends Activity {
 					  return false;
 				  }
 			  }else{
-				  Log.e("clientLogout", "error code is " + Integer.toString(code));
+				  Log.e(LOG_TAG, "clientLogout-。error code is " + Integer.toString(code));
 				  return false;
 			  }
 		  }catch(InterruptedIOException e){
@@ -250,6 +253,12 @@ public class UserCenterActivity extends Activity {
     public String readToken() {
         SharedPreferences pref = getSharedPreferences(FILE_NAME_TOKEN, MODE_MULTI_PROCESS);
         String str = pref.getString("token", "");
+        return str;
+    }
+    
+    private String readAccount() {
+        SharedPreferences pref = getSharedPreferences(FILE_NAME_COLLECTOR, MODE_MULTI_PROCESS);
+        String str = pref.getString("collectorNumber", "");
         return str;
     }
 }

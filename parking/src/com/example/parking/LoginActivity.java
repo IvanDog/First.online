@@ -29,6 +29,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.ParseException;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -50,40 +52,21 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-/**
- * Activity which displays a login screen to the user, offering registration as
- * well.
- */
-public class LoginActivity extends Activity {
-	/**
-	 * A dummy authentication store containing known user names and passwords.
-	 * TODO: remove after connecting to a real authentication system.
-	 */
-	private static final String[] DUMMY_CREDENTIALS = new String[] {
-			"gouyf@ehualu.com:123456"};
 
-	/**
-	 * The default email to populate the email field with.
-	 */
-	public static final String EXTRA_EMAIL = "com.example.android.authenticatordemo.extra.EMAIL";
+public class LoginActivity extends Activity {
 
 	private UserLoginTask mLoginTask = null;
-    private UserRegisterTask mRegisterTask = null;
-	// Values for email and password at the time of the login attempt.
-	private String mEmail;
+
+	private String mAccount;
 	private String mPassword;
 
-	// UI references.
-	private EditText mEmailView;
-	private EditText mPasswordView;
+	private EditText mAccountET;
+	private EditText mPasswordET;
 	private View mLoginFormView;
 	private View mLoginStatusView;
 	private TextView mLoginStatusMessageView;
     private CheckBox mKeepUserinfo;
     private CheckBox mKeepPassword;
-    private AlertDialog mDialog;
-	private EditText mUserNumberDialogET;
-	private EditText mPasswdDialogET;
 	private String mPublicKey;
 	private String mPrivateKey;
 	private boolean mFirstLogin;
@@ -94,20 +77,19 @@ public class LoginActivity extends Activity {
 	private static final int ERROR_TYPE_NO_ERROR=403;
     private static final String FILE_NAME_NAME_PASSWD = "save_spref_name_passwd";
     private static final String FILE_NAME_TOKEN = "save_pref_token";
+    private static final String FILE_NAME_COLLECTOR = "save_pref_collector";
 	private int mErrorType = ERROR_TYPE_NO_ERROR;
+	public static String LOG_TAG = "LoginActivity";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.activity_login);
 
-		// Set up the login form.
-		mEmail = getIntent().getStringExtra(EXTRA_EMAIL);
-		mEmailView = (EditText) findViewById(R.id.email);
-		mEmailView.setText(mEmail);
+		mAccountET = (EditText) findViewById(R.id.email);
 
-		mPasswordView = (EditText) findViewById(R.id.password);
-		mPasswordView
+		mPasswordET = (EditText) findViewById(R.id.password);
+		mPasswordET
 				.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 					@Override
 					public boolean onEditorAction(TextView textView, int id,
@@ -129,13 +111,6 @@ public class LoginActivity extends Activity {
 					@Override
 					public void onClick(View view) {
 						attemptLogin();
-					}
-				});
-		findViewById(R.id.register_button).setOnClickListener(
-				new View.OnClickListener() {
-					@Override
-					public void onClick(View view) {
-						showRegisterDialog();
 					}
 				});
         mKeepUserinfo = (CheckBox) findViewById(R.id.ck_userinfo);
@@ -168,11 +143,11 @@ public class LoginActivity extends Activity {
     private void initView() {
         if (readBoolean("isuserinfo")) {
         	mKeepUserinfo.setChecked(true);
-        	mEmailView.setText(readData("userinfo").toString());
+        	mAccountET.setText(readData("userinfo").toString());
         }
         if (readBoolean("ispassword")) {
         	mKeepPassword.setChecked(true);
-            mPasswordView.setText(readData("password").toString());
+            mPasswordET.setText(readData("password").toString());
         }
     }
 
@@ -215,9 +190,7 @@ public class LoginActivity extends Activity {
     }
 
 	/**
-	 * Attempts to sign in or register the account specified by the login form.
-	 * If there are form errors (invalid email, missing fields, etc.), the
-	 * errors are presented and no actual login attempt is made.
+	 * Attempts to sign
 	 */
 	public void attemptLogin() {
 		if (mLoginTask != null) {
@@ -225,37 +198,33 @@ public class LoginActivity extends Activity {
 		}
 
 		// Reset errors.
-		mEmailView.setError(null);
-		mPasswordView.setError(null);
+		mAccountET.setError(null);
+		mPasswordET.setError(null);
 
 		// Store values at the time of the login attempt.
-		mEmail = mEmailView.getText().toString();
-		mPassword = mPasswordView.getText().toString();
+		mAccount = mAccountET.getText().toString();
+		mPassword = mPasswordET.getText().toString();
 
 		boolean cancel = false;
 		View focusView = null;
 
 		// Check for a valid password.
 		if (TextUtils.isEmpty(mPassword)) {
-			mPasswordView.setError(getString(R.string.error_passwd_required));
-			focusView = mPasswordView;
+			mPasswordET.setError(getString(R.string.error_passwd_required));
+			focusView = mPasswordET;
 			cancel = true;
 		} else if (mPassword.length() < 4) {
-			mPasswordView.setError(getString(R.string.error_invalid_password));
-			focusView = mPasswordView;
+			mPasswordET.setError(getString(R.string.error_invalid_password));
+			focusView = mPasswordET;
 			cancel = true;
 		}
 
 		// Check for a valid email address.
-		if (TextUtils.isEmpty(mEmail)) {
-			mEmailView.setError(getString(R.string.error_email_required));
-			focusView = mEmailView;
+		if (TextUtils.isEmpty(mAccount)) {
+			mAccountET.setError(getString(R.string.error_email_required));
+			focusView = mAccountET;
 			cancel = true;
-		} /*else if (!mEmail.contains("@")) {
-			mEmailView.setError(getString(R.string.error_invalid_email));
-			focusView = mEmailView;
-			cancel = true;
-		}*/
+		}
 
 		if (cancel) {
 			focusView.requestFocus();
@@ -298,8 +267,6 @@ public class LoginActivity extends Activity {
 						}
 					});
 		} else {
-			// The ViewPropertyAnimator APIs are not available, so simply show
-			// and hide the relevant UI components.
 			mLoginStatusView.setVisibility(show ? View.VISIBLE : View.GONE);
 			mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
 		}
@@ -313,32 +280,13 @@ public class LoginActivity extends Activity {
 		@Override
 		protected Boolean doInBackground(Void... params) {
 			try{
-				String email = mEmailView.getText().toString();
-				String passwd = mPasswordView.getText().toString();
+				String email = mAccountET.getText().toString();
+				String passwd = mPasswordET.getText().toString();
 				return clientLogin(email,passwd);
 			}catch(Exception e){
 				e.printStackTrace();
 			}
 			return false;
-			/*try {
-				// Simulate network access.
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				return false;
-			}			
-			for (String credential : DUMMY_CREDENTIALS) {
-				String[] pieces = credential.split(":");
-				if (pieces[0].equals(mEmail)) {
-					// Account exists, return true if the password matches.
-					if(pieces[1].equals(mPassword)){
-						return true;
-					}else{
-						mErrorType = ERROR_TYPE_PASSWD;
-					}
-				}else{
-					mErrorType = ERROR_TYPE_EMAIL;
-				}
-			}*/
 		}
 
 		@Override
@@ -347,10 +295,11 @@ public class LoginActivity extends Activity {
 			showProgress(false);
 
 			if (success) {
+				mFirstLogin = true;
 				if(mFirstLogin){
 					mFirstLogin = false;
-					String userinfo = mEmailView.getText().toString();
-			        String password = mPasswordView.getText().toString();
+					String userinfo = mAccountET.getText().toString();
+			        String password = mPasswordET.getText().toString();
 			        writeData(userinfo, password, mKeepUserinfo.isChecked(), mKeepPassword.isChecked());
 					Intent intent = new Intent(LoginActivity.this,WorkAttendanceActivity.class);
 					Bundle bundle = new Bundle();
@@ -359,8 +308,8 @@ public class LoginActivity extends Activity {
 					startActivity(intent);
 					finish();
 				}else{
-					String userinfo = mEmailView.getText().toString();
-			        String password = mPasswordView.getText().toString();
+					String userinfo = mAccountET.getText().toString();
+			        String password = mPasswordET.getText().toString();
 			        writeData(userinfo, password, mKeepUserinfo.isChecked(), mKeepPassword.isChecked());
 					Intent intent = new Intent(LoginActivity.this,MainActivity.class);
 					Bundle bundle = new Bundle();
@@ -371,12 +320,12 @@ public class LoginActivity extends Activity {
 				}
 			} else {
 				if(mErrorType == ERROR_TYPE_EMAIL){
-					mEmailView.setError(getString(R.string.error_incorrect_email));
-					mEmailView.requestFocus();
+					mAccountET.setError(getString(R.string.error_incorrect_email));
+					mAccountET.requestFocus();
 				}else if(mErrorType == ERROR_TYPE_PASSWD){
-					mPasswordView
+					mPasswordET
 					.setError(getString(R.string.error_incorrect_password));
-					mPasswordView.requestFocus();
+					mPasswordET.requestFocus();
 				}
 			}
 			mErrorType=ERROR_TYPE_NO_ERROR;
@@ -407,41 +356,46 @@ public class LoginActivity extends Activity {
 	/**
 	 * Add for request login's state
 	 * */
-	public boolean clientLogin(String name, String pwd)throws ParseException, IOException, JSONException{
+	public boolean clientLogin(String account, String pwd)throws ParseException, IOException, JSONException{
 		  HttpClient httpClient = new DefaultHttpClient();
 		  httpClient.getParams().setIntParameter(  
                   HttpConnectionParams.SO_TIMEOUT, 5000); // 请求超时设置,"0"代表永不超时  
 		  httpClient.getParams().setIntParameter(  
                   HttpConnectionParams.CONNECTION_TIMEOUT, 5000);// 连接超时设置,"0"代表永不超时
-		  //String strurl = "http://" + mIP + ":8080/ServletTest/LoginServlet";
-		  String strurl = "http://" + 	this.getString(R.string.ip) + ":8080/park/collector/login/login";
+		  String strurl = "http://" + 	this.getString(R.string.ip) + "/itspark/collector/login/login";
+		  Log.e(LOG_TAG,"clientLogin-> url is " + strurl);
 		  HttpPost request = new HttpPost(strurl);
 		  request.addHeader("Accept","application/json");
-		  request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+		  //request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+		  request.setHeader("Content-Type", "application/json; charset=utf-8");
 		  JSONObject param = new JSONObject();
-		  param.put("name", name);
-		  param.put("password", getMD5Code(pwd));
+		  LoginInfo info=new LoginInfo();
+		  CommonRequestHeader header = new CommonRequestHeader();
+		  header.addRequestHeader(CommonRequestHeader.REQUEST_COLLECTOR_LOGIN_CODE, account, readToken());
+		  info.setHeader(header);
+		  info.setVersion(getVersion());
+		  info.setPassword(getMD5Code(pwd));
 		  String androidID = Secure.getString(this.getContentResolver(), Secure.ANDROID_ID);
-		  param.put("androidID", androidID);
+		  info.setAndroidID(androidID);
 		  mPublicKey = generateRSAKeyPair(1024).getPublic().toString();
 		  mPrivateKey = generateRSAKeyPair(1024).getPrivate().toString();
-		  param.put("publicKey", mPublicKey);
-		  StringEntity se = new StringEntity(param.toString(), "UTF-8");
-		  request.setEntity(se);//发送数据
+//		  param.put("publicKey", mPublicKey);
+		  StringEntity se = new StringEntity(JacksonJsonUtil.beanToJson(info), "UTF-8");
+		  Log.e(LOG_TAG,"clientLogin-> param is " + JacksonJsonUtil.beanToJson(info));
+		  request.setEntity( se);//发送数据
 		  try{
 			  HttpResponse httpResponse = httpClient.execute(request);//获得响应
 			  int code = httpResponse.getStatusLine().getStatusCode();
 			  if(code==HttpStatus.SC_OK){
 				  String strResult = EntityUtils.toString(httpResponse.getEntity());
-				  Log.e("clientLogin","strResult is " + strResult);
+				  Log.e(LOG_TAG,"clientLogin-> strResult is " + strResult);
 				  CommonResponse res = new CommonResponse(strResult);
 				  String resCode = res.getResCode();
-				  Log.e("clientLogin","resCode is  " + res.getResCode());
-				  Log.e("clientLogin","resMsg is  " + res.getResMsg());
 				  if(resCode.equals("100") || resCode.equals("101")){
 					  if(resCode.equals("100")){
 						  mFirstLogin = true;
 					  }
+					  writeCollector(account);
 					  writeToken((String)res.getPropertyMap().get("token"));
 					  mErrorType = ERROR_TYPE_NO_ERROR;
 					  return true;
@@ -455,7 +409,7 @@ public class LoginActivity extends Activity {
 					  return false;
 				  }
 			  }else{
-				  Log.e("clientLogin", "error code is " + Integer.toString(code));
+				  Log.e(LOG_TAG, "clientLogin->error code is " + Integer.toString(code));
 				  return false;
 			  }
 		  }catch(InterruptedIOException e){
@@ -469,63 +423,7 @@ public class LoginActivity extends Activity {
           }  
 		  return false;
     }
-	  /*if(loginResult.equals("ok")){
-	  String parkName = (String) result.get("parkname");
-	  String parkNumber = (String) result.get("parknumber");
-	  String userNumber = (String) result.get("usernumber");
-	  String workStartTIme = (String) result.get("workstarttime");
-	  String workEndTIme = (String) result.get("workendtime");
-      }*/
-   
-	/**
-	 * Add for request register's state
-	 * */
-	public boolean clientRegister(String teleNumber, String passwd) throws ParseException, IOException, JSONException{
-		  HttpClient httpClient = new DefaultHttpClient();
-		  httpClient.getParams().setIntParameter(  
-                  HttpConnectionParams.SO_TIMEOUT, 5000); // 请求超时设置,"0"代表永不超时  
-		  httpClient.getParams().setIntParameter(  
-                  HttpConnectionParams.CONNECTION_TIMEOUT, 5000);// 连接超时设置 
-		  //String strurl = "http://" + mIP + ":8080/ServletTest/RegisterServlet";
-		  String strurl = "http://" + 	this.getString(R.string.ip) + ":8080/park/collector/login/register";
-		  HttpPost request = new HttpPost(strurl);
-		  request.addHeader("Accept","application/json");
-		  request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
-		  JSONObject param = new JSONObject();
-		  param.put("account", teleNumber);
-		  param.put("password", getMD5Code(passwd));
-		  StringEntity se = new StringEntity(param.toString(), "UTF-8");
-		  request.setEntity(se);//发送数据
-		  try{
-			  HttpResponse httpResponse = httpClient.execute(request);//获得响应
-			  int code = httpResponse.getStatusLine().getStatusCode();
-			  if(code==HttpStatus.SC_OK){
-				  String strResult = EntityUtils.toString(httpResponse.getEntity());
-				  Log.e("clienRegister","strResult is " + strResult);
-				  CommonResponse res = new CommonResponse(strResult);
-				  Log.e("clienRegister","resCode is  " + res.getResCode());
-				  Log.e("clienRegister","resMsg is  " + res.getResMsg());
-				  String resCode = res.getResCode();
-				  String resMsg = res.getResMsg();
-				  toastWrapper(resMsg);
-				  if(resCode == "100"){
-					  return true;
-				  }
-			  }else{
-				  Log.e("clienRegister", "error code is " + Integer.toString(code));
-				  return false;
-			  }
-		  }catch(InterruptedIOException e){
-			  if(e instanceof ConnectTimeoutException){
-				  toastWrapper("连接超时");  
-			  }else if(e instanceof InterruptedIOException){
-				  toastWrapper("请求超时");  
-			  }
-          }finally{  
-        	  httpClient.getConnectionManager().shutdown();  
-          }  
-		  return false;
-    }
+
 	
 	/**
 	 * 封装Toast
@@ -537,62 +435,7 @@ public class LoginActivity extends Activity {
 	               Toast.makeText(LoginActivity.this, str, Toast.LENGTH_SHORT).show();
 	           }
 	      });
-	 }
-	 
-	    public void showRegisterDialog(){
-	    	LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
-			View view = inflater.inflate(R.layout.dialog_passwd_set, null);
-			mUserNumberDialogET = (EditText)view.findViewById(R.id.et_input_tele_number);
-			mPasswdDialogET = (EditText)view.findViewById(R.id.et_input_passwd);
-			final Button finishRegisterButton=(Button)view.findViewById(R.id.bt_finish_register);
-			final AlertDialog.Builder VCdialogBuilder = new AlertDialog.Builder(LoginActivity.this);
-			VCdialogBuilder.setView(view); // 自定义dialog
-			finishRegisterButton.setOnClickListener(new OnClickListener(){
-				@Override
-				public void onClick(View v){
-					showProgress(true);
-					mRegisterTask = new UserRegisterTask();
-					mRegisterTask.execute((Void) null);
-				}
-			});
-			mDialog = VCdialogBuilder.create();
-			mDialog.show();
-	    }
-		
-		/**
-		 * 用户注册Task
-		 * 
-		 */
-		public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
-			@Override
-			protected Boolean doInBackground(Void... params) {
-				try{
-					if("".equals(mUserNumberDialogET.getText().toString()) || "".equals(mPasswdDialogET.getText().toString())){
-					  toastWrapper("请完整输入");
-					}else{
-						 clientRegister(mUserNumberDialogET.getText().toString(),mPasswdDialogET.getText().toString());
-						 mDialog.dismiss();
-					}
-				}catch(Exception e){
-					e.printStackTrace();
-				}
-				return false;
-			}
-
-			@Override
-			protected void onPostExecute(final Boolean success) {
-				mRegisterTask = null;
-				showProgress(false);
-			}
-
-			@Override
-			protected void onCancelled() {
-				mRegisterTask = null;
-				showProgress(false);
-			}
-			
-		}
-		
+	 }	 		
 		
 		/**
 		 * MD5 算法
@@ -633,4 +476,40 @@ public class LoginActivity extends Activity {
 	        KeyPair keyPair = RSAUtils.generateRSAKeyPair(keyLength);
 			return keyPair;  
 	    }  
+	    
+	    /**
+	     * 获取版本号
+	     * @return 当前应用的版本号
+	     */
+	    public String getVersion() {
+	        try {
+	            PackageManager manager = this.getPackageManager();
+	            PackageInfo info = manager.getPackageInfo(this.getPackageName(), 0);
+	            String version = info.versionName;
+	            return this.getString(R.string.app_name) + version;
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return this.getString(R.string.can_not_find_version_name);
+	        }
+	    }
+	    
+	    /**
+	     * 获取token
+	     */
+	    private String readToken() {
+	        SharedPreferences pref = getSharedPreferences(FILE_NAME_TOKEN, MODE_MULTI_PROCESS);
+	        String str = pref.getString("token", "");
+	        return str;
+	    }
+	    
+	    /**
+	     * 记录账户信息
+	     */
+	    private boolean writeCollector(String account) {
+	        SharedPreferences.Editor share_edit = getSharedPreferences(FILE_NAME_COLLECTOR,
+	                MODE_MULTI_PROCESS).edit();
+	        share_edit.putString("collectorNumber", account);
+	        share_edit.commit();
+	        return true;
+	    }
 }

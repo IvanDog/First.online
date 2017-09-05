@@ -18,8 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
-	private static final int ARRIVING_TYPE=101;
-	private static final int LEAVING_TYPE=102;
+	private static final int LICENSE_ARRIVING_TYPE=101;
+	private static final int LICENSE_LEAVING_TYPE=102;
 	private static final int ATTENDANCE_TYPE_START=301;
 	private static final int ATTENDANCE_TYPE_END=302;
     private static final String FILE_NAME_COLLECTOR = "save_pref_collector";
@@ -37,10 +37,6 @@ public class MainActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-/*		Intent intent = getIntent();
-		Bundle bundle = intent.getExtras();
-		mUserTV = (TextView)findViewById(R.id.textView1);
-		mUserTV.setText("工号： "+bundle.getString("user") );*/
 		mParkNumberTV = (TextView)findViewById(R.id.tv_park_number);
 		mParkNumberTV.setText("车场编号:" + readCollector("parkNumber"));
 		mUserNumberTV = (TextView)findViewById(R.id.tv_user_number);
@@ -52,7 +48,7 @@ public class MainActivity extends Activity {
 			public void onClick(View v){
 				Intent intent = new Intent(MainActivity.this,InputLicenseActivity.class);
 				Bundle bundle = new Bundle();
-				bundle.putInt("type", ARRIVING_TYPE);
+				bundle.putInt("type", LICENSE_ARRIVING_TYPE);
 				intent.putExtras(bundle);
 				startActivity(intent);
 			}
@@ -62,7 +58,7 @@ public class MainActivity extends Activity {
 			public void onClick(View v){
 				Intent intent = new Intent(MainActivity.this,InputLicenseActivity.class);
 				Bundle bundle = new Bundle();
-				bundle.putInt("type", LEAVING_TYPE);
+				bundle.putInt("type", LICENSE_LEAVING_TYPE);
 				intent.putExtras(bundle);
 				startActivity(intent);
 			}

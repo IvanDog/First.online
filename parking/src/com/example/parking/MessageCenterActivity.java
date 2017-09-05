@@ -49,6 +49,7 @@ public class MessageCenterActivity extends Activity {
 	public static final int EVENT_SET_ADAPTER = 102;
     private static final String FILE_NAME_TOKEN = "save_pref_token";
     private static final String FILE_NAME_COLLECTOR = "save_pref_collector";
+	public static String LOG_TAG = "MessageCenterActivity";
     private UserGetTask mGetTask= null;
     private ArrayList<HashMap<String, Object>> mList = new ArrayList<HashMap<String, Object>>();
     private MessageCenterListAdapter mMessageCenterListAdapter;
@@ -61,8 +62,6 @@ public class MessageCenterActivity extends Activity {
 		setContentView(R.layout.activity_message_center);
 		mListView=(ListView)findViewById(R.id.list_message_center);  
 		mEmptyNotifyTV=(TextView)findViewById(R.id.tv_notify_message_list_empty); 
-        //List<Map<String, Object>> list=getData();  
-        //mListView.setAdapter(new MessageCenterListAdapter(this, list)); 
         mListView.setOnItemClickListener(new OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
@@ -136,10 +135,12 @@ public class MessageCenterActivity extends Activity {
 		  String strurl = "http://" + 	this.getString(R.string.ip) + ":8080/park/collector/messageCenter/getMessage";
 		  HttpPost request = new HttpPost(strurl);
 		  request.addHeader("Accept","application/json");
-		  request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+		  //request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+		  request.setHeader("Content-Type", "application/json; charset=utf-8");
 		  JSONObject param = new JSONObject();
-		  param.put("token", readToken());
-		  param.put("collectorNumber", readCollector("collectorNumber"));
+		  CommonRequestHeader header = new CommonRequestHeader();
+		  header.addRequestHeader(CommonRequestHeader.REQUEST_COLLECTOR_MESSAGE_CENTER_CODE, readAccount(), readToken());
+		  param.put("header", header);
 		  StringEntity se = new StringEntity(param.toString(), "UTF-8");
 		  request.setEntity(se);//发送数据
 		  try{
@@ -147,12 +148,8 @@ public class MessageCenterActivity extends Activity {
 			  int code = httpResponse.getStatusLine().getStatusCode();
 			  if(code==HttpStatus.SC_OK){
 				  String strResult = EntityUtils.toString(httpResponse.getEntity());
-				  Log.e("clientGet","strResult is " + strResult);
+				  Log.e(LOG_TAG,"clientGet->strResult is " + strResult);
 				  CommonResponse res = new CommonResponse(strResult);
-				  Log.e("clientGet","resCode is  " + res.getResCode());
-				  Log.e("clientGet","resMsg is  " + res.getResMsg());
-				  Log.e("clientGet","List is  " + res.getDataList());
-				  Log.e("clientGet","Map is  " + res.getPropertyMap());
 				  toastWrapper(res.getResMsg());  
 				  if(res.getResCode().equals("100")){
 					  mList = res.getDataList();
@@ -161,7 +158,7 @@ public class MessageCenterActivity extends Activity {
 			          return false;
 				  } 
 			}else{
-					  Log.e("clientGet", "error code is " + Integer.toString(code));
+					  Log.e(LOG_TAG, "clientGet->error code is " + Integer.toString(code));
 					  return false;
 		    }
 		  }catch(InterruptedIOException e){
@@ -184,10 +181,10 @@ public class MessageCenterActivity extends Activity {
 		@Override
 		protected Boolean doInBackground(Void... params) {
 			try{
-				Log.e("clientGet","UserGetTask doInBackground");  
+				Log.e(LOG_TAG,"UserGetTask->doInBackground");  
 				return clientGet();
 			}catch(Exception e){
-				Log.e("clientGet","Query exists exception ");  
+				Log.e(LOG_TAG,"UserGetTask-> exists exception ");  
 				e.printStackTrace();
 			}
 			return false;
@@ -233,33 +230,17 @@ public class MessageCenterActivity extends Activity {
         String str = pref.getString("token", "");
         return str;
     }
+
+    private String readAccount() {
+        SharedPreferences pref = getSharedPreferences(FILE_NAME_COLLECTOR, MODE_MULTI_PROCESS);
+        String str = pref.getString("collectorNumber", "");
+        return str;
+    }
     
     private String readCollector(String data) {
         SharedPreferences pref = getSharedPreferences(FILE_NAME_COLLECTOR, MODE_MULTI_PROCESS);
         String str = pref.getString(data, "");
         return str;
     }
-    /*public List<Map<String, Object>> getData(){  
-    List<Map<String, Object>> list=new ArrayList<Map<String,Object>>();  
-    for (int i = 1; i <= 2; i++) {  
-        Map<String, Object> map=new HashMap<String, Object>();  
-        if(i==1){
-            map.put("messageCenterImage",  drawable.ic_add_alert_black_18dp);
-            map.put("messageCenterTitle", "考勤通知");
-            map.put("messageCenterDetail", "您4月25日出现一次考勤异常");
-            map.put("messageCenterTime", "2017.04.25" + " " + "15:15:40");
-            map.put("messageCenterDetailHide", "您4月25日上班打卡时间08:40:36(上班时间9:00)，" +
-            		"下班打卡时间15:30:23(下班时间17:30)，存在异常，请联系考勤员确认。");
-        }else if(i==2){
-            map.put("messageCenterImage",  drawable.ic_error_outline_black_18dp);
-            map.put("messageCenterTitle", "停车通知");
-            map.put("messageCenterDetail", "4月25日出现一次停车逃费现象");
-            map.put("messageCenterTime", "2017.04.25" + " " + "16:25:36");
-            map.put("messageCenterDetailHide", "4月25日出现一次停车逃费现象，入场时间11:15:36，" +
-            		"牌照号津A00001，泊位号6，请联系稽查员确认。");
-        }
-        list.add(map);  
-    }  
-    return list;  
-  }*/
+
 }

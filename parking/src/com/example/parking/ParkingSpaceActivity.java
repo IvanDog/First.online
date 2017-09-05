@@ -57,7 +57,6 @@ public class ParkingSpaceActivity extends Activity {
 	private DBAdapter mDBAdapter;
 	private TextView mTotalParkingNumberTV;
 	private TextView mIdleParkingNumberTV;
-	private  static final int MAX_LOCATION_SIZE = 10;
 	private int mTotalLocationNumber;
 	private int mIdleLocationNumber;
 	
@@ -68,7 +67,7 @@ public class ParkingSpaceActivity extends Activity {
 	
     private static final String FILE_NAME_COLLECTOR = "save_pref_collector";
     private static final String FILE_NAME_TOKEN = "save_pref_token";
-    
+	public static String LOG_TAG = "ParkingSpaceActivity";
     private UserQueryTask mQueryTask = null;
     private ArrayList<HashMap<String, Object>> mList = new ArrayList<HashMap<String, Object>>();
     private ParkingPlaceListAdapter mParkingPlaceListAdapter;
@@ -84,8 +83,6 @@ public class ParkingSpaceActivity extends Activity {
         mlicenseplatenumber=(TextView)findViewById(R.id.tv_licenseplatenumber);
 		mQueryTask = new UserQueryTask();
 		mQueryTask.execute((Void) null);
-        //List<Map<String, Object>> list=getData();  
-        //mListView.setAdapter(new ParkingPlaceListAdapter(this, list)); 
         mListView.setOnItemClickListener(new OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
@@ -93,7 +90,7 @@ public class ParkingSpaceActivity extends Activity {
             	Map<String,Object> map=(Map<String,Object>)mListView.getItemAtPosition(arg2);
                 String licensePlateNumber=(String)map.get("licensePlateNumber");
                 int locationNumber=Integer.valueOf(map.get("parkingLocation").toString());
-                if(licensePlateNumber.equals("")){
+                if(licensePlateNumber.equals("") || licensePlateNumber==null){
                 	Intent intent = new Intent(ParkingSpaceActivity.this,TodayRecordActivity.class);
 	        	    Bundle bundle = new Bundle();
 	        	    bundle.putString("licensePlateNumber", licensePlateNumber);
@@ -157,38 +154,37 @@ public class ParkingSpaceActivity extends Activity {
                   HttpConnectionParams.SO_TIMEOUT, 5000); // 请求超时设置,"0"代表永不超时  
 		  httpClient.getParams().setIntParameter(  
                   HttpConnectionParams.CONNECTION_TIMEOUT, 5000);// 连接超时设置 
-		  //String strurl = "http://" + mIP + ":8080/ServletTest/QueryParkingSpaceServlet";
-		  String strurl = "http://" + this.getString(R.string.ip) + ":8080/park/collector/queryParkingSpace/query";
+		  String strurl = "http://" + this.getString(R.string.ip) + ":8080/itspark/collector/queryParkingSpace/query";
 		  HttpPost request = new HttpPost(strurl);
 		  request.addHeader("Accept","application/json");
-		  request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+			//request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+		  request.setHeader("Content-Type", "application/json; charset=utf-8");
 		  JSONObject param = new JSONObject();
-		  param.put("token", readToken());
-		  param.put("parkingnumber",readCollector("parkNumber"));
-		  StringEntity se = new StringEntity(param.toString(), "UTF-8");
+		  ParkLotQueryInfo info = new ParkLotQueryInfo();
+		  CommonRequestHeader header = new CommonRequestHeader();
+		  header.addRequestHeader(CommonRequestHeader.REQUEST_COLLECTOR_QUERY_PARKING_SPACE_CODE, readAccount(), readToken());
+		  info.setHeader(header);
+		  info.setParkNumber(readCollector("parkNumber"));
+		  StringEntity se = new StringEntity( JacksonJsonUtil.beanToJson(info), "UTF-8");
+		  Log.e(LOG_TAG,"clientParkingQuery-> param is " + JacksonJsonUtil.beanToJson(info));
 		  request.setEntity(se);//发送数据
 		  try{
 			  HttpResponse httpResponse = httpClient.execute(request);//获得响应
 			  int code = httpResponse.getStatusLine().getStatusCode();
 			  if(code==HttpStatus.SC_OK){
 				  String strResult = EntityUtils.toString(httpResponse.getEntity());
-				  Log.e("clientParkingQuery","strResult is " + strResult);
+				  Log.e(LOG_TAG,"clientParkingQuery->strResult is " + strResult);
 				  CommonResponse res = new CommonResponse(strResult);
-				  Log.e("clientParkingQuery","resCode is  " + res.getResCode());
-				  Log.e("clientParkingQuery","resMsg is  " + res.getResMsg());
-				  Log.e("clientParkingQuery","List is  " + res.getDataList());
-				  Log.e("clientParkingQuery","Map is  " + res.getPropertyMap());
 				  if(res.getResCode().equals("100")){
-					  Log.e("clientParkingQuery","return true");  
 					  mList = res.getDataList();
 					  mIdleLocationNumber = Integer.parseInt(String.valueOf(res.getPropertyMap().get("idleLocationNumber")));
 					  mTotalLocationNumber = Integer.parseInt(String.valueOf(res.getPropertyMap().get("totalLocationNumber")));
 					  return true;
-				  }else if(res.getResCode().equals("201")){
+				  }else{
 			          return false;
 				  } 
 			}else{
-					  Log.e("clientParkingQuery", "error code is " + Integer.toString(code));
+					  Log.e(LOG_TAG, "clientParkingQuery->error code is " + Integer.toString(code));
 					  return false;
 		    }
 		  }catch(InterruptedIOException e){
@@ -217,10 +213,10 @@ public class ParkingSpaceActivity extends Activity {
 		@Override
 		protected Boolean doInBackground(Void... params) {
 			try{
-				Log.e("clientParkingQuery","UserQueryTask doInBackground");  
-				clientQuery();
+				Log.e(LOG_TAG,"UserQueryTask->doInBackground");  
+				return clientQuery();
 			}catch(Exception e){
-				Log.e("clientParkingQuery","Query exists exception ");  
+				Log.e(LOG_TAG,"UserQueryTask->exists exception ");  
 				e.printStackTrace();
 			}
 			return false;
@@ -228,13 +224,12 @@ public class ParkingSpaceActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(final Boolean success) {
-			Log.e("clientParkingQuery","onPostExecute " + success.toString()); 
 			mQueryTask = null;
-			//if(success){
+			if(success){
 			    Message msg = new Message();
 			    msg.what=EVENT_SET_ADAPTER;
 			    mHandler.sendMessage(msg);
-			//}
+			}
 		}
 
 		@Override
@@ -282,6 +277,12 @@ public class ParkingSpaceActivity extends Activity {
     private String readToken() {
         SharedPreferences pref = getSharedPreferences(FILE_NAME_TOKEN, MODE_MULTI_PROCESS);
         String str = pref.getString("token", "");
+        return str;
+    }
+    
+    private String readAccount() {
+        SharedPreferences pref = getSharedPreferences(FILE_NAME_COLLECTOR, MODE_MULTI_PROCESS);
+        String str = pref.getString("collectorNumber", "");
         return str;
     }
     /*public List<Map<String, Object>> getData(){  

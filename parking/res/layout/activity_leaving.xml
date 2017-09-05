@@ -131,12 +131,12 @@
                 android:checkedButton="@+id/paymentType"  
                 android:orientation="vertical">  
                     <RadioButton  
-                    android:id="@+id/rb_cash_payment_leaving"  
+                    android:id="@+id/rb_pos_payment_leaving"  
                     android:layout_width="wrap_content"  
                     android:layout_height="wrap_content" 
-                    android:drawableRight="@drawable/ic_cash_32px"
+                    android:drawableRight="@drawable/ic_pos_32px"
                     android:drawablePadding="5sp"
-                    android:text="@string/cashPayment"/>  
+                    android:text="@string/posPayment"/>
                    <RadioButton  
                     android:id="@+id/rb_alipay_payment_leaving"  
                     android:layout_width="wrap_content"  
@@ -167,7 +167,7 @@
           android:gravity="center"
           android:background="#EBEBEB"
           android:text="@string/printLeaving" />-->
-        <LinearLayout
+       <LinearLayout
           android:id="@+id/parking_detail_buttons"
           android:layout_below="@+id/linear_payment_information"
           android:layout_width="match_parent"
@@ -176,19 +176,12 @@
           android:layout_alignParentBottom="true">
             <Button 
               android:id="@+id/bt_confirm_payment_leaving"
-              android:background = "@drawable/ic_ok"
               android:layout_width="0dp"
               android:layout_height="wrap_content"
+              android:layout_margin="5dp"
               android:layout_weight="1"
               android:gravity="center"
               android:text="@string/confirmPaymentLeaving" />
-            <Button 
-              android:id="@+id/bt_cancel_payment"
-              android:background = "@drawable/ic_ok"
-              android:layout_width="0dp"
-              android:layout_height="wrap_content"
-              android:layout_weight="1"
-              android:gravity="center"
-              android:text="@string/escapeLeaving" />
+
     </LinearLayout>
 </RelativeLayout>

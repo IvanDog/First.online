@@ -22,7 +22,6 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.example.parking.LoginActivity.UserRegisterTask;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -46,8 +45,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView;
 
 public class HistoryRecordFragment extends Fragment {
-	public static final int TYPE_UNFINISHED_PAYMENT_STATE = 101;
-	public static final int TYPE_FINISHED_PAYMENT_STATE_MOBILE = 102;
+	public static final int TYPE_FINISHED_PAYMENT_STATE_MOBILE_WECHAT = 101;
+	public static final int TYPE_FINISHED_PAYMENT_STATE_MOBILE_ALI = 102;
 	public static final int TYPE_FINISHED_PAYMENT_STATE_CASH = 103;
 	public static final int TYPE_FINISHED_PAYMENT_STATE_ACCOUNT = 104;
 	public static final int TYPE_UNFINISHED_PAYMENT_STATE_LEAVE = 105;
@@ -56,6 +55,7 @@ public class HistoryRecordFragment extends Fragment {
 	public static final int EVENT_DISPLAY_REQUEST_TIMEOUT = 203;
 	public static final int EVENT_DISPLAY_CONNECT_TIMEOUT = 204;
 	public static final int EVENT_SET_ADAPTER = 205;
+	public static String LOG_TAG = "HistoryRecordFragment";
 	private View mView;
 	private ListView mListView;
 	private TextView mEmptyNotifyTV;
@@ -173,17 +173,22 @@ public class HistoryRecordFragment extends Fragment {
 	                  HttpConnectionParams.SO_TIMEOUT, 5000); // 请求超时设置,"0"代表永不超时  
 			  httpClient.getParams().setIntParameter(  
 	                  HttpConnectionParams.CONNECTION_TIMEOUT, 5000);// 连接超时设置 
-			  //String strurl = "http://" + mIP + ":8080/ServletTest/QueryServlet";
-			  String strurl = "http://" + this.getString(R.string.ip) + ":8080/park/collector/queryHistory/query";
+			  String strurl = "http://" + this.getString(R.string.ip) + ":8080/itspark/collector/queryHistory/query";
 			  HttpPost request = new HttpPost(strurl);
 			  request.addHeader("Accept","application/json");
-			  request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+			//request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+			  request.setHeader("Content-Type", "application/json; charset=utf-8");
 			  JSONObject param = new JSONObject();
-			  param.put("token", ((ParkingHistorySearchActivity)getActivity()).readToken());
-			  param.put("parkingnumber",((ParkingHistorySearchActivity)getActivity()).readCollector("parkNumber"));
-			  param.put("paymentpattern", paymentPattern);
-			  param.put("date", date);
-			  StringEntity se = new StringEntity(param.toString(), "UTF-8");
+			  HistoryRecordSearchInfo info = new HistoryRecordSearchInfo(); 
+			  CommonRequestHeader header = new CommonRequestHeader();
+			  header.addRequestHeader(CommonRequestHeader.REQUEST_COLLECTOR_QUERY_HISTORY_PARKING_RECORD_CODE,
+					  ((ParkingHistorySearchActivity)getActivity()).readAccount(), ((ParkingHistorySearchActivity)getActivity()).readToken());
+			  info.setHeader(header);
+			  info.setParkNumber(((ParkingHistorySearchActivity)getActivity()).readCollector("parkNumber"));
+			  info.setPaymentPattern(convertPaymentPattern(paymentPattern));
+			  info.setDate(date);
+			  StringEntity se = new StringEntity(JacksonJsonUtil.beanToJson(info), "UTF-8");
+			  Log.e(LOG_TAG,"clientHistoryQuery-> param is " + JacksonJsonUtil.beanToJson(info));
 			  request.setEntity(se);//发送数据
 			  
 			  try{
@@ -191,12 +196,8 @@ public class HistoryRecordFragment extends Fragment {
 				  int code = httpResponse.getStatusLine().getStatusCode();
 				  if(code==HttpStatus.SC_OK){
 					  String strResult = EntityUtils.toString(httpResponse.getEntity());
-					  Log.e("clientHistoryQuery","strResult is " + strResult);
+					  Log.e(LOG_TAG,"clientHistoryQuery->strResult is " + strResult);
 					  CommonResponse res = new CommonResponse(strResult);
-					  Log.e("clientHistoryQuery","resCode is  " + res.getResCode());
-					  Log.e("clientHistoryQuery","resMsg is  " + res.getResMsg());
-					  Log.e("clientHistoryQuery","List is  " + res.getDataList());
-					  Log.e("clientHistoryQuery","mList is  " + mList);
 					  Message msg = new Message();
   		              msg.what=EVENT_DISPLAY_QUERY_RESULT;
   		              msg.obj= res.getResMsg();
@@ -204,11 +205,11 @@ public class HistoryRecordFragment extends Fragment {
 					  if(res.getResCode().equals("100")){
 						  mList = res.getDataList();
 						  return true;
-					  }else if(res.getResCode().equals("201")){
+					  }else{
 				          return false;
 					  } 
 				}else{
-				    Log.e("clientHistoryQuery", "error code is " + Integer.toString(code));
+				    Log.e(LOG_TAG, "clientHistoryQuery->error code is " + Integer.toString(code));
 					return false;
 			    }
 			  }catch(InterruptedIOException e){
@@ -239,10 +240,10 @@ public class HistoryRecordFragment extends Fragment {
 				try{
 					Log.e("clientQuery","UserQueryTask doInBackground");  
 					String paymentState = null;
-			    	if(mType==TYPE_UNFINISHED_PAYMENT_STATE){
-			    		paymentState = "未付";
-			    	}else if(mType==TYPE_FINISHED_PAYMENT_STATE_MOBILE){
-			    		paymentState = "移动支付";
+			    	if(mType==TYPE_FINISHED_PAYMENT_STATE_MOBILE_WECHAT){
+			    		paymentState = "微信支付";
+			    	}else if(mType==TYPE_FINISHED_PAYMENT_STATE_MOBILE_ALI){
+			    		paymentState = "支付宝支付";
 			    	}else if(mType==TYPE_FINISHED_PAYMENT_STATE_CASH){
 			    		paymentState = "现金支付";
 			    	}else if(mType==TYPE_FINISHED_PAYMENT_STATE_ACCOUNT){
@@ -250,10 +251,10 @@ public class HistoryRecordFragment extends Fragment {
 			    	}else if(mType==TYPE_UNFINISHED_PAYMENT_STATE_LEAVE){
 			    		paymentState = "逃费";
 			    	}
-					Log.e("clientHistoryQuery","UserQueryTask payment is " + paymentState);  
+					Log.e(LOG_TAG,"UserQueryTask->payment is " + paymentState);  
 					return clientQuery(mDate, paymentState);
 				}catch(Exception e){
-					Log.e("clientHistoryQuery","Query exists exception ");  
+					Log.e(LOG_TAG,"UserQueryTask->exists exception ");  
 					e.printStackTrace();
 				}
 				return false;
@@ -304,72 +305,19 @@ public class HistoryRecordFragment extends Fragment {
 			}
 		}
 		
-	    /*public List<Map<String, Object>> getData(){  
-        List<Map<String, Object>> list=new ArrayList<Map<String,Object>>();  
-        setHistoryRecord(mDate,mType,list);
-        return list;
-        }*/
-		
-	    /*public void setHistoryRecord(String date,int type,List<Map<String, Object>> list){
-    	mDBAdapter.open();
-    	String paymentState = new String();
-    	if(mType==TYPE_UNFINISHED_PAYMENT_STATE){
-    		paymentState = "未付";
-    	}else if(mType==TYPE_FINISHED_PAYMENT_STATE_MOBILE){
-    		paymentState = "移动支付";
-    	}else if(mType==TYPE_FINISHED_PAYMENT_STATE_CASH){
-    		paymentState = "现金支付";
-    	}else if(mType==TYPE_UNFINISHED_PAYMENT_STATE_LEAVE){
-    		paymentState = "逃费";
-    	}
-    	Log.e("yifan","date : " + date);
-    	Log.e("yifan","paymentState : " + paymentState);
-    	Cursor cursor = mDBAdapter.getParkingByStartTime(date+"%");
-    	Log.e("yifan","count : " + cursor.getCount());
-    	Map<String, Object> titleMap=new HashMap<String, Object>();
-    	titleMap.put("licensePlateNumber","牌照");
-    	titleMap.put("startTime","入场时间");
-    	titleMap.put("leaveTime", "离场时间");
-    	titleMap.put("parkingLocation","泊位");
-    	titleMap.put("expense", "支付");
-        list.add(titleMap); 
-        int count = 0;
-        try {
-        	do{
-        		      Log.e("yifan","paymentpattern : " + cursor.getString(cursor.getColumnIndex("paymentpattern")));
-        	    	  if((cursor.getString(cursor.getColumnIndex("paymentpattern"))).equals(paymentState) ){
-        	    		  Map<String, Object> map=new HashMap<String, Object>();
-        	    		  map.put("licensePlateNumber", cursor.getString(cursor.getColumnIndex("licenseplate")));
-        	    		  map.put("parkingLocation", cursor.getInt(cursor.getColumnIndex("locationnumber"))+"");
-        	    		  map.put("startTime", "入场: " + cursor.getString(cursor.getColumnIndex("starttime")));
-        	    		  if(cursor.getString(cursor.getColumnIndex("leavetime"))==null){
-        	    			  map.put("leaveTime", null);
-        	    		  }else{
-	        	    		  map.put("leaveTime", "离场: " + cursor.getString(cursor.getColumnIndex("leavetime")));
-        	    		  }
-        	    		  map.put("paymentState", cursor.getString(cursor.getColumnIndex("paymentpattern")));
-        	    		  if(cursor.getString(cursor.getColumnIndex("expense"))==null){
-	        	    		  map.put("expense", null);
-        	    		  }else{
-	        	    		  map.put("expense", cursor.getString(cursor.getColumnIndex("expense")));
-        	    		  }
-      		              list.add(map); 
-      		              count++;
-        	    	  }
-        	      }while(cursor.moveToNext());
-        }catch (Exception e) {
-                e.printStackTrace();
-        } finally{
-   	            if(count==0){
-	    	        list.remove(titleMap);
-		            Message msg = new Message();
-		            msg.what=NO_TODAY_PARKING_RECORD;
-		            mHandler.sendMessage(msg);
-	    	        mEmptyNotifyTV.setVisibility(View.VISIBLE);
-	            }
-            	if(cursor!=null){
-            		cursor.close();
-                }
-        }
-    }*/
+		public Integer convertPaymentPattern(String paymentPattern){
+			if("现金支付".equals(paymentPattern)){
+				return  1;
+			}else if("pos机支付".equals(paymentPattern)){
+				return 2;
+			}else if("微信支付".equals(paymentPattern)){
+				return 3;
+			}else if("支付宝支付".equals(paymentPattern)){
+				return 4;
+			}else if("余额支付".equals(paymentPattern)){
+				return 5;
+			}else{
+				return 6;
+			}
+		}
 }

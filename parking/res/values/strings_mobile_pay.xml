@@ -1,6 +1,7 @@
 <resources>
     <string name="mobile_payment_type_alipay">支付宝</string>
     <string name="mobile_payment_type_wechatpay">微信</string>
-    <string name="mobile_payment_two_dimensions_code">二维码</string>
-    <string name="mobile_payment_scan">扫一扫</string>
+    <string name="mobile_payment_scan">扫码支付</string>
+    <string name="mobile_payment_card">刷卡支付</string>
+    <string name="scan_text">将二维码放入框内</string>
 </resources>

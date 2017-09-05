@@ -75,7 +75,6 @@ public class ParkingPlaceListAdapter extends BaseAdapter {
         }
         zujian.parkingNumberTV.setBackgroundColor(context.getResources().getColor(R.color.white));
         zujian.licensePlateNumberTV.setText((String)data.get(position).get("licensePlateNumber"));
-        Log.e("gouyifan","licensePlateNumber:" + (String)data.get(position).get("licensePlateNumber"));
         if(!data.get(position).get("licensePlateNumber").equals("")){
             Drawable drawable = context.getResources().getDrawable(R.drawable.ic_car_in_parking_24px);
     		drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight()); //设置边界

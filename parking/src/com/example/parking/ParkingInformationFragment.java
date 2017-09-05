@@ -45,6 +45,7 @@ public class ParkingInformationFragment extends Fragment {
 	public static final int EVENT_DISPLAY_REQUEST_TIMEOUT = 202;
 	public static final int EVENT_DISPLAY_CONNECT_TIMEOUT = 203;
 	public static final int EVENT_DISPLAY_INFORMATION = 204;
+	public static String LOG_TAG = "ParkingInformationFragment";
 	private View mView;
 	private TextView mParkNameTV;
 	private TextView mParkNumberTV;
@@ -56,6 +57,7 @@ public class ParkingInformationFragment extends Fragment {
 	private TextView mLeaveTimeTV;
 	private Button mConfirmLeavingBT;
 	private Button mCancelLeavingBT;
+	private Long mParkingEnterID;
 	private int mLocationNumber;
 	private String mCarType;
 	private String mParkType;
@@ -100,7 +102,10 @@ public class ParkingInformationFragment extends Fragment {
 	        	public void onClick(View v){
 					Intent intent = new Intent(getActivity(),LeavingActivity.class);
 					Bundle bundle = new Bundle();
-					bundle.putString("licensePlate",mLicensePlateNumber );
+					bundle.putString("parkNumber", ((ParkingSpaceDetailActivity)getActivity()).readCollector("parkNumber"));
+					bundle.putString("licensePlateNumber",mLicensePlateNumber );
+					bundle.putString("carType", mCarType);
+					bundle.putLong("parkingEnterID",mParkingEnterID);
 					intent.putExtras(bundle);
 					startActivity(intent);
 	        	}
@@ -174,44 +179,51 @@ public class ParkingInformationFragment extends Fragment {
 	    /**
 		 * Add for request parking information
 		 * */
-		public boolean clientUpdateDisplay() throws ParseException, IOException, JSONException{
+		public boolean clientQuery() throws ParseException, IOException, JSONException{
 			Log.e("clientQuery","enter clientQuery");  
 			HttpClient httpClient = new DefaultHttpClient();
 			  httpClient.getParams().setIntParameter(  
 	                  HttpConnectionParams.SO_TIMEOUT, 5000); // 请求超时设置,"0"代表永不超时  
 			  httpClient.getParams().setIntParameter(  
 	                  HttpConnectionParams.CONNECTION_TIMEOUT, 5000);// 连接超时设置 
-			  //String strurl = "http://" + mIP + ":8080/ServletTest/QueryParkingSpaceServlet";
-			  String strurl = "http://" + this.getString(R.string.ip) + ":8080/park/collector/queryCurrentParking/query";
+			  String strurl = "http://" + this.getString(R.string.ip) + ":8080/itspark/collector/queryCurrentParking/query";
 			  HttpPost request = new HttpPost(strurl);
 			  request.addHeader("Accept","application/json");
-			  request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
-			  JSONObject param = new JSONObject();//定义json对象
-			  param.put("token", ((ParkingSpaceDetailActivity)getActivity()).readToken());
-			  param.put("parkingnumber",((ParkingSpaceDetailActivity)getActivity()).readCollector("parkNumber"));
-			  param.put("parkinglocation",mLocationNumber);
-			  StringEntity se = new StringEntity(param.toString(), "UTF-8");
+			//request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+			  request.setHeader("Content-Type", "application/json; charset=utf-8");
+			  JSONObject param = new JSONObject();
+			  LotDetailQueryInfo info = new LotDetailQueryInfo();
+			  CommonRequestHeader header = new CommonRequestHeader();
+			  header.addRequestHeader(CommonRequestHeader.REQUEST_COLLECTOR_QUERY_PARKING_INFORMATION_CODE, 
+					  ((ParkingSpaceDetailActivity)getActivity()).readAccount(), ((ParkingSpaceDetailActivity)getActivity()).readToken());
+			  info.setHeader(header);
+			  info.setParkNumber(((ParkingSpaceDetailActivity)getActivity()).readCollector("parkNumber"));
+			  info.setParkingLocation(String.valueOf(mLocationNumber));
+			  StringEntity se = new StringEntity( JacksonJsonUtil.beanToJson(info), "UTF-8");
+			  Log.e(LOG_TAG,"clientQuery-> param is " + JacksonJsonUtil.beanToJson(info));
 			  request.setEntity(se);//发送数据
 			  try{
 				  HttpResponse httpResponse = httpClient.execute(request);//获得响应
 				  int code = httpResponse.getStatusLine().getStatusCode();
 				  if(code==HttpStatus.SC_OK){
 					  String strResult = EntityUtils.toString(httpResponse.getEntity());
-					  Log.e("clientUpdateDisplay","strResult is " + strResult);
+					  Log.e(LOG_TAG,"clientQuery->strResult is " + strResult);
 					  CommonResponse res = new CommonResponse(strResult);
-					  Log.e("clientUpdateDisplay","resCode is  " + res.getResCode());
-					  Log.e("clientUpdateDisplay","List is  " + res.getDataList());
-					  Log.e("clientUpdateDisplay","Map is  " + res.getPropertyMap());
+					  Message msg = new Message();
+			          msg.what=EVENT_DISPLAY_QUERY_RESULT;
+			          msg.obj= res.getResMsg();
+			          mHandler.sendMessage(msg);
 					  if(res.getResCode().equals("100")){
+						  mParkingEnterID = Long.parseLong(String.valueOf (res.getPropertyMap().get("parkingEnterID")));
 						  mCarType = (String)res.getPropertyMap().get("carType");
 						  mParkType = (String)res.getPropertyMap().get("parkType");
 						  mStartTime = (String)res.getPropertyMap().get("startTime");
 						  return true;
-					  }else if(res.getResCode().equals("201")){
+					  }else{
 				          return false;
 					  } 
 				}else{
-						  Log.e("yifan", "error code is " + Integer.toString(code));
+						  Log.e(LOG_TAG, "clientQuery->error code is " + Integer.toString(code));
 						  return false;
 			    }
 			  }catch(InterruptedIOException e){
@@ -240,10 +252,10 @@ public class ParkingInformationFragment extends Fragment {
 			@Override
 			protected Boolean doInBackground(Void... params) {
 				try{
-					Log.e("clientQuery","UserQueryTask doInBackground");  
-					clientUpdateDisplay();
+					Log.e(LOG_TAG,"UserQueryTask->doInBackground");  
+					return clientQuery();
 				}catch(Exception e){
-					Log.e("clientQuery","Query exists exception ");  
+					Log.e(LOG_TAG,"UserQueryTask-> exists exception ");  
 					e.printStackTrace();
 				}
 				return false;
@@ -252,7 +264,6 @@ public class ParkingInformationFragment extends Fragment {
 			@Override
 			protected void onPostExecute(final Boolean success) {
 				mQueryTask = null;
-			    Log.e("clientQuery","EVENT_DISPLAY_INFORMATION ");  
 			    Message msg = new Message();
 			    msg.what=EVENT_DISPLAY_INFORMATION;
 			    mHandler.sendMessage(msg);
@@ -300,27 +311,4 @@ public class ParkingInformationFragment extends Fragment {
 	        }
 	    };
 	    
-		/*public void setParkingInformation(){
-    	mDBAdapter.open();
-    	Cursor cursor = mDBAdapter.getParkingByLicensePlate(mLicensePlateNumber);
-        try {
-        	      cursor.moveToFirst();
-  		          mLocationNumber =  cursor.getInt(cursor.getColumnIndex("locationnumber"));
-  		          mCarType = cursor.getString(cursor.getColumnIndex("cartype"));
-  		          mParkType = cursor.getString(cursor.getColumnIndex("parkingtype"));
-  		          mStartTime = cursor.getString(cursor.getColumnIndex("starttime"));
-  				  mLicenseNumberTV.setText("车牌号: " + mLicensePlateNumber);
-  				  mLocationNumberTV.setText("泊位号: " + mLocationNumber);
-  		    	  mCarTypeTV.setText("车辆类型: " + mCarType);
-  		          mParkTypeTV.setText("泊车类型: " + mParkType);
-  		          mStartTimeTV.setText("入场时间: " + mStartTime);
-        }
-        catch (Exception e) {
-                e.printStackTrace();
-        } finally{
-            	if(cursor!=null){
-            		cursor.close();
-                }
-        }
-	}*/
 }

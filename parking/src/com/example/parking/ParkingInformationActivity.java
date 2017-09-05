@@ -29,6 +29,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.net.ParseException;
 import android.net.Uri;
@@ -38,6 +39,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.text.format.DateFormat;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -56,6 +58,7 @@ public class ParkingInformationActivity extends Activity {
 	public static final int EVENT_DISPLAY_QUERY_RESULT = 301;
 	public static final int EVENT_DISPLAY_REQUEST_TIMEOUT = 302;
 	public static final int EVENT_DISPLAY_CONNECT_TIMEOUT = 303;
+	public static String LOG_TAG = "ParkingInformationActivity";
 	private String mLicensePlateNumber;
 	private TextView mParkNameTV;
 	private TextView mParkNumberTV;
@@ -67,19 +70,14 @@ public class ParkingInformationActivity extends Activity {
 	private Button mOkBT;
 	private Button mPhotoBT;
 	private TextView mPhotoTitleTV;;
-	private ImageView mPhotoFirstIV;
-	private ImageView mPhotoSecondIV;
-	private Bitmap mPhotoFirst = null;
-	private Bitmap mPhotoSecond = null;
-	private DBAdapter mDBAdapter;
-	private boolean mPermissionState=true;
+	private ImageView mEnterImageIV;
+	private Bitmap mEnterImage = null;
     private InsertTask  mInsertTask = null;
     private static final String FILE_NAME_COLLECTOR = "save_pref_collector";
     private static final String FILE_NAME_TOKEN = "save_pref_token";
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mDBAdapter = new DBAdapter(this);
 		setContentView(R.layout.activity_parking_information);
 		mParkNameTV = (TextView) findViewById(R.id.tv_parking_name);
 		mParkNumberTV = (TextView) findViewById(R.id.tv_parking_number);
@@ -91,7 +89,7 @@ public class ParkingInformationActivity extends Activity {
 		mLicensePlateNumberTV = (TextView) findViewById(R.id.tv_license_plate_number);
 		Intent intent = getIntent();
 		Bundle bundle = intent.getExtras();
-		mLicensePlateNumber = bundle.getString("licensePlate");
+		mLicensePlateNumber = bundle.getString("licensePlateNumber");
 		mLicensePlateNumberTV.setText(mLicensePlateNumber);
 		mStartTimeTV=(TextView) findViewById(R.id.tv_start_time_arriving);
 		new TimeThread().start();
@@ -103,23 +101,20 @@ public class ParkingInformationActivity extends Activity {
 	        	 mInsertTask.execute((Void) null);
 			}
 		});
-		/*mOkBT.setOnClickListener(new InsertOnclickListener(mLicensePlateNumberTV.getText().toString(),
-				mCarTypeSP.getSelectedItem().toString(), mParkingTypeSP.getSelectedItem().toString(), Integer.parseInt(mLocationNumberSP.getSelectedItem().toString()),
-				DateFormat.format("yyyy-MM-dd HH:mm:ss", System.currentTimeMillis()).toString(), null, null, "未付"));*/
 		mPhotoBT=(Button) findViewById(R.id.bt_camera_arriving);
 		mPhotoBT.setOnClickListener(new Button.OnClickListener(){
 			@Override
 			public void onClick(View v){
-				if(mPhotoFirst!=null && mPhotoSecond!=null){
-					Toast.makeText(getApplicationContext(), "最多可添加两张图片",Toast.LENGTH_SHORT).show();
+				if(mEnterImage!=null){
+					Toast.makeText(getApplicationContext(), "最多可添加一张图片",Toast.LENGTH_SHORT).show();
 				}else{
 					openTakePhoto();
 				}
 			}
 		});
 		mPhotoTitleTV = (TextView)findViewById(R.id.tv_photo_title_arriving);
-		mPhotoFirstIV = (ImageView)findViewById(R.id.iv_photo_first_arriving);
-		mPhotoFirstIV.setOnClickListener(new Button.OnClickListener(){
+		mEnterImageIV = (ImageView)findViewById(R.id.iv_photo_first_arriving);
+		mEnterImageIV.setOnClickListener(new Button.OnClickListener(){
 			@Override
 			public void onClick(View v){
 				LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
@@ -127,7 +122,7 @@ public class ParkingInformationActivity extends Activity {
 				final AlertDialog dialog = new AlertDialog.Builder(ParkingInformationActivity.this).create();
 				ImageView img = (ImageView)imgEntryView.findViewById(R.id.iv_large_image);
 				Button deleteBT = (Button)imgEntryView.findViewById(R.id.bt_delete_image);
-				img.setImageBitmap(mPhotoFirst);
+				img.setImageBitmap(mEnterImage);
 				dialog.setView(imgEntryView); // 自定义dialog
 				dialog.show();
 				imgEntryView.setOnClickListener(new OnClickListener() {
@@ -137,34 +132,8 @@ public class ParkingInformationActivity extends Activity {
 			    });
 				deleteBT.setOnClickListener(new OnClickListener() {
 				    public void onClick(View paramView) {
-				    	mPhotoFirst = null;
-				    	mPhotoFirstIV.setImageResource(drawable.ic_photo_background_64px);
-				        dialog.cancel();
-				    }
-			    });
-			}
-        });
-		mPhotoSecondIV = (ImageView)findViewById(R.id.iv_photo_second_arriving);
-		mPhotoSecondIV.setOnClickListener(new Button.OnClickListener(){
-			@Override
-			public void onClick(View v){
-				LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
-				View imgEntryView = inflater.inflate(R.layout.dialog_photo_entry, null); // 加载自定义的布局文件
-				final AlertDialog dialog = new AlertDialog.Builder(ParkingInformationActivity.this).create();
-				ImageView img = (ImageView)imgEntryView.findViewById(R.id.iv_large_image);
-				Button deleteBT = (Button)imgEntryView.findViewById(R.id.bt_delete_image);
-				img.setImageBitmap(mPhotoSecond);
-				dialog.setView(imgEntryView); // 自定义dialog
-				dialog.show();
-				imgEntryView.setOnClickListener(new OnClickListener() {
-				    public void onClick(View paramView) {
-				        dialog.cancel();
-				    }
-			    });
-				deleteBT.setOnClickListener(new OnClickListener() {
-				    public void onClick(View paramView) {
-				    	mPhotoSecond = null;
-				    	mPhotoSecondIV.setImageResource(drawable.ic_photo_background_64px);
+				    	mEnterImage = null;
+				    	mEnterImageIV.setImageResource(drawable.ic_photo_background_64px);
 				        dialog.cancel();
 				    }
 			    });
@@ -258,26 +227,19 @@ public class ParkingInformationActivity extends Activity {
                if (data.getData() != null|| data.getExtras() != null){ //防止没有返回结果
                    Uri uri =data.getData();
                    if (uri != null) {
-                	   if(mPhotoFirst==null){
-	                	   mPhotoFirst =BitmapFactory.decodeFile(uri.getPath()); //拿到图片
-                	   }else if(mPhotoSecond==null){
-                		   mPhotoSecond =BitmapFactory.decodeFile(uri.getPath()); //拿到图片
+                	   if(mEnterImage==null){
+	                	   mEnterImage =BitmapFactory.decodeFile(uri.getPath()); //拿到图片
                 	   }
                    }
                    Bundle bundle =data.getExtras();
                    if (bundle != null){
-    	               if (mPhotoFirst == null) {
-                    	   mPhotoFirst =(Bitmap) bundle.get("data");
-   	                    }else 	if (mPhotoSecond == null) {
-   	                    	mPhotoSecond =(Bitmap) bundle.get("data");
-	   	                }
+    	               if (mEnterImage == null) {
+                    	   mEnterImage =(Bitmap) bundle.get("data");
+   	                    }
                    } 
                }
-               if(mPhotoFirst!=null){
-	               mPhotoFirstIV.setImageBitmap(mPhotoFirst);
-               }
-               if(mPhotoSecond!=null){
-	               mPhotoSecondIV.setImageBitmap(mPhotoSecond);
+               if(mEnterImage!=null){
+	               mEnterImageIV.setImageBitmap(mEnterImage);
                }
                break;
           
@@ -286,7 +248,11 @@ public class ParkingInformationActivity extends Activity {
 	   }
 	
 
-
+    /** 
+     * 将bitmap转为byte[]
+     * @param bitmap 
+     * @return byte[]
+     */  
     public byte[] converImageToByte(Bitmap bitmap) {
 	    if(bitmap!=null){
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -297,6 +263,22 @@ public class ParkingInformationActivity extends Activity {
 	    }
     }
 
+    /** 
+     * 通过Base32将Bitmap转换成Base64字符串 
+     * @param bitmap 
+     * @return String
+     */  
+    public String Bitmap2StrByBase64(Bitmap bitmap){
+    	if(bitmap != null){
+    	       ByteArrayOutputStream bos=new ByteArrayOutputStream();  
+    	       bitmap.compress(CompressFormat.JPEG, 40, bos);//参数100表示不压缩  
+    	       byte[] bytes=bos.toByteArray();  
+    	       return Base64.encodeToString(bytes, Base64.DEFAULT);  
+    	}else{
+    		return "";
+    	}
+    } 
+    
     private BroadcastReceiver mReceiver = new BroadcastReceiver(){  
 	@Override
 	    public void onReceive(Context context, Intent intent) {
@@ -321,35 +303,31 @@ public class ParkingInformationActivity extends Activity {
                   HttpConnectionParams.SO_TIMEOUT,5000); // 请求超时设置,"0"代表永不超时  
 		  httpClient.getParams().setIntParameter(  
                   HttpConnectionParams.CONNECTION_TIMEOUT, 5000);// 连接超时设置,"0"代表永不超时
-		  String strurl = "http://" + this.getString(R.string.ip) + ":8080/park/collector/insertArriving/insert";
+		  String strurl = "http://" + this.getString(R.string.ip) + "/itspark/collector/insertArriving/insert";
 		  HttpPost request = new HttpPost(strurl);
 		  request.addHeader("Accept","application/json");
-		  request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
-		  JSONObject param = new JSONObject();//定义json对象
-		  param.put("token", readToken());
-		  param.put("parkingNumber", readCollector("parkNumber"));
-		  param.put("licensePlateNumber", mLicensePlateNumber);
-		  param.put("parkingLocation", Integer.parseInt(String.valueOf(mLocationNumberSP.getSelectedItem().toString())));
-		  param.put("carType", mCarTypeSP.getSelectedItem().toString());
-		  param.put("parkType", mParkingTypeSP.getSelectedItem().toString());
-		  if(mPhotoFirst!=null){
-			  param.put("firstPhoto", converImageToByte(mPhotoFirst));
-		  }
-		  if(mPhotoSecond!=null){
-			  param.put("secondPhoto", converImageToByte(mPhotoSecond));
-		  }
-		  StringEntity se = new StringEntity(param.toString(), "UTF-8");
+		  request.setHeader("Content-Type", "application/json; charset=utf-8");
+		  EntranceInfo info = new EntranceInfo();
+		  CommonRequestHeader header = new CommonRequestHeader();
+		  header.addRequestHeader(CommonRequestHeader.REQUEST_COLLECTOR_NEW_PARKING_CODE, readAccount(), readToken());
+	      info.setHeader(header);
+	      info.setParkNumber(readCollector("parkNumber"));
+	      info.setLicensePlateNumber(mLicensePlateNumber);
+	      info.setParkingLocation(mLocationNumberSP.getSelectedItem().toString());
+	      info.setCarType(mCarTypeSP.getSelectedItem().toString());
+	      info.setParkType(mParkingTypeSP.getSelectedItem().toString());
+	      info.setEnterTime(mStartTimeTV.getText().toString());
+	      info.setEnterImage(converImageToByte(mEnterImage));
+		  StringEntity se = new StringEntity( JacksonJsonUtil.beanToJson(info), "UTF-8");
+		  Log.e(LOG_TAG,"clientInsert-> param is " + JacksonJsonUtil.beanToJson(info));
 		  request.setEntity(se);//发送数据
 		  try{
 			  HttpResponse httpResponse = httpClient.execute(request);//获得响应
 			  int code = httpResponse.getStatusLine().getStatusCode();
 			  if(code==HttpStatus.SC_OK){
 				  String strResult = EntityUtils.toString(httpResponse.getEntity());
+   				  Log.e(LOG_TAG,"clientInsert->strResult is " + strResult);
 				  CommonResponse res = new CommonResponse(strResult);
-				  Log.e("clientInsert","resCode is  " + res.getResCode());
-				  Log.e("clientInsert","resMsg is  " + res.getResMsg());
-				  Log.e("clientInsert","List is  " + res.getDataList());
-				  Log.e("clientInsert","Map is  " + res.getPropertyMap());
 				  String resCode = res.getResCode();
 				  Message msg = new Message();
 		          msg.what=EVENT_DISPLAY_QUERY_RESULT;
@@ -357,9 +335,7 @@ public class ParkingInformationActivity extends Activity {
 		          mHandler.sendMessage(msg);
 				  if(resCode.equals("100")){
 					  return true;
-				  }else if(resCode.equals("201")){
-					  return false;
-				  }else if(resCode.equals("202")){
+				  }else{
 					  return false;
 				  }
 			  }else{
@@ -391,10 +367,10 @@ public class ParkingInformationActivity extends Activity {
 		@Override
 		protected Boolean doInBackground(Void... params) {
 			try{
-				Log.e("clientInsert","InsertTask doInBackground");  
+				Log.e(LOG_TAG,"InsertTask->doInBackground");  
 				return clientInsert();
 			}catch(Exception e){
-				Log.e("clientInsert","InsertTask doInBackground EXCEPTION");  
+				Log.e(LOG_TAG,"InsertTask->exists exception");  
 				e.printStackTrace();
 			}
 			return false;
@@ -403,7 +379,7 @@ public class ParkingInformationActivity extends Activity {
 		@Override
 		protected void onPostExecute(final Boolean success) {
 			mInsertTask = null;
-			 Log.e("clientInsert","InsertTask onPostExecute " + success.toString());  
+			 Log.e(LOG_TAG,"InsertTask->onPostExecute " + success.toString());  
 			if(success){
    		        Message msg = new Message();
                 msg.what = EVENT_INSERT_SUCCESS;
@@ -429,65 +405,12 @@ public class ParkingInformationActivity extends Activity {
         String str = pref.getString("token", "");
         return str;
     }
-    /*private class InsertOnclickListener implements Button.OnClickListener{
-    private String licensePlate;
-    private String carType;
-    private String parkingType;mPhotoFirst
-    private int locationNumber;
-    private String startTime;
-    private String leaveTime;
-    private String expense;
-    private String paymentPattern;
-    public InsertOnclickListener(String licensePlate, String carType, String parkingType, int locationNumber, 
-		      String startTime, String leaveTime, String expense, String paymentPattern){
-       this.licensePlate = licensePlate;
-       this.carType = carType;
-       this.parkingType = parkingType;
-       this.locationNumber = locationNumber;
-       this.startTime = startTime;
-       this.leaveTime = leaveTime;
-       this.expense = expense;
-       this.paymentPattern = paymentPattern;
+    
+    private String readAccount() {
+        SharedPreferences pref = getSharedPreferences(FILE_NAME_COLLECTOR, MODE_MULTI_PROCESS);
+        String str = pref.getString("collectorNumber", "");
+        return str;
     }
-    @Override
-    public void onClick(View v){
-	        mDBAdapter.open();
-	        Cursor cursor = mDBAdapter.getParkingByLocationNumber( Integer.parseInt(mLocationNumberSP.getSelectedItem().toString()));
-	        try {
-   	    cursor.moveToFirst();
-   	    mPermissionState=true;
-   	    if(cursor.getString(cursor.getColumnIndex("paymentpattern")).equals("未付")){
-  		        Message msg = new Message();
-              msg.what = EVENT_DUPLICATED_LOCATION_NUMBER;
-              mHandler.sendMessage(msg);
-              mPermissionState=false;
-              Log.e("yifan","p1 = " + mPermissionState);
-   	   }
-        }catch (Exception e) {
-               e.printStackTrace();
-        } finally{
-       	if(cursor!=null){
-       		cursor.close();
-           }
-       }
-	        Log.e("yifan","p3 = " + mPermissionState);
-	        if(mPermissionState){
-   	    long  result = mDBAdapter.insertParking(licensePlate,mCarTypeSP.getSelectedItem().toString(),mParkingTypeSP.getSelectedItem().toString(),
-   			 Integer.parseInt(mLocationNumberSP.getSelectedItem().toString()),startTime,leaveTime,expense,paymentPattern,converImageToByte(mPhoto));
-  	        if (result != -1){//插入成功
-  		        Message msg = new Message();
-               msg.what = EVENT_INSERT_SUCCESS;
-               mHandler.sendMessage(msg);
-               Intent intentBack = new Intent();
-               intentBack.setAction("BackMain");
-               sendBroadcast(intentBack);
-      	        Intent intent = new Intent(ParkingInformationActivity.this,MainActivity.class);
-			    startActivity(intent);
-			    finish();
-           }
-  	        mDBAdapter.close(); 
-	         }
-   }
-}*/
+    
 }
 

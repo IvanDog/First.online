@@ -16,7 +16,6 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.example.parking.LoginActivity.UserRegisterTask;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -29,7 +28,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.Settings.Secure;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,12 +37,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 public class ResetPasswdActivity extends Activity {
-	private static final String[] DUMMY_CREDENTIALS = new String[] {
-	"gouyf@ehualu.com","123456"};
 	private static final int EVENT_INPUT_UNFINISHED = 101;
 	private static final int EVENT_INPUT_RENEW_ERROR =102;
 	private static final int EVENT_MODIFY_SUCCESS = 103;
     private static final String FILE_NAME_TOKEN = "save_pref_token";
+    private static final String FILE_NAME_COLLECTOR = "save_pref_collector";
+	public static String LOG_TAG = "ResetPasswdActivity";
 	private Button mConfirmBT;
 	private Button mCancelBT;
 	private EditText mOldPasswdET;
@@ -148,10 +146,13 @@ public class ResetPasswdActivity extends Activity {
 		  String strurl = "http://" + 	this.getString(R.string.ip) + ":8080/park/collector/reset/reset";
 		  HttpPost request = new HttpPost(strurl);
 		  request.addHeader("Accept","application/json");
-		  request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+		//request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+		  request.setHeader("Content-Type", "application/json; charset=utf-8");
 		  JSONObject param = new JSONObject();
-		  param.put("token", readToken());
-		  param.put("oldPassword", getMD5Code(oldPassword));
+		  CommonRequestHeader header = new CommonRequestHeader();
+		  header.addRequestHeader(CommonRequestHeader.REQUEST_COLLECTOR_RESET_PASSWORD_CODE, readAccount(), readToken());
+		  param.put("header", header);
+		  param.put("password", getMD5Code(oldPassword));
 		  param.put("newPassword", getMD5Code(newPassword));
 		  StringEntity se = new StringEntity(param.toString(), "UTF-8");
 		  request.setEntity(se);
@@ -160,11 +161,9 @@ public class ResetPasswdActivity extends Activity {
 			  int code = httpResponse.getStatusLine().getStatusCode();
 			  if(code==HttpStatus.SC_OK){
 				  String strResult = EntityUtils.toString(httpResponse.getEntity());
-				  Log.e("clientReset","strResult is " + strResult);
+				  Log.e(LOG_TAG,"clientReset->strResult is " + strResult);
 				  CommonResponse res = new CommonResponse(strResult);
 				  String resCode = res.getResCode();
-				  Log.e("clientReset","resCode is  " + res.getResCode());
-				  Log.e("clientReset","resMsg is  " + res.getResMsg());
 				  toastWrapper(res.getResMsg());
 				  if(resCode.equals("100")){
 					  return true;
@@ -174,7 +173,7 @@ public class ResetPasswdActivity extends Activity {
 					  return false;
 				  }
 			  }else{
-				  Log.e("clientReset", "error code is " + Integer.toString(code));
+				  Log.e(LOG_TAG, "clientReset->error code is " + Integer.toString(code));
 				  return false;
 			  }
 		  }catch(InterruptedIOException e){
@@ -267,6 +266,13 @@ public class ResetPasswdActivity extends Activity {
 	    public String readToken() {
 	        SharedPreferences pref = getSharedPreferences(FILE_NAME_TOKEN, MODE_MULTI_PROCESS);
 	        String str = pref.getString("token", "");
+	        return str;
+	    }
+	    
+
+	    private String readAccount() {
+	        SharedPreferences pref = getSharedPreferences(FILE_NAME_COLLECTOR, MODE_MULTI_PROCESS);
+	        String str = pref.getString("collectorNumber", "");
 	        return str;
 	    }
 }

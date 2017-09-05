@@ -78,7 +78,7 @@ public class TodayRecordListAdapter extends BaseAdapter {
         }else{
             zujian.leaveTimeTV.setText( (String)data.get(position).get("leaveTime")); 
         }
-        zujian.paymentStateTV.setText((String)data.get(position).get("paymentState"));  
+        zujian.paymentStateTV.setText((String)data.get(position).get("paymentPattern"));  
         if(data.get(position).get("expense")==null){
             zujian.paymentBillTV.setText(null); 
         }else{

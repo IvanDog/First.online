@@ -2,6 +2,9 @@ package com.example.parking;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -13,31 +16,24 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.example.parking.ParkingInformationFragment.UserQueryTask;
-import com.example.parking.R.color;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.ParseException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.Settings.Secure;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -51,20 +47,19 @@ import android.widget.Toast;
 
 public class InputLicenseActivity extends FragmentActivity {
 	private static final int LICENSE_PLATE_NUMBER_SIZE=7;
-	private static final int ARRIVING_TYPE=101;
-	private static final int LEAVING_TYPE=102;
-	private static final int EVENT_UNFINISHED_LICENSE_PLATE=201;
-	private static final int EVENT_ESCAPE_LICENSE_PLATE=202;
-	private static final int EVENT_ENTER_PARK_INFORMATION=203;
-	private static final int EVENT_NOT_EXISTS_LICENSE_PLATE=204;
-	private static final int EVENT_INVALID_LICENSE_PLATE=205;
+	private static final int LICENSE_ARRIVING_TYPE=101;
+	private static final int LICENSE_LEAVING_TYPE=102;
+	private static final int EVENT_INVALID_LICENSE_PLATE=201;
 	private static final int EVENT_SCAN_STATE_NOTIFY=301;
 	public static final int EVENT_DISPLAY_QUERY_RESULT = 401;
 	public static final int EVENT_DISPLAY_REQUEST_TIMEOUT = 402;
 	public static final int EVENT_DISPLAY_CONNECT_TIMEOUT = 403;
 	public static final int EVENT_ENTER_ARRIVING = 501;
 	public static final int EVENT_ENTER_LEAVING = 502;
+	public static final int EVENT_HANDLE_ORDER = 503;
     private static final String FILE_NAME_TOKEN = "save_pref_token";
+    private static final String FILE_NAME_COLLECTOR = "save_pref_collector";
+	public static String LOG_TAG = "InputLicenseActivity";
 	private Fragment mNumberFragment;
 	private Fragment mLetterFragment;
 	private Fragment mLocationFragment;
@@ -76,8 +71,10 @@ public class InputLicenseActivity extends FragmentActivity {
 	private Button mNextBT;
 	private int mCurrentId;
 	private int mType;
-	private String mParkingNumber = "P1234";
-	private DBAdapter mDBAdapter;
+	private String mCarType ="小客车";//暂时写为小客车，用于调试
+	private String mParkingEnterID;
+	private ArrayList<HashMap<String,Object>> mUnFinishedRecordList;
+	private int mUnfinishedFlag = 0;
     private LicenseTask mLicenseTask = null;
 	private OnClickListener mTabClickListener = new OnClickListener() {
         @Override  
@@ -92,13 +89,12 @@ public class InputLicenseActivity extends FragmentActivity {
 	@Override  
     public void onCreate(Bundle savedInstanceState) {  
         super.onCreate(savedInstanceState);  
-    	mDBAdapter = new DBAdapter(this);
         Intent intent = getIntent();
 		Bundle bundle = intent.getExtras();
-		if(bundle.getInt("type")==ARRIVING_TYPE){
-			mType=ARRIVING_TYPE;
-		}else if(bundle.getInt("type")==LEAVING_TYPE){
-			mType=LEAVING_TYPE;
+		if(bundle.getInt("type")==LICENSE_ARRIVING_TYPE){
+			mType=LICENSE_ARRIVING_TYPE;
+		}else if(bundle.getInt("type")==LICENSE_LEAVING_TYPE){
+			mType=LICENSE_LEAVING_TYPE;
 		}
         setContentView(R.layout.activity_input_license);
         mLicensePlateET = (EditText) findViewById(R.id.et_license_plate);
@@ -118,17 +114,19 @@ public class InputLicenseActivity extends FragmentActivity {
     	        // et.getCompoundDrawables()得到一个长度为4的数组，分别表示左右上下四张图片
     	        Drawable drawable = mLicensePlateET.getCompoundDrawables()[2];
     	        //如果右边没有图片，不再处理
-    	        if (drawable == null)
+    	        if (drawable == null){
     	            return false;
+    	        }
     	        //如果不是按下事件，不再处理
-    	        if (event.getAction() != MotionEvent.ACTION_UP)
+    	        if (event.getAction() != MotionEvent.ACTION_UP){
     	            return false;
+    	        }
     	        if (event.getX() > mLicensePlateET.getWidth()
                    -mLicensePlateET.getPaddingRight()
     	           - drawable.getIntrinsicWidth()){
     	        	mLicensePlateET.setText("");
     	        }
-    	          return false;
+    	         return false;
     	      }
     	    });
     	mScanBT.setOnClickListener(new Button.OnClickListener(){
@@ -256,16 +254,26 @@ public class InputLicenseActivity extends FragmentActivity {
 	            case EVENT_ENTER_ARRIVING:
 					Intent arrivingIntent = new Intent(InputLicenseActivity.this,ParkingInformationActivity.class);
 					Bundle arrivingBundle = new Bundle();
-					arrivingBundle.putString("licensePlate",mLicensePlateET.getText().toString());
+					arrivingBundle.putString("licensePlateNumber",mLicensePlateET.getText().toString());
 					arrivingIntent.putExtras(arrivingBundle);
 					startActivity(arrivingIntent);
 	            	break;
 	            case EVENT_ENTER_LEAVING:
 					Intent leavingIntent = new Intent(InputLicenseActivity.this,LeavingActivity.class);
 					Bundle leavingBundle = new Bundle();
-					leavingBundle.putString("licensePlate",mLicensePlateET.getText().toString() );
+					leavingBundle.putString("parkNumber",readCollector("parkNumber"));
+					leavingBundle.putString("parkingEnterID",mParkingEnterID);
+					leavingBundle.putString("licensePlateNumber",mLicensePlateET.getText().toString());
+					leavingBundle.putString("carType", mCarType);
 					leavingIntent.putExtras(leavingBundle);
 					startActivity(leavingIntent);
+	            	break;
+	            case EVENT_HANDLE_ORDER:
+					Intent handleintent = new Intent(InputLicenseActivity.this,UnfinishedParkingRecordActivity.class);
+					Bundle handleBundle = new Bundle();
+					handleBundle.putSerializable("list",(Serializable)mUnFinishedRecordList);  
+					handleintent.putExtras(handleBundle); 
+					startActivity(handleintent);
 	            	break;
                 case EVENT_SCAN_STATE_NOTIFY:
                     Toast.makeText(getApplicationContext(), "扫码功能开发中", Toast.LENGTH_SHORT).show();
@@ -314,39 +322,44 @@ public class InputLicenseActivity extends FragmentActivity {
                   HttpConnectionParams.SO_TIMEOUT,5000); // 请求超时设置,"0"代表永不超时  
 		  httpClient.getParams().setIntParameter(  
                   HttpConnectionParams.CONNECTION_TIMEOUT, 5000);// 连接超时设置,"0"代表永不超时
-		  String strurl = "http://" + this.getString(R.string.ip) + ":8080/park/collector/license/analysis";
+		  String strurl = "http://" + this.getString(R.string.ip) + "/itspark/collector/license/analysis";
 		  HttpPost request = new HttpPost(strurl);
 		  request.addHeader("Accept","application/json");
-		  request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
-		  JSONObject param = new JSONObject();
-		  param.put("token", readToken());
-		  param.put("type", mType);
-		  param.put("parkingNumber", mParkingNumber);
-		  param.put("licensePlateNumber", mLicensePlateET.getText().toString());
-		  StringEntity se = new StringEntity(param.toString(), "UTF-8");
+		  request.setHeader("Content-Type", "application/json; charset=utf-8");
+		  LicenseInfo info = new LicenseInfo();
+		  CommonRequestHeader header = new CommonRequestHeader();
+		  header.addRequestHeader(CommonRequestHeader.REQUEST_COLLECTOR_GET_LOCATION_STATE_CODE, readAccount(), readToken());
+		  info.setHeader(header);
+		  info.setCarType(mCarType);
+		  info.setType(mType);
+		  info.setLicensePlateNumber(mLicensePlateET.getText().toString());
+		  info.setParkNumber(readCollector("parkNumber"));
+		  StringEntity se = new StringEntity(JacksonJsonUtil.beanToJson(info), "UTF-8");
+		  Log.e(LOG_TAG,"clientSendLicense-> param is " + JacksonJsonUtil.beanToJson(info));
 		  request.setEntity(se);//发送数据
 		  try{
 			  HttpResponse httpResponse = httpClient.execute(request);//获得响应
 			  int code = httpResponse.getStatusLine().getStatusCode();
 			  if(code==HttpStatus.SC_OK){
 				  String strResult = EntityUtils.toString(httpResponse.getEntity());
+   				  Log.e(LOG_TAG,"clientSendLicense->strResult is " + strResult);
 				  CommonResponse res = new CommonResponse(strResult);
-				  Log.e("clientInsert","resCode is  " + res.getResCode());
-				  Log.e("clientInsert","resMsg is  " + res.getResMsg());
-				  Log.e("clientInsert","List is  " + res.getDataList());
-				  Log.e("clientInsert","Map is  " + res.getPropertyMap());
 				  String resCode = res.getResCode();
 				  Message msg = new Message();
 		          msg.what=EVENT_DISPLAY_QUERY_RESULT;
 		          msg.obj= res.getResMsg();
 		          mHandler.sendMessage(msg);
 				  if(resCode.equals("100")){
+					  if(res.getPropertyMap().get("parkingEnterID")!=null){
+						  mParkingEnterID = (String)res.getPropertyMap().get("parkingEnterID");
+					  }
 					  return true;
-				  }else if(resCode.equals("201")){
-					  return false;
-				  }else if(resCode.equals("202")){
-					  return false;
-				  }else if(resCode.equals("203")){
+				  }else if(resCode.equals("204")){
+					  mUnFinishedRecordList = res.getDataList();
+					  mUnfinishedFlag = 1;
+					  return true;
+				  }
+				  else{
 					  return false;
 				  }
 			  }else{
@@ -370,6 +383,7 @@ public class InputLicenseActivity extends FragmentActivity {
 		  return false;
     }
 	
+	
     /**
 	 * 牌照Task
 	 * 
@@ -378,7 +392,7 @@ public class InputLicenseActivity extends FragmentActivity {
 		@Override
 		protected Boolean doInBackground(Void... params) {
 			try{
-				Log.e("clientSendLicense","LicenseTask doInBackground");  
+				Log.e(LOG_TAG,"LicenseTask->doInBackground");  
 				return clientSendLicense();
 			}catch(Exception e){
 				e.printStackTrace();
@@ -389,13 +403,19 @@ public class InputLicenseActivity extends FragmentActivity {
 		@Override
 		protected void onPostExecute(final Boolean success) {
 			 mLicenseTask = null;
-			 Log.e("clientSendLicense","LicenseTask onPostExecute " + success.toString());  
+			 Log.e(LOG_TAG,"LicenseTask->onPostExecute " + success.toString());  
 			if(success){
-				if(mType == ARRIVING_TYPE){
-					  Message msg = new Message();
-			          msg.what=EVENT_ENTER_ARRIVING;
-			          mHandler.sendMessage(msg);
-				}else if(mType == LEAVING_TYPE){
+				if(mType == LICENSE_ARRIVING_TYPE){
+					if(mUnfinishedFlag==1){
+						  Message msg = new Message();
+				          msg.what=EVENT_HANDLE_ORDER;
+				          mHandler.sendMessage(msg);
+					}else{
+						  Message msg = new Message();
+				          msg.what=EVENT_ENTER_ARRIVING;
+				          mHandler.sendMessage(msg);
+					}
+				}else if(mType == LICENSE_LEAVING_TYPE){
 					  Message msg = new Message();
 			          msg.what=EVENT_ENTER_LEAVING;
 			          mHandler.sendMessage(msg);
@@ -415,61 +435,16 @@ public class InputLicenseActivity extends FragmentActivity {
         String str = pref.getString("token", "");
         return str;
     }
-    /*public class SQLThread extends Thread {
-    @Override
-    public void run () {
-    	mDBAdapter.open();
-    	Cursor cursor = mDBAdapter.getParkingByLicensePlate(mLicensePlateET.getText().toString());
-    	if(cursor.getCount() == 0){
-    		if(mType==ARRIVING_TYPE){
-        		Message msg = new Message();
-        		msg.what=	EVENT_ENTER_PARK_INFORMATION;
-        		mHandler.sendMessage(msg);
-    		}else if(mType==LEAVING_TYPE){
-        		Message msg = new Message();
-        		msg.what=	EVENT_NOT_EXISTS_LICENSE_PLATE;
-        		mHandler.sendMessage(msg);
-    		}
-    	}
-        try {
-        	cursor.moveToFirst();
-        	if(mType==ARRIVING_TYPE){
-            	if(cursor.getString(cursor.getColumnIndex("paymentpattern")).equals("未付")){
-            		Message msg = new Message();
-            		msg.what=EVENT_UNFINISHED_LICENSE_PLATE;
-            		mHandler.sendMessage(msg);
-            	}else if(cursor.getString(cursor.getColumnIndex("paymentpattern")).equals("逃费")){
-            		Message msg = new Message();
-            		msg.what=EVENT_ESCAPE_LICENSE_PLATE;
-            		mHandler.sendMessage(msg);
-            	}else{
-            		Message msg = new Message();
-            		msg.what=	EVENT_ENTER_PARK_INFORMATION;
-            		mHandler.sendMessage(msg);
-            	}	
-        	}else if(mType==LEAVING_TYPE){
-            	if(cursor.getString(cursor.getColumnIndex("paymentpattern")).equals("未付")){
-					Intent intent = new Intent(InputLicenseActivity.this,LeavingActivity.class);
-					Bundle bundle = new Bundle();
-					bundle.putString("licensePlate",mLicensePlateET.getText().toString() );
-					intent.putExtras(bundle);
-					startActivity(intent);
-            	}else if(cursor.getString(cursor.getColumnIndex("paymentpattern")).equals("现金支付") ||
-            			cursor.getString(cursor.getColumnIndex("paymentpattern")).equals("移动支付") ||
-            			cursor.getString(cursor.getColumnIndex("paymentpattern")).equals("逃费")) {
-            		Message msg = new Message();
-            		msg.what=	EVENT_NOT_EXISTS_LICENSE_PLATE;
-            		mHandler.sendMessage(msg);
-            	}
-        	}
-        }
-        catch (Exception e) {
-                e.printStackTrace();
-        } finally{
-            	if(cursor!=null){
-            		cursor.close();
-                }
-        }
+    
+    private String readAccount() {
+        SharedPreferences pref = getSharedPreferences(FILE_NAME_COLLECTOR, MODE_MULTI_PROCESS);
+        String str = pref.getString("collectorNumber", "");
+        return str;
     }
-}*/
+    
+    private String readCollector(String data) {
+        SharedPreferences pref = getSharedPreferences(FILE_NAME_COLLECTOR, MODE_MULTI_PROCESS);
+        String str = pref.getString(data, "");
+        return str;
+    }
 }

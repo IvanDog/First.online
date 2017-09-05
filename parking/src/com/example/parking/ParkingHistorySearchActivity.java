@@ -35,15 +35,16 @@ public class ParkingHistorySearchActivity extends FragmentActivity {
 	public static final int TYPE_FINISHED_PAYMENT_STATE_ACCOUNT = 104;
 	public static final int TYPE_UNFINISHED_PAYMENT_STATE_LEAVE = 105;
 	public static final int SEARCH_SUCCESS =201;
+	public static String LOG_TAG = "ParkingHistorySearchActivity";
     private static final String FILE_NAME_COLLECTOR = "save_pref_collector";
     private static final String FILE_NAME_TOKEN = "save_pref_token";
-	private Fragment mUnfinishedPaymentStateFragment;
-	private Fragment mFinishedPaymentStateMobileFragment;
+	private Fragment mFinishedPaymentStateMobileWechatFragment;
+	private Fragment mFinishedPaymentStateMobileAliFragment;
 	private Fragment mFinishedPaymentStateCashFragment;
 	private Fragment mFinishedPaymentStateAccountFragment;
 	private Fragment mUnfinishedPaymentStateLeaveFragment;
-	private TextView mUnfinishedPaymentStateTV;
-	private TextView mFinishedPaymentStateMobileTV;
+	private TextView mFinishedPaymentStateMobileWechatTV;
+	private TextView mFinishedPaymentStateMobileAliTV;
 	private TextView mFinishedPaymentStateCashTV;
 	private TextView mFinishedPaymentStateAccountTV;
 	private TextView mUnfinishedPaymentStateLeaveTV;
@@ -87,13 +88,13 @@ public class ParkingHistorySearchActivity extends FragmentActivity {
     public void onCreate(Bundle savedInstanceState) {  
         super.onCreate(savedInstanceState);  
         setContentView(R.layout.activity_parking_history_search);
-        mUnfinishedPaymentStateTV = (TextView) findViewById(R.id.tv_payment_state_unfinished_history);
-        mFinishedPaymentStateMobileTV = (TextView) findViewById(R.id.tv_payment_state_finished_mobile_history);
+        mFinishedPaymentStateMobileWechatTV = (TextView) findViewById(R.id.tv_payment_state_finished_mobile_wechat_history);
+        mFinishedPaymentStateMobileAliTV = (TextView) findViewById(R.id.tv_payment_state_finished_mobile_ali_history);
         mFinishedPaymentStateCashTV = (TextView) findViewById(R.id.tv_payment_state_finished_cash_history);
         mFinishedPaymentStateAccountTV = (TextView) findViewById(R.id.tv_payment_state_finished_account_history);
         mUnfinishedPaymentStateLeaveTV = (TextView) findViewById(R.id.tv_payment_state_unfinished_leave_history);
-        mUnfinishedPaymentStateTV.setOnClickListener(mTabClickListener); 
-        mFinishedPaymentStateMobileTV.setOnClickListener(mTabClickListener);
+        mFinishedPaymentStateMobileWechatTV.setOnClickListener(mTabClickListener); 
+        mFinishedPaymentStateMobileAliTV.setOnClickListener(mTabClickListener);
         mFinishedPaymentStateCashTV.setOnClickListener(mTabClickListener); 
         mFinishedPaymentStateAccountTV.setOnClickListener(mTabClickListener); 
         mUnfinishedPaymentStateLeaveTV.setOnClickListener(mTabClickListener);
@@ -119,8 +120,8 @@ public class ParkingHistorySearchActivity extends FragmentActivity {
 		        mHandler.sendMessage(msg);*/
 			}
 		});
-        changeSelect(R.id.tv_payment_state_unfinished_history);
-        changeFragment(R.id.tv_payment_state_unfinished_history,formatDate());
+        changeSelect(R.id.tv_payment_state_finished_mobile_wechat_history);
+        changeFragment(R.id.tv_payment_state_finished_mobile_wechat_history,formatDate());
 		getActionBar().setDisplayHomeAsUpEnabled(true); 
         IntentFilter filter = new IntentFilter();  
         filter.addAction("ExitApp");  
@@ -130,12 +131,12 @@ public class ParkingHistorySearchActivity extends FragmentActivity {
 	private void changeFragment(int resId,String date) {  
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();//开启一个Fragment事务  
         hideFragments(transaction);//隐藏所有fragment  
-        if(resId==R.id.tv_payment_state_unfinished_history){
-        	mUnfinishedPaymentStateFragment = new HistoryRecordFragment(TYPE_UNFINISHED_PAYMENT_STATE,date);
-        	 transaction.replace(R.id.history_payment_container, mUnfinishedPaymentStateFragment);
-        }else if(resId==R.id.tv_payment_state_finished_mobile_history){
-        	mFinishedPaymentStateMobileFragment = new HistoryRecordFragment(TYPE_FINISHED_PAYMENT_STATE_MOBILE,date);  
-        	transaction.replace(R.id.history_payment_container, mFinishedPaymentStateMobileFragment);
+        if(resId==R.id.tv_payment_state_finished_mobile_wechat_history){
+        	mFinishedPaymentStateMobileWechatFragment = new HistoryRecordFragment(TYPE_UNFINISHED_PAYMENT_STATE,date);
+        	 transaction.replace(R.id.history_payment_container, mFinishedPaymentStateMobileWechatFragment);
+        }else if(resId==R.id.tv_payment_state_finished_mobile_ali_history){
+        	mFinishedPaymentStateMobileAliFragment = new HistoryRecordFragment(TYPE_FINISHED_PAYMENT_STATE_MOBILE,date);  
+        	transaction.replace(R.id.history_payment_container, mFinishedPaymentStateMobileAliFragment);
         }else if(resId==R.id.tv_payment_state_finished_cash_history){
         	mFinishedPaymentStateCashFragment = new HistoryRecordFragment(TYPE_FINISHED_PAYMENT_STATE_CASH,date);  
         	transaction.replace(R.id.history_payment_container, mFinishedPaymentStateCashFragment);
@@ -150,10 +151,10 @@ public class ParkingHistorySearchActivity extends FragmentActivity {
     }
 
 	private void hideFragments(FragmentTransaction transaction){  
-        if (mUnfinishedPaymentStateFragment != null) {
-        	transaction.hide(mUnfinishedPaymentStateFragment);
-        }else if(mFinishedPaymentStateMobileFragment!=null){
-        	transaction.hide(mFinishedPaymentStateMobileFragment);
+        if (mFinishedPaymentStateMobileWechatFragment != null) {
+        	transaction.hide(mFinishedPaymentStateMobileWechatFragment);
+        }else if(mFinishedPaymentStateMobileAliFragment!=null){
+        	transaction.hide(mFinishedPaymentStateMobileAliFragment);
         }else if(mFinishedPaymentStateCashFragment!=null){
         	transaction.hide(mFinishedPaymentStateCashFragment);
         }else if(mFinishedPaymentStateAccountFragment!=null){
@@ -165,10 +166,10 @@ public class ParkingHistorySearchActivity extends FragmentActivity {
 
 	private void changeSelect(int resId) {  
 		mCurrentId = resId;
-		mUnfinishedPaymentStateTV.setSelected(false);
-		mUnfinishedPaymentStateTV.setBackgroundResource(R.color.gray);
-		mFinishedPaymentStateMobileTV.setSelected(false);  
-		mFinishedPaymentStateMobileTV.setBackgroundResource(R.color.gray);
+		mFinishedPaymentStateMobileWechatTV.setSelected(false);
+		mFinishedPaymentStateMobileWechatTV.setBackgroundResource(R.color.gray);
+		mFinishedPaymentStateMobileAliTV.setSelected(false);  
+		mFinishedPaymentStateMobileAliTV.setBackgroundResource(R.color.gray);
 		mFinishedPaymentStateCashTV.setSelected(false);
 		mFinishedPaymentStateCashTV.setBackgroundResource(R.color.gray);
 		mFinishedPaymentStateAccountTV.setSelected(false);
@@ -176,13 +177,13 @@ public class ParkingHistorySearchActivity extends FragmentActivity {
 		mUnfinishedPaymentStateLeaveTV.setSelected(false);  
 		mUnfinishedPaymentStateLeaveTV.setBackgroundResource(R.color.gray);
         switch (resId) {  
-        case R.id.tv_payment_state_unfinished_history:  
-        	mUnfinishedPaymentStateTV.setSelected(true);  
-        	mUnfinishedPaymentStateTV.setBackgroundResource(R.color.orange);
+        case R.id.tv_payment_state_finished_mobile_wechat_history:  
+        	mFinishedPaymentStateMobileWechatTV.setSelected(true);  
+        	mFinishedPaymentStateMobileWechatTV.setBackgroundResource(R.color.orange);
             break;  
-        case R.id.tv_payment_state_finished_mobile_history:  
-        	mFinishedPaymentStateMobileTV.setSelected(true);  
-        	mFinishedPaymentStateMobileTV.setBackgroundResource(R.color.orange);
+        case R.id.tv_payment_state_finished_mobile_ali_history:  
+        	mFinishedPaymentStateMobileAliTV.setSelected(true);  
+        	mFinishedPaymentStateMobileAliTV.setBackgroundResource(R.color.orange);
             break;
         case R.id.tv_payment_state_finished_cash_history:  
         	mFinishedPaymentStateCashTV.setSelected(true);  
@@ -261,6 +262,12 @@ public class ParkingHistorySearchActivity extends FragmentActivity {
     public String readToken() {
         SharedPreferences pref = getSharedPreferences(FILE_NAME_TOKEN, MODE_MULTI_PROCESS);
         String str = pref.getString("token", "");
+        return str;
+    }
+    
+    public String readAccount() {
+        SharedPreferences pref = getSharedPreferences(FILE_NAME_COLLECTOR, MODE_MULTI_PROCESS);
+        String str = pref.getString("collectorNumber", "");
         return str;
     }
 }

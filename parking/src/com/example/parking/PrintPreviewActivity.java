@@ -10,19 +10,20 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-import printerdemo.PrinterClass;
+
 
 public class PrintPreviewActivity extends Activity {
 	private static final int PAYMENT_TYPE_CASH=201;
-	private static final int PAYMENT_TYPE_ALIPAY=202;
-	private static final int PAYMENT_TYPE_WECHATPAY=203;
-	private static final int PAYMENT_TYPE_MOBILE=204;
+	private static final int PAYMENT_TYPE_NETWORK=202;
+	private static final int PAYMENT_TYPE_ALIPAY=203;
+	private static final int PAYMENT_TYPE_WECHATPAY=204;
+	private static final int PAYMENT_TYPE_MOBILE=205;
 	private static final int EVENT_PRINT_SUCCESS= 301;
     private static final String FILE_NAME_COLLECTOR = "save_pref_collector";
 	private Button mConfirmPrintBT;;
@@ -36,7 +37,6 @@ public class PrintPreviewActivity extends Activity {
 	private TextView mParkTypeTV;
 	private TextView mStartTimeTV;
 	private TextView mLeaveTimeTV;
-	//private TextView mParkTimeTV;
 	private TextView mExpenseTotalTV;
 	private TextView mFeeScaleTV;
 	private TextView mChargeStandardTV;
@@ -49,17 +49,12 @@ public class PrintPreviewActivity extends Activity {
 	private String mLeaveTime;
 	private String mExpense;
 	private String mLicensePlateNumber;
-	private DBAdapter mDBAdapter;
-	private PrinterClass mPrinter;
-    private boolean mPaperTemState = true;
-    private int mRecindex = 0;
-    private String mRecviceMessage = "";
+	public static String LOG_TAG = "PrintPreviewActivity";
     
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_print_preview);
-		mDBAdapter = new DBAdapter(this);
 		Intent intent = getIntent();
 		Bundle bundle = intent.getExtras();
 		mPayType=bundle.getInt("paytype");
@@ -91,7 +86,6 @@ public class PrintPreviewActivity extends Activity {
         mParkTypeTV.setText("泊车类型:" + mParkType);
         mStartTimeTV.setText("入场时间:" + mStartTime);
         mLeaveTimeTV.setText("离场时间:" + mLeaveTime);
-		//mParkTimeTV=(TextView)findViewById(R.id.tv_parking_time_print);
 		mExpenseTotalTV.setText("费用总计:" + mExpense);
 		mFeeScaleTV.setText("收费标准:" +readCollector("feeScale"));
 		mChargeStandardTV=(TextView)findViewById(R.id.tv_charge_standard_print);
@@ -117,30 +111,20 @@ public class PrintPreviewActivity extends Activity {
 		mCancelPrintBT.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v){
-				if(mPayType==PAYMENT_TYPE_CASH){
+				if(mPayType==PAYMENT_TYPE_CASH || mPayType == PAYMENT_TYPE_NETWORK){
                     Intent intentBack = new Intent();
                     intentBack.setAction("BackMain");
                     sendBroadcast(intentBack);
 					Intent intent = new Intent(PrintPreviewActivity.this,MainActivity.class);
 					startActivity(intent);
 					finish();
-				}else if(mPayType==PAYMENT_TYPE_MOBILE){
+				}else if(mPayType==PAYMENT_TYPE_MOBILE || mPayType==PAYMENT_TYPE_ALIPAY || mPayType==PAYMENT_TYPE_WECHATPAY){
 					Intent intent = new Intent(PrintPreviewActivity.this,MobilePaymentSuccessActivity.class);
 					startActivity(intent);
 					finish();
 				}
 			}
 		});
-		mPrinter = new PrinterClass();
-		mPrinter.setPrinterResponseMessageListener(new PrinterClass.PrinterResponseMessageListener() {
-            public void response(byte[] RecMessage) {
-                if(mRecindex ==1){
-                	mRecviceMessage =mPrinter.bytesToHex(RecMessage,0,RecMessage.length);
-                }else if(mRecindex ==2){
-                	//TODO
-                }
-            }
-        });
         getActionBar().setDisplayHomeAsUpEnabled(true);
         IntentFilter filter = new IntentFilter();  
         filter.addAction("ExitApp");  
@@ -162,10 +146,7 @@ public class PrintPreviewActivity extends Activity {
                 	.append("\n").append(mExpenseTotalTV.getText()).append("  ")
                 	.append(mFeeScaleTV.getText()).append("\n").append(mChargeStandardTV.getText())
                 	.append("\n").append(mSuperviseTelephoneTV.getText());
-                	mPrinter.printer_uart_on();
-                	//mPrinter.serialport_uart_on(doGetData());;
-                    mPrinter.send(sb.toString());
-                	//mPrinter.send("hello");
+                	print_string(sb.toString());
                 	//Toast.makeText(getApplicationContext(), "该设备不支持打印功能", Toast.LENGTH_SHORT).show();
                 	break;
                 default:
@@ -173,11 +154,6 @@ public class PrintPreviewActivity extends Activity {
             }
         }
     };
-
-    private int doGetData(){
-        SharedPreferences settings = getSharedPreferences("settings", BIND_AUTO_CREATE);
-        return settings.getInt("data",9600);
-    }
     
 	public boolean onOptionsItemSelected(MenuItem item) {  
 	    switch (item.getItemId()) {  
@@ -209,5 +185,17 @@ public class PrintPreviewActivity extends Activity {
         SharedPreferences pref = getSharedPreferences(FILE_NAME_COLLECTOR, MODE_MULTI_PROCESS);
         String str = pref.getString(data, "");
         return str;
+    }
+    
+    private void print_string(String text){
+        try {
+        	Log.e(LOG_TAG,"print_string->try" ); 
+            byte [] prntBuf = text.getBytes("GBK");
+            MyApp.ddi.ddi_prnt_esc(prntBuf, prntBuf.length);
+        }catch (Exception e)
+        {
+        	Log.e(LOG_TAG,"print_string->exception" + e); 
+            e.printStackTrace();
+        }
     }
 }

@@ -79,10 +79,10 @@ public class MessageCenterListAdapter extends BaseAdapter {
             zujian=(Zujian)convertView.getTag();  
         }  
         //绑定数据  
-        zujian.messageCenterTitleTV.setText((String)data.get(position).get("messageCenterTitle")); 
-        zujian.messageCenterDetailTV.setText((String)data.get(position).get("messageCenterDetail")); 
-        zujian.messageCenterTimeTV.setText((String)(data.get(position).get("messageCenterTime"))); 
-        zujian.messageCenterDetailHideTV.setText((String)(data.get(position).get("messageCenterDetailHide"))); 
+        zujian.messageCenterTitleTV.setText((String)data.get(position).get("messageTitle")); 
+        zujian.messageCenterDetailTV.setText((String)data.get(position).get("messageAbstract")); 
+        zujian.messageCenterTimeTV.setText((String)(data.get(position).get("messageTime"))); 
+        zujian.messageCenterDetailHideTV.setText((String)(data.get(position).get("messageDetail"))); 
         Drawable drawable = context.getResources().getDrawable(R.drawable.ic_error_outline_black_18dp);
         if(((String)data.get(position).get("messageCenterTitle")).equals("停车通知")){
         	drawable = context.getResources().getDrawable(R.drawable.ic_add_alert_black_18dp);

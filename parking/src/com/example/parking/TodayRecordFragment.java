@@ -48,6 +48,7 @@ public class TodayRecordFragment extends Fragment {
 	public static final int EVENT_DISPLAY_REQUEST_TIMEOUT = 202;
 	public static final int EVENT_DISPLAY_CONNECT_TIMEOUT = 203;
 	public static final int EVENT_SET_ADAPTER = 204;
+	public static String LOG_TAG = "TodayRecordFragment";
 	private View mView;
 	private ListView mListView;
 	private TextView mEmptyNotifyTV;
@@ -77,8 +78,6 @@ public class TodayRecordFragment extends Fragment {
 			mQueryTask = new UserQueryTask();
 			mQueryTask.execute((Void) null);
 	        mDBAdapter = new DBAdapter(getActivity());
-	        //List<Map<String, Object>> list=getData();  
-	        //mListView.setAdapter(new TodayRecordListAdapter(getActivity(), list)); 
 	        return mView;
 	    }
 
@@ -139,28 +138,29 @@ public class TodayRecordFragment extends Fragment {
 	                  HttpConnectionParams.SO_TIMEOUT, 5000); // 请求超时设置,"0"代表永不超时  
 			  httpClient.getParams().setIntParameter(  
 	                  HttpConnectionParams.CONNECTION_TIMEOUT, 5000);// 连接超时设置 
-			  //String strurl = "http://" + mIP + ":8080/ServletTest/QueryParkingSpaceServlet";
-			  String strurl = "http://" + this.getString(R.string.ip) + ":8080/park/collector/queryToday/query";
+			  String strurl = "http://" + this.getString(R.string.ip) + ":8080/itspark/collector/queryToday/query";
 			  HttpPost request = new HttpPost(strurl);
 			  request.addHeader("Accept","application/json");
-			  request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+			//request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+			  request.setHeader("Content-Type", "application/json; charset=utf-8");
 			  JSONObject param = new JSONObject();
-			  param.put("token", ((ParkingSpaceDetailActivity)getActivity()).readToken());
-			  param.put("parkingnumber",((ParkingSpaceDetailActivity)getActivity()).readCollector("parkNumber"));
-			  param.put("parkinglocation", mLocationNumber);
-			  StringEntity se = new StringEntity(param.toString(), "UTF-8");
+			  TodayRecordSearchInfo info = new TodayRecordSearchInfo();
+			  CommonRequestHeader header = new CommonRequestHeader();
+			  header.addRequestHeader(CommonRequestHeader.REQUEST_COLLECTOR_QUERY_TODAY_PARKING_RECORD_CODE,
+					  ((ParkingSpaceDetailActivity)getActivity()).readAccount(), ((ParkingSpaceDetailActivity)getActivity()).readToken());
+			  info.setHeader(header);
+			  info.setParkNumber(((ParkingSpaceDetailActivity)getActivity()).readCollector("parkNumber"));
+			  info.setParkingLocation(String.valueOf(mLocationNumber));
+			  StringEntity se = new StringEntity(JacksonJsonUtil.beanToJson(info), "UTF-8");
+			  Log.e(LOG_TAG,"clientTodayQuery-> param is " + JacksonJsonUtil.beanToJson(info));
 			  request.setEntity(se);//发送数据
 			  try{
 				  HttpResponse httpResponse = httpClient.execute(request);//获得响应
 				  int code = httpResponse.getStatusLine().getStatusCode();
 				  if(code==HttpStatus.SC_OK){
 					  String strResult = EntityUtils.toString(httpResponse.getEntity());
-					  Log.e("clientTodayQuery","strResult is " + strResult);
+					  Log.e(LOG_TAG,"clientTodayQuery->strResult is " + strResult);
 					  CommonResponse res = new CommonResponse(strResult);
-					  Log.e("clientTodayQuery","resCode is  " + res.getResCode());
-					  Log.e("clientTodayQuery","resMsg is  " + res.getResMsg());
-					  Log.e("clientTodayQuery","List is  " + res.getDataList());
-					  Log.e("clientTodayQuery","Map is  " + res.getPropertyMap());
 					  Message msg = new Message();
 			          msg.what=EVENT_DISPLAY_QUERY_RESULT;
 			          msg.obj= res.getResMsg();
@@ -168,11 +168,11 @@ public class TodayRecordFragment extends Fragment {
 					  if(res.getResCode().equals("100")){
 						  mList = res.getDataList();
 						  return true;
-					  }else if(res.getResCode().equals("201")){
+					  }else{
 				          return false;
 					  } 
 				}else{
-						  Log.e("clientTodayQuery", "error code is " + Integer.toString(code));
+						  Log.e(LOG_TAG, "clientTodayQuery->error code is " + Integer.toString(code));
 						  return false;
 			    }
 			  }catch(InterruptedIOException e){
@@ -201,10 +201,10 @@ public class TodayRecordFragment extends Fragment {
 			@Override
 			protected Boolean doInBackground(Void... params) {
 				try{
-					Log.e("clientTodayQuery","UserQueryTask doInBackground");  
+					Log.e(LOG_TAG,"UserQueryTask->doInBackground");  
 					return clientQuery();
 				}catch(Exception e){
-					Log.e("clientTodayQuery","Query exists exception ");  
+					Log.e(LOG_TAG,"UserQueryTask-> exists exception ");  
 					e.printStackTrace();
 				}
 				return false;
@@ -260,53 +260,5 @@ public class TodayRecordFragment extends Fragment {
 		        }
 		    }
 		};
-	    /*public List<Map<String, Object>> getData(){  
-			SimpleDateFormat formatter = new SimpleDateFormat ("yyyy-MM-dd%"); 
-			Date curDate = new Date(System.currentTimeMillis());
-			String date = formatter.format(curDate);
-	        List<Map<String, Object>> list=new ArrayList<Map<String,Object>>();  
-	        setTodayRecord(date,mLocationNumber,list);
-	        return list;  
-	    }*/
-
-	    /*public void setTodayRecord(String date,int locationNumber,List<Map<String, Object>> list){
-	    	mDBAdapter.open();
-	    	Cursor cursor = mDBAdapter.getParkingByStartTime(date);
-	    	Map<String, Object> titleMap=new HashMap<String, Object>();
-	    	titleMap.put("licensePlateNumber","牌照号码");
-	    	titleMap.put("startTime","入场时间");
-	    	titleMap.put("leaveTime", "离场时间");
-	    	titleMap.put("paymentState","支付状态");
-	    	titleMap.put("expense", "支付金额");
-            list.add(titleMap); 
-	    	Log.e("yifan", "count: " + cursor.getCount());
-	    	Log.e("yifan", "locationNumber: " + locationNumber);
-	        try {
-	        	do{
-	        	    	  Log.e("yifan", "dblocation: " + cursor.getInt(cursor.getColumnIndex("locationnumber")));
-	        	    	  if(cursor.getInt(cursor.getColumnIndex("locationnumber"))==locationNumber ){
-	        	    		  Log.e("yifan", "+1" );
-	        	    		  Map<String, Object> map=new HashMap<String, Object>();
-	        	    		  map.put("licensePlateNumber", cursor.getString(cursor.getColumnIndex("licenseplate")));
-	        	    		  map.put("startTime", "入场: " + cursor.getString(cursor.getColumnIndex("starttime")));
-	        	    		  if(cursor.getString(cursor.getColumnIndex("leavetime"))==null){
-	        	    			  map.put("leaveTime", null);
-	        	    		  }else{
-		        	    		  map.put("leaveTime", "离场: " + cursor.getString(cursor.getColumnIndex("leavetime")));
-	        	    		  }
-	        	    		  map.put("paymentState", cursor.getString(cursor.getColumnIndex("paymentpattern")));
-	        	    		  map.put("expense", cursor.getString(cursor.getColumnIndex("expense")));
-	      		              list.add(map); 
-	        	    	  }
-	        	      }while(cursor.moveToNext());
-	        }
-	        catch (Exception e) {
-	                e.printStackTrace();
-	        } finally{
-	            	if(cursor!=null){
-	            		cursor.close();
-	                }
-	        }
-	    }*/
 	    
 }

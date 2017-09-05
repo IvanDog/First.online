@@ -56,6 +56,7 @@ public class WorkAttendanceActivity extends Activity {
 	private static final int EVENT_ATTENDANCE_END_SUCCESS = 206;
 	private static final int EVENT_ENTER_MAIN = 207;
 	private static final int EVENT_EXIT_LOGIN = 208;
+	public static String LOG_TAG = "WorkAttendanceActivity";
 	private int mType;
 	private Button mAttendanceBT;
 	private TextView mParkNumberTV;
@@ -64,17 +65,15 @@ public class WorkAttendanceActivity extends Activity {
 	private TextView mAttendanceWorkEndTimeTV;
 	private TextView mAttendanceStartLocationTV;
 	private TextView mAttendanceEndLocationTV;
-	private TextView mAttendanceDate;
-	private TextView mLocationState;
+	private TextView mAttendanceDateTV;
+	private TextView mLocationStateTV;
 	private Context mContext;
-	
-    private LocationManager locationManager;  
-    private String locationProvider; 
-    private String mLocation;
     
 	private UserUpdateInformationTask mUserUpdateInformationTask = null;
     private UserReprotLocationTask mUserReprotLocationTask = null;
     private UserClockTask mUserClockTask = null;
+    
+    private Integer mLocationState =0;//“０”为考勤范围外，"１"为考勤范围内
     
     //声明AMapLocationClient类对象
     public AMapLocationClient mLocationClient = null;
@@ -94,23 +93,17 @@ public class WorkAttendanceActivity extends Activity {
 		Bundle bundle = intent.getExtras();
 		mType = bundle.getInt("attendancetype");
 		mParkNumberTV = (TextView)findViewById(R.id.tv_attendance_park_number);
-		//mParkNumberTV.setText("车场编号:" + this.getString(R.string.park_number_fixed));
 		mUserNumberTV = (TextView)findViewById(R.id.tv_attendance_user_number);
-		//mUserNumberTV.setText("工号:" + this.getString(R.string.user_number_fixed) );
-		mAttendanceDate=(TextView)findViewById(R.id.tv_attendance_date);
+		mAttendanceDateTV=(TextView)findViewById(R.id.tv_attendance_date);
 		SimpleDateFormat formatter = new SimpleDateFormat ("yyyy年MM月dd日"); 
 		Date curDate = new Date(System.currentTimeMillis());
 		String dateStr = formatter.format(curDate);
-		mAttendanceDate.setText(dateStr);
+		mAttendanceDateTV.setText(dateStr);
 		mAttendanceWorkStartTimeTV=(TextView)findViewById(R.id.tv_attendance_work_start_time);
-		//mAttendanceWorkStartTimeTV.setText(R.string.work_start_time_fixed);
 		mAttendanceWorkEndTimeTV=(TextView)findViewById(R.id.tv_attendance_work_end_time);
-		//mAttendanceWorkEndTimeTV.setText(R.string.work_end_time_fixed);
 		mAttendanceStartLocationTV=(TextView)findViewById(R.id.tv_attendance_start_location);
 		mAttendanceEndLocationTV=(TextView)findViewById(R.id.tv_attendance_end_location);
-		mLocationState=(TextView)findViewById(R.id.tv_location_state);
-		//mLocationState.setText("当前位置:" + this.getString(R.string.location_state));
-		//new TimeThread().start();
+		mLocationStateTV=(TextView)findViewById(R.id.tv_location_state);
 		mAttendanceBT=(Button)findViewById(R.id.bt_work_attendance);
 		mAttendanceBT.setOnClickListener(new OnClickListener(){
 			@Override
@@ -165,7 +158,7 @@ public class WorkAttendanceActivity extends Activity {
            	       mAttendanceWorkEndTimeTV.setText("下班时间:" + readCollector("workEndTime"));
             	   break;
                case EVENT_DISPLAY_LOCATION_STATE:
-            	   mLocationState.setText("当前位置:" + (String)msg.obj);
+            	   mLocationStateTV.setText("当前位置:" + (String)msg.obj);
             	   break;
                 case EVENT_DISPLAY_TIME_START:
                     CharSequence sysTimeStrStart = DateFormat.format("HH:mm:ss", System.currentTimeMillis());
@@ -228,13 +221,12 @@ public class WorkAttendanceActivity extends Activity {
         return str;
     }
 
-    private boolean writeCollector(String parkName, String parkNumber, String collectorNumber, String workStartTime, 
+    private boolean writeCollector(String parkName, String parkNumber, String workStartTime, 
     		String workEndTime, String feeScale, String chargeStandard, String superviseTelephone) {
         SharedPreferences.Editor share_edit = getSharedPreferences(FILE_NAME_COLLECTOR,
                 MODE_MULTI_PROCESS).edit();
         share_edit.putString("parkName", parkName);
         share_edit.putString("parkNumber", parkNumber);
-        share_edit.putString("collectorNumber", collectorNumber);
         share_edit.putString("workStartTime", workStartTime);
         share_edit.putString("workEndTime", workEndTime);
         share_edit.putString("feeScale", feeScale);
@@ -247,6 +239,12 @@ public class WorkAttendanceActivity extends Activity {
     private String readToken() {
         SharedPreferences pref = getSharedPreferences(FILE_NAME_TOKEN, MODE_MULTI_PROCESS);
         String str = pref.getString("token", "");
+        return str;
+    }
+    
+    private String readAccount() {
+        SharedPreferences pref = getSharedPreferences(FILE_NAME_COLLECTOR, MODE_MULTI_PROCESS);
+        String str = pref.getString("collectorNumber", "");
         return str;
     }
     
@@ -358,42 +356,45 @@ public class WorkAttendanceActivity extends Activity {
                      HttpConnectionParams.SO_TIMEOUT, 5000); // 请求超时设置,"0"代表永不超时  
    		  httpClient.getParams().setIntParameter(  
                      HttpConnectionParams.CONNECTION_TIMEOUT, 5000);// 连接超时设置 
-   		  String strurl = "http://" + this.getString(R.string.ip) + ":8080/park/collector/workAttendance/requestInformation";
+   		  String strurl = "http://" + this.getString(R.string.ip) + "/itspark/collector/workAttendance/requestInformation";
    		  HttpPost request = new HttpPost(strurl);
    		  request.addHeader("Accept","application/json");
-   		  request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+		  //request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+		  request.setHeader("Content-Type", "application/json; charset=utf-8");
    		  JSONObject param = new JSONObject();
-   		  param.put("token", readToken());
-   		  StringEntity se = new StringEntity(param.toString(), "UTF-8");
+   		  TokenInfo info = new TokenInfo();
+		  CommonRequestHeader header = new CommonRequestHeader();
+		  header.addRequestHeader(CommonRequestHeader.REQUEST_COLLECTOR_GET_WORK_CODE, readAccount(), readToken());
+		  info.setHeader(header);
+   		  StringEntity se = new StringEntity(JacksonJsonUtil.beanToJson(info), "UTF-8");
+		  Log.e(LOG_TAG,"clientRequest-> param is " + JacksonJsonUtil.beanToJson(info));
    		  request.setEntity(se);//发送数据
    		  try{
    			  HttpResponse httpResponse = httpClient.execute(request);//获得响应
    			  int code = httpResponse.getStatusLine().getStatusCode();
    			  if(code==HttpStatus.SC_OK){
    				  String strResult = EntityUtils.toString(httpResponse.getEntity());
-   				  Log.e("clientRequest","strResult is " + strResult);
+   				  Log.e(LOG_TAG,"clientRequest->strResult is " + strResult);
    				  CommonResponse res = new CommonResponse(strResult);
-   				  Log.e("clientRequest","resCode is  " + res.getResCode());
-   				  Log.e("clientRequest","resMsg is  " + res.getResMsg());
    				  String parkName = (String)res.getPropertyMap().get("parkName");
    				  String parkNumber = (String)res.getPropertyMap().get("parkNumber");
-   				  String collectorNumber = (String)res.getPropertyMap().get("collectorNumber");
    				  String workStartTime = (String)res.getPropertyMap().get("workStartTime");
    				  String workEndTime = (String)res.getPropertyMap().get("workEndTime");
    				  String feeScale = (String)res.getPropertyMap().get("feeScale");
    				  String chargeStandard = (String)res.getPropertyMap().get("chargeStandard");
    				  String superviseTelephone = (String)res.getPropertyMap().get("superviseTelephone");
-   				  if(writeCollector(parkName,parkNumber,collectorNumber,workStartTime,workEndTime,feeScale,chargeStandard,superviseTelephone)){
-   	   				  Log.e("clientRequest","writeCollector ok");
+   				  if(writeCollector(parkName,parkNumber,workStartTime,workEndTime,feeScale,chargeStandard,superviseTelephone)){
+   	   				  Log.e(LOG_TAG,"clientRequest->writeCollector ok"); 
    				  }
+   				  toastWrapper(res.getResMsg());
    				  String resCode = res.getResCode();
    				  if(resCode.equals("100")){
    					  return true;
-   				  }else if(resCode.equals("201")){
+   				  }else {
    					  return false;
    				  }
    			  }else{
-   				  Log.e("clientRequest", "error code is " + Integer.toString(code));
+   				  Log.e(LOG_TAG, "clientRequest-> error code is " + Integer.toString(code));
    				  return false;
    			  }
    		  }catch(InterruptedIOException e){
@@ -425,12 +426,12 @@ public class WorkAttendanceActivity extends Activity {
    		@Override
    		protected void onPostExecute(final Boolean success) {
    			mUserUpdateInformationTask = null;
-   			Log.e("clientRequest","onPostExecute  " + success.toString());
+   			Log.e(LOG_TAG,"clientRequest-> onPostExecute  " + success.toString());
    			if(success){
  	        	  Message msg = new Message();
    	              msg.what = EVENT_UPDATE_INFORMATION;
    	              mHandler.sendMessage(msg);
-   				  new TimeThread().start();
+   				  new TimeThread().start(); 
    			}
    		}
 
@@ -452,38 +453,42 @@ public class WorkAttendanceActivity extends Activity {
                   HttpConnectionParams.SO_TIMEOUT, 5000); // 请求超时设置,"0"代表永不超时  
 		  httpClient.getParams().setIntParameter(  
                   HttpConnectionParams.CONNECTION_TIMEOUT, 5000);// 连接超时设置 
-		  //String strurl = "http://" + mIP + ":8080/ServletTest/RegisterServlet";
-		  String strurl = "http://" + this.getString(R.string.ip) + ":8080/park/collector/workAttendance/reportLocation";
+		  String strurl = "http://" + this.getString(R.string.ip) + "/itspark/collector/workAttendance/reportLocation";
 		  HttpPost request = new HttpPost(strurl);
 		  request.addHeader("Accept","application/json");
-		  request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+		  //request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+		  request.setHeader("Content-Type", "application/json; charset=utf-8");
 		  JSONObject param = new JSONObject();
-		  param.put("token", readToken());
-		  param.put("latitude", amapLocation.getLatitude());
-		  param.put("longitude", amapLocation.getLongitude());
-		  StringEntity se = new StringEntity(param.toString(), "UTF-8");
+		  LocationInfo info = new LocationInfo();
+		  CommonRequestHeader header = new CommonRequestHeader();
+		  header.addRequestHeader(CommonRequestHeader.REQUEST_COLLECTOR_GET_LOCATION_STATE_CODE, readAccount(), readToken());
+		  info.setHeader(header);
+		  info.setLatitude(amapLocation.getLatitude());
+		  info.setLongitude(amapLocation.getLongitude());
+		  StringEntity se = new StringEntity(JacksonJsonUtil.beanToJson(info), "UTF-8");
+		  Log.e(LOG_TAG,"clientReport-> param is " + JacksonJsonUtil.beanToJson(info));
 		  request.setEntity(se);//发送数据
 		  try{
 			  HttpResponse httpResponse = httpClient.execute(request);//获得响应
 			  int code = httpResponse.getStatusLine().getStatusCode();
 			  if(code==HttpStatus.SC_OK){
 				  String strResult = EntityUtils.toString(httpResponse.getEntity());
-				  Log.e("clientReport","strResult is " + strResult);
+				  Log.e(LOG_TAG,"clientReport-> strResult is " + strResult);
 				  CommonResponse res = new CommonResponse(strResult);
-				  Log.e("clientReport","resCode is  " + res.getResCode());
-				  Log.e("clientReport","resMsg is  " + res.getResMsg());
 	        	  Message msg = new Message();
 	              msg.what = EVENT_DISPLAY_LOCATION_STATE;
 	              msg.obj = res.getResMsg();
 	              mHandler.sendMessage(msg);
 				  String resCode = res.getResCode();
    				  if(resCode.equals("100")){
+   					mLocationState = 1;
    					  return true;
-   				  }else if(resCode.equals("201")){
+   				  }else{
+   					mLocationState = 0;
    					  return false;
    				  }
 			  }else{
-				  Log.e("clientReport", "error code is " + Integer.toString(code));
+				  Log.e(LOG_TAG, "clientReport-> error code is " + Integer.toString(code));
 				  return false;
 			  }
 		  }catch(InterruptedIOException e){
@@ -497,6 +502,7 @@ public class WorkAttendanceActivity extends Activity {
           }  
 		  return false;
     } 
+	
 	/**
 	 * 用户上班打卡时上报位置Task
 	 * 
@@ -530,7 +536,7 @@ public class WorkAttendanceActivity extends Activity {
 	
 	
     /**
-   	 * Add for report request collector's information 
+   	 * Add for clock 
    	 * */
    	public boolean clientClock() throws ParseException, IOException, JSONException{
    		  HttpClient httpClient = new DefaultHttpClient();
@@ -538,35 +544,40 @@ public class WorkAttendanceActivity extends Activity {
                      HttpConnectionParams.SO_TIMEOUT, 5000); // 请求超时设置,"0"代表永不超时  
    		  httpClient.getParams().setIntParameter(  
                      HttpConnectionParams.CONNECTION_TIMEOUT, 5000);// 连接超时设置 
-   		  //String strurl = "http://" + mIP + ":8080/ServletTest/RegisterServlet";
-   		  String strurl = "http://" + this.getString(R.string.ip) + ":8080/park/collector/workAttendance/clock";
+   		  String strurl = "http://" + this.getString(R.string.ip) + "/itspark/collector/workAttendance/clock";
    		  HttpPost request = new HttpPost(strurl);
    		  request.addHeader("Accept","application/json");
-   		  request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+		  //request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+		  request.setHeader("Content-Type", "application/json; charset=utf-8");
    		  JSONObject param = new JSONObject();
-   		  param.put("token", readToken());
-   		  param.put("clockType",mType);
-   		  CharSequence currentTime = DateFormat.format("HH:mm:ss", System.currentTimeMillis());
-   		  param.put("clockTime", currentTime + "");
-   		  StringEntity se = new StringEntity(param.toString(), "UTF-8");
+   		  ClockInfo info = new ClockInfo();
+		  CommonRequestHeader header = new CommonRequestHeader();
+		  header.addRequestHeader(CommonRequestHeader.REQUEST_COLLECTOR_WORK_CLOCK_CODE, readAccount(), readToken());
+   		  info.setHeader(header);
+   		  info.setParkNo(readCollector("parkNumber"));
+   		  info.setClockType(mType);
+   		  info.setLocationState(mLocationState);
+   		  CharSequence currentTime = DateFormat.format("yyyy-MM-dd HH:mm:ss", System.currentTimeMillis());
+   		  info.setClockTime(currentTime + "");
+   		  StringEntity se = new StringEntity(JacksonJsonUtil.beanToJson(info), "UTF-8");
+		  Log.e(LOG_TAG,"clientClock-> param is " + JacksonJsonUtil.beanToJson(info));
    		  request.setEntity(se);//发送数据
    		  try{
    			  HttpResponse httpResponse = httpClient.execute(request);//获得响应
    			  int code = httpResponse.getStatusLine().getStatusCode();
    			  if(code==HttpStatus.SC_OK){
    				  String strResult = EntityUtils.toString(httpResponse.getEntity());
-   				  Log.e("clientRequest","strResult is " + strResult);
+   				  Log.e(LOG_TAG,"clientClock-> strResult is " + strResult);
    				  CommonResponse res = new CommonResponse(strResult);
-   				  Log.e("clientRequest","resCode is  " + res.getResCode());
-   				  Log.e("clientRequest","resMsg is  " + res.getResMsg());
+   				  toastWrapper(res.getResMsg());
    				  String resCode = res.getResCode();
    				  if(resCode.equals("100")){
    					  return true;
-   				  }else if(resCode.equals("201")){
+   				  }else{
    					  return false;
    				  }
    			  }else{
-   				  Log.e("clientRequest", "error code is " + Integer.toString(code));
+   				  Log.e(LOG_TAG, "clientClock-> error code is " + Integer.toString(code));
    				  return false;
    			  }
    		  }catch(InterruptedIOException e){

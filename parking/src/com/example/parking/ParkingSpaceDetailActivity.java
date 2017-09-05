@@ -24,6 +24,7 @@ public class ParkingSpaceDetailActivity extends FragmentActivity {
 	private String mLicensePlateNumber;
     private static final String FILE_NAME_COLLECTOR = "save_pref_collector";
     private static final String FILE_NAME_TOKEN = "save_pref_token";
+	public static String LOG_TAG = "ParkingSpaceDetailActivity";
 	private OnClickListener mTabClickListener = new OnClickListener() {
         @Override  
         public void onClick(View v) {  
@@ -138,6 +139,12 @@ public class ParkingSpaceDetailActivity extends FragmentActivity {
     public String readToken() {
         SharedPreferences pref = getSharedPreferences(FILE_NAME_TOKEN, MODE_MULTI_PROCESS);
         String str = pref.getString("token", "");
+        return str;
+    }
+    
+    public String readAccount() {
+        SharedPreferences pref = getSharedPreferences(FILE_NAME_COLLECTOR, MODE_MULTI_PROCESS);
+        String str = pref.getString("collectorNumber", "");
         return str;
     }
 	/**
