@@ -50,6 +50,7 @@ public class InputLicenseActivity extends FragmentActivity {
 	private static final int LICENSE_ARRIVING_TYPE=101;
 	private static final int LICENSE_LEAVING_TYPE=102;
 	private static final int EVENT_INVALID_LICENSE_PLATE=201;
+	private static final int EVENT_NOTIFY_CHOOSE_CAR_TYPE =  202;
 	private static final int EVENT_SCAN_STATE_NOTIFY=301;
 	public static final int EVENT_DISPLAY_QUERY_RESULT = 401;
 	public static final int EVENT_DISPLAY_REQUEST_TIMEOUT = 402;
@@ -63,15 +64,17 @@ public class InputLicenseActivity extends FragmentActivity {
 	private Fragment mNumberFragment;
 	private Fragment mLetterFragment;
 	private Fragment mLocationFragment;
+	private Fragment mCarTypeFragment;
 	private EditText mLicensePlateET;
 	private TextView mNumberTV;
 	private TextView mLetterTV;
 	private TextView mLocationTV;
+	private TextView mCarTypeTV;
 	private Button mScanBT;
 	private Button mNextBT;
 	private int mCurrentId;
 	private int mType;
-	private String mCarType ="小客车";//暂时写为小客车，用于调试
+	private String mCarType = null;
 	private String mParkingEnterID;
 	private ArrayList<HashMap<String,Object>> mUnFinishedRecordList;
 	private int mUnfinishedFlag = 0;
@@ -101,11 +104,13 @@ public class InputLicenseActivity extends FragmentActivity {
         mLetterTV = (TextView) findViewById(R.id.tv_letter);
         mNumberTV = (TextView) findViewById(R.id.tv_number);
         mLocationTV = (TextView) findViewById(R.id.tv_location);
+        mCarTypeTV= (TextView) findViewById(R.id.tv_car_type_input);
     	mScanBT = (Button) findViewById(R.id.bt_scan);
     	mNextBT = (Button) findViewById(R.id.bt_next);
         mLetterTV.setOnClickListener(mTabClickListener); 
     	mNumberTV.setOnClickListener(mTabClickListener);
     	mLocationTV.setOnClickListener(mTabClickListener);
+    	mCarTypeTV.setOnClickListener(mTabClickListener);
     	changeSelect(R.id.tv_location);
     	changeFragment(R.id.tv_location);
     	mLicensePlateET.setOnTouchListener(new OnTouchListener() {	 
@@ -162,6 +167,12 @@ public class InputLicenseActivity extends FragmentActivity {
             		mHandler.sendMessage(msg);
             		return;
 				}
+				if(mCarType == null || "".equals(mCarType)){
+            		Message msg = new Message();
+            		msg.what=EVENT_NOTIFY_CHOOSE_CAR_TYPE;
+            		mHandler.sendMessage(msg);
+            		return;
+				}
 				mLicenseTask = new LicenseTask();
 				mLicenseTask.execute((Void) null);
 				//new SQLThread().start();
@@ -199,6 +210,14 @@ public class InputLicenseActivity extends FragmentActivity {
                 transaction.show(mLocationFragment);  
             }
         }
+        else if(resId==R.id.tv_car_type_input){
+            if(mCarTypeFragment==null){//如果为空先添加进来.不为空直接显示  
+            	mCarTypeFragment = new CarTypeFragment();  
+                transaction.add(R.id.main_container,mCarTypeFragment);  
+            }else {  
+                transaction.show(mCarTypeFragment);  
+            }
+        }
         transaction.commit();//提交事务  
     }
 
@@ -209,6 +228,8 @@ public class InputLicenseActivity extends FragmentActivity {
             transaction.hide(mNumberFragment);
         if (mLocationFragment != null)
             transaction.hide(mLocationFragment);
+        if(mCarTypeFragment != null)
+        	transaction.hide(mCarTypeFragment);
     }
 
 	private void changeSelect(int resId) {  
@@ -218,6 +239,8 @@ public class InputLicenseActivity extends FragmentActivity {
 		mNumberTV.setBackgroundResource(R.color.gray);
 		mLocationTV.setSelected(false);
 		mLocationTV.setBackgroundResource(R.color.gray);
+		mCarTypeTV.setSelected(false);
+		mCarTypeTV.setBackgroundResource(R.color.gray);
         switch (resId) {  
         case R.id.tv_letter:  
         	mLetterTV.setSelected(true);  
@@ -230,6 +253,10 @@ public class InputLicenseActivity extends FragmentActivity {
         case R.id.tv_location:  
         	mLocationTV.setSelected(true);  
         	mLocationTV.setBackgroundResource(R.color.orange);
+            break;
+        case R.id.tv_car_type_input:  
+        	mCarTypeTV.setSelected(true);  
+        	mCarTypeTV.setBackgroundResource(R.color.orange);
             break;  
         }  
     }
@@ -241,6 +268,9 @@ public class InputLicenseActivity extends FragmentActivity {
             switch (msg.what) {
                 case EVENT_INVALID_LICENSE_PLATE:
                     Toast.makeText(getApplicationContext(), "请输入正确牌照", Toast.LENGTH_SHORT).show();
+        	        break;
+                case EVENT_NOTIFY_CHOOSE_CAR_TYPE:
+                    Toast.makeText(getApplicationContext(), "请选择车辆类型", Toast.LENGTH_SHORT).show();
         	        break;
                 case EVENT_DISPLAY_QUERY_RESULT:
                 	Toast.makeText(getApplicationContext(), (String)msg.obj, Toast.LENGTH_SHORT).show();
@@ -446,5 +476,9 @@ public class InputLicenseActivity extends FragmentActivity {
         SharedPreferences pref = getSharedPreferences(FILE_NAME_COLLECTOR, MODE_MULTI_PROCESS);
         String str = pref.getString(data, "");
         return str;
+    }
+    
+    public void setCarType(String type){
+    	mCarType = type;
     }
 }

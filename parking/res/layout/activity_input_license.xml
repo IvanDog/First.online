@@ -79,6 +79,20 @@
        android:paddingBottom="10dp"
        android:background="#EBEBEB"
        android:textColor="@color/white"  />
+      <TextView
+       android:id="@+id/tv_car_type_input"
+       android:layout_width="0dip"
+       android:layout_height="wrap_content"
+       android:layout_weight="1"
+       android:gravity="center"
+       android:text="@string/cartype"
+       android:textSize="20sp"
+       android:paddingLeft="10dp"
+       android:paddingRight="10dp"
+       android:paddingTop="10dp"
+       android:paddingBottom="10dp"
+       android:background="#EBEBEB"
+       android:textColor="@color/white"  />
     </LinearLayout>
 
     <FrameLayout  

@@ -4,6 +4,7 @@
     <string name="letter">字母</string>
     <string name="number">数字</string>
     <string name="location">地区</string>
+    <string name="cartype">类别</string>
     
     <string name="one">1</string>
     <string name="two">2</string>
@@ -74,6 +75,10 @@
     <string name="Qinghai">青</string>
     <string name="Ningxia">宁</string>
     <string name="Xinjiang">新</string>
+    
+    <string name="type_car">小客车</string>
+    <string name="type_bus">大客车</string>
+    <string name="type_truck">货车</string>
     
     <string name="scan">扫描牌照</string>
     <string name="next">下一步</string>

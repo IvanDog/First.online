@@ -258,7 +258,6 @@ public class LeavingActivity extends Activity {
 		  HttpPost request = new HttpPost(strurl);
 		  request.addHeader("Accept","application/json");
 		  request.setHeader("Content-Type", "application/json; charset=utf-8");
-		  JSONObject param = new JSONObject();
 		  SettleAccountInfo info = new SettleAccountInfo();
 		  CommonRequestHeader header = new CommonRequestHeader();
 		  header.addRequestHeader(CommonRequestHeader.REQUEST_COLLECTOR_QUERY_EXPENSE_CODE, readAccount(), readToken());
