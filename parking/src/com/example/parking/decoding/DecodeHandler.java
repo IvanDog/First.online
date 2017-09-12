@@ -23,10 +23,10 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
-import com.example.parking.CaptureActivity;
 import com.example.parking.R;
 import com.example.parking.camera.CameraManager;
 import com.example.parking.camera.PlanarYUVLuminanceSource;
+import com.example.parking.view.CaptureActivity;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.MultiFormatReader;

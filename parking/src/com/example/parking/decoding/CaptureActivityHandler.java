@@ -27,10 +27,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import com.example.parking.CaptureActivity;
 import com.example.parking.R;
 import com.example.parking.camera.CameraManager;
-import com.example.parking.view.ViewfinderResultPointCallback;
+import com.example.parking.view.CaptureActivity;
+import com.example.parking.viewfinder.ViewfinderResultPointCallback;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 
