@@ -155,12 +155,11 @@ public class TodayRecordActivity extends Activity {
                   HttpConnectionParams.SO_TIMEOUT, 5000); // 请求超时设置,"0"代表永不超时  
 		  httpClient.getParams().setIntParameter(  
                   HttpConnectionParams.CONNECTION_TIMEOUT, 5000);// 连接超时设置 
-		  String strurl = "http://" + 	this.getString(R.string.ip) + ":8080/itspark/collector/queryToday/query";
+		  String strurl = "http://" + 	this.getString(R.string.ip) + "/itspark/collector/queryToday/query";
 		  HttpPost request = new HttpPost(strurl);
 		  request.addHeader("Accept","application/json");
 		//request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
 		  request.setHeader("Content-Type", "application/json; charset=utf-8");
-		  JSONObject param = new JSONObject();
 		  TodayRecordSearchInfo info = new TodayRecordSearchInfo();
 		  CommonRequestHeader header = new CommonRequestHeader();
 		  header.addRequestHeader(CommonRequestHeader.REQUEST_COLLECTOR_QUERY_TODAY_PARKING_RECORD_CODE,

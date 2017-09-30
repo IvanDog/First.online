@@ -410,12 +410,6 @@ public class LoginActivity extends Activity {
 					  writeToken((String)res.getPropertyMap().get("token"));
 					  mErrorType = ERROR_TYPE_NO_ERROR;
 					  return true;
-				  }else if(resCode.equals("201")){
-					  mErrorType = ERROR_TYPE_PASSWD;
-					  return false;
-				  }else if(resCode.equals("202")){
-					  mErrorType = ERROR_TYPE_EMAIL;
-					  return false;
 				  }else{
 					  return false;
 				  }

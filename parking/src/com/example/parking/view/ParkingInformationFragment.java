@@ -66,7 +66,7 @@ public class ParkingInformationFragment extends Fragment {
 	private TextView mLeaveTimeTV;
 	private Button mConfirmLeavingBT;
 	private Button mCancelLeavingBT;
-	private Long mParkingEnterID;
+	private String mParkingEnterID;
 	private int mLocationNumber;
 	private String mCarType;
 	private String mParkType;
@@ -114,7 +114,7 @@ public class ParkingInformationFragment extends Fragment {
 					bundle.putString("parkNumber", ((ParkingSpaceDetailActivity)getActivity()).readCollector("parkNumber"));
 					bundle.putString("licensePlateNumber",mLicensePlateNumber );
 					bundle.putString("carType", mCarType);
-					bundle.putLong("parkingEnterID",mParkingEnterID);
+					bundle.putString("parkingEnterID",mParkingEnterID);
 					intent.putExtras(bundle);
 					startActivity(intent);
 	        	}
@@ -195,12 +195,11 @@ public class ParkingInformationFragment extends Fragment {
 	                  HttpConnectionParams.SO_TIMEOUT, 5000); // 请求超时设置,"0"代表永不超时  
 			  httpClient.getParams().setIntParameter(  
 	                  HttpConnectionParams.CONNECTION_TIMEOUT, 5000);// 连接超时设置 
-			  String strurl = "http://" + this.getString(R.string.ip) + ":8080/itspark/collector/queryCurrentParking/query";
+			  String strurl = "http://" + this.getString(R.string.ip) + "/itspark/collector/queryCurrentParking/query";
 			  HttpPost request = new HttpPost(strurl);
 			  request.addHeader("Accept","application/json");
 			//request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
 			  request.setHeader("Content-Type", "application/json; charset=utf-8");
-			  JSONObject param = new JSONObject();
 			  LotDetailQueryInfo info = new LotDetailQueryInfo();
 			  CommonRequestHeader header = new CommonRequestHeader();
 			  header.addRequestHeader(CommonRequestHeader.REQUEST_COLLECTOR_QUERY_PARKING_INFORMATION_CODE, 
@@ -223,7 +222,7 @@ public class ParkingInformationFragment extends Fragment {
 			          msg.obj= res.getResMsg();
 			          mHandler.sendMessage(msg);
 					  if(res.getResCode().equals("100")){
-						  mParkingEnterID = Long.parseLong(String.valueOf (res.getPropertyMap().get("parkingEnterID")));
+						  mParkingEnterID = (String)res.getPropertyMap().get("parkingEnterID");
 						  mCarType = (String)res.getPropertyMap().get("carType");
 						  mParkType = (String)res.getPropertyMap().get("parkType");
 						  mStartTime = (String)res.getPropertyMap().get("startTime");

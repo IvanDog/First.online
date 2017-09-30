@@ -57,7 +57,7 @@ import android.widget.TextView;
 public class HistoryRecordFragment extends Fragment {
 	public static final int TYPE_FINISHED_PAYMENT_STATE_MOBILE_WECHAT = 101;
 	public static final int TYPE_FINISHED_PAYMENT_STATE_MOBILE_ALI = 102;
-	public static final int TYPE_FINISHED_PAYMENT_STATE_CASH = 103;
+	public static final int TYPE_FINISHED_PAYMENT_STATE_POS = 103;
 	public static final int TYPE_FINISHED_PAYMENT_STATE_ACCOUNT = 104;
 	public static final int TYPE_UNFINISHED_PAYMENT_STATE_LEAVE = 105;
 	public static final int NO_HISTORY_PARKING_RECORD =201;
@@ -71,8 +71,6 @@ public class HistoryRecordFragment extends Fragment {
 	private TextView mEmptyNotifyTV;
 	private int mType;
 	private String mDate;
-	private DBAdapter mDBAdapter;
-	private String mParkingNumber = "P1234";
     private UserQueryTask mQueryTask = null;
     private ArrayList<HashMap<String, Object>> mList = new ArrayList<HashMap<String, Object>>();
     private ProgressDialog mProgressDialog = null;
@@ -183,12 +181,11 @@ public class HistoryRecordFragment extends Fragment {
 	                  HttpConnectionParams.SO_TIMEOUT, 5000); // 请求超时设置,"0"代表永不超时  
 			  httpClient.getParams().setIntParameter(  
 	                  HttpConnectionParams.CONNECTION_TIMEOUT, 5000);// 连接超时设置 
-			  String strurl = "http://" + this.getString(R.string.ip) + ":8080/itspark/collector/queryHistory/query";
+			  String strurl = "http://" + this.getString(R.string.ip) + "/itspark/collector/queryHistory/query";
 			  HttpPost request = new HttpPost(strurl);
 			  request.addHeader("Accept","application/json");
 			//request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
 			  request.setHeader("Content-Type", "application/json; charset=utf-8");
-			  JSONObject param = new JSONObject();
 			  HistoryRecordSearchInfo info = new HistoryRecordSearchInfo(); 
 			  CommonRequestHeader header = new CommonRequestHeader();
 			  header.addRequestHeader(CommonRequestHeader.REQUEST_COLLECTOR_QUERY_HISTORY_PARKING_RECORD_CODE,
@@ -251,11 +248,11 @@ public class HistoryRecordFragment extends Fragment {
 					Log.e("clientQuery","UserQueryTask doInBackground");  
 					String paymentState = null;
 			    	if(mType==TYPE_FINISHED_PAYMENT_STATE_MOBILE_WECHAT){
-			    		paymentState = "微信支付";
+			    		paymentState = "微信";
 			    	}else if(mType==TYPE_FINISHED_PAYMENT_STATE_MOBILE_ALI){
-			    		paymentState = "支付宝支付";
-			    	}else if(mType==TYPE_FINISHED_PAYMENT_STATE_CASH){
-			    		paymentState = "现金支付";
+			    		paymentState = "支付宝";
+			    	}else if(mType==TYPE_FINISHED_PAYMENT_STATE_POS){
+			    		paymentState = "pos机支付";
 			    	}else if(mType==TYPE_FINISHED_PAYMENT_STATE_ACCOUNT){
 			    		paymentState = "余额支付";
 			    	}else if(mType==TYPE_UNFINISHED_PAYMENT_STATE_LEAVE){
@@ -316,18 +313,20 @@ public class HistoryRecordFragment extends Fragment {
 		}
 		
 		public Integer convertPaymentPattern(String paymentPattern){
-			if("现金支付".equals(paymentPattern)){
-				return  1;
+			if("未付".equals(paymentPattern)){
+				return 0;
 			}else if("pos机支付".equals(paymentPattern)){
-				return 2;
-			}else if("微信支付".equals(paymentPattern)){
-				return 3;
-			}else if("支付宝支付".equals(paymentPattern)){
-				return 4;
+				return 1;
+			}else if("微信".equals(paymentPattern)){
+				return 12;//包括l微信支付、微信扫码支付、微信刷卡支付
+			}else if("支付宝".equals(paymentPattern)){
+				return 15;//包括支付宝支付、支付宝扫码支付、支付宝条码支付
 			}else if("余额支付".equals(paymentPattern)){
-				return 5;
+				return 8;
+			}else if("逃费".equals(paymentPattern)){
+				return 9;
 			}else{
-				return 6;
+				return -1;
 			}
 		}
 }

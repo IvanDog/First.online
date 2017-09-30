@@ -16,7 +16,7 @@
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1" 
-                android:background="#BFBFBF"
+                android:background="@drawable/button_selector"
                 android:text="@string/type_car"/>          
       </TableRow>
        <TableRow
@@ -30,7 +30,7 @@
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1" 
-                android:background="#BFBFBF"
+                android:background="@drawable/button_selector"
                 android:text="@string/type_bus"/>             
         </TableRow>
         <TableRow
@@ -44,7 +44,7 @@
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1" 
-                android:background="#BFBFBF"
+                android:background="@drawable/button_selector"
                 android:text="@string/type_truck"/>
         </TableRow>
 </TableLayout>

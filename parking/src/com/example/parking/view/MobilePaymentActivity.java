@@ -129,7 +129,6 @@ public class MobilePaymentActivity extends FragmentActivity {
         case R.id.tv_mobile_payment_card:  
         	mCardTitleTV.setSelected(true);  
         	mCardTitleTV.setBackgroundResource(R.color.orange);
-        	Toast.makeText(getApplicationContext(), "扫码收款功能开发中", Toast.LENGTH_SHORT).show();
             break;
         }  
     }
@@ -137,7 +136,7 @@ public class MobilePaymentActivity extends FragmentActivity {
 	private void changeFragment(int resId) {  
         if(resId==R.id.tv_mobile_payment_scan){
         	if(mPayType==PAYMENT_TYPE_ALIPAY){
-            	mPayTask = new UserPayTask("支付宝扫码支付");
+            	mPayTask = new UserPayTask("支付宝扫码付");
         	}else if(mPayType==PAYMENT_TYPE_WECHATPAY){
             	mPayTask = new UserPayTask("微信扫码支付");
         	}
@@ -193,7 +192,7 @@ public class MobilePaymentActivity extends FragmentActivity {
                 Bundle bundle = data.getExtras();  
                 mAuthCode = bundle.getString("result");
             	if(mPayType==PAYMENT_TYPE_ALIPAY){
-                	mPayTask = new UserPayTask("支付宝条码支付");
+                	mPayTask = new UserPayTask("支付宝条码付");
             	}else if(mPayType==PAYMENT_TYPE_WECHATPAY){
                 	mPayTask = new UserPayTask("微信刷卡支付");
             	}
@@ -222,11 +221,11 @@ public class MobilePaymentActivity extends FragmentActivity {
 		  info.setHeader(header);
 		  info.setParkNumber(mParkNumber);
 		  info.setLicensePlateNumber(mLicensePlateNumber);
-		  info.setParkingRecordID(String.valueOf(mParkingRecordID));
-		  info.setTradeRecordID(mTradeRecordID);
+		  info.setParkingRecordID(convertString(mParkingRecordID));
+		  info.setTradeRecordID(convertString(mTradeRecordID));
 		  info.setPaymentPattern(convertPayPattToInteger(paymentPattern));
-		  info.setPaidMoney(mPaidMoney);
-		  if(mPaymentPattern==6 || mPaymentPattern ==7){//“微信刷卡支付”或“支付宝条码支付”
+		  info.setPaidMoney(mPaidMoney.replace("元", ""));
+		  if(mPaymentPattern==6 || mPaymentPattern ==7){//“微信刷卡支付”或“支付宝条码付”
 			  info.setAuthCode(mAuthCode);
 		  }
 		  StringEntity se = new StringEntity(JacksonJsonUtil.beanToJson(info), "UTF-8");
@@ -365,18 +364,28 @@ public class MobilePaymentActivity extends FragmentActivity {
 				return 3;
 			}else if("微信扫码支付".equals(paymentPattern)){
 				return 4;
-			}else if("支付宝扫码支付".equals(paymentPattern)){
+			}else if("支付宝扫码付".equals(paymentPattern)){
 				return 5;
 			}else if("微信刷卡支付".equals(paymentPattern)){
 				return 6;
-			}else if("支付宝条码支付".equals(paymentPattern)){
+			}else if("支付宝条码付".equals(paymentPattern)){
 				return 7;
 			}else if("余额支付".equals(paymentPattern)){
 				return 8;
 			}else if("逃费".equals(paymentPattern)){
 				return 9;
-			}else{
+			}else if("未付".equals(paymentPattern)){
 				return 0;
+			}else{
+				return -1;
 			}
 		}
+	
+	public String convertString(String str){
+		if("null".equals(str)){ 
+			return "";
+		}else{
+			return str;
+		}
+	}
 }

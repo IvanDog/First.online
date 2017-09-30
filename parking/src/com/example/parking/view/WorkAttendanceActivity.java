@@ -162,7 +162,7 @@ public class WorkAttendanceActivity extends Activity {
             super.handleMessage(msg);
             switch (msg.what) {
                case EVENT_UPDATE_INFORMATION:
-            	   Log.e("clientRequest","EVENT_UPDATE_INFORMATION");
+            	   Log.e(LOG_TAG,"EVENT_UPDATE_INFORMATION");
            		   mParkNumberTV.setText("车场编号:" + readCollector("parkNumber"));
            		   mUserNumberTV.setText("工号:" + readCollector("collectorNumber"));
            		   mAttendanceWorkStartTimeTV.setText("上班时间:" + readCollector("workStartTime"));
@@ -172,11 +172,11 @@ public class WorkAttendanceActivity extends Activity {
             	   mLocationStateTV.setText("当前位置:" + (String)msg.obj);
             	   break;
                 case EVENT_DISPLAY_TIME_START:
-                    CharSequence sysTimeStrStart = DateFormat.format("HH:mm:ss", System.currentTimeMillis());
+                    CharSequence sysTimeStrStart = DateFormat.format("HH:mm", System.currentTimeMillis());
                     mAttendanceBT.setText("上班打卡\n" + sysTimeStrStart);
                     break;
                 case EVENT_DISPLAY_TIME_END:
-                    CharSequence sysTimeStrEnd = DateFormat.format("HH:mm:ss", System.currentTimeMillis());
+                    CharSequence sysTimeStrEnd = DateFormat.format("HH:mm", System.currentTimeMillis());
                     mAttendanceBT.setText("下班打卡\n" + sysTimeStrEnd);
                     break;
                 case EVENT_ATTENDANCE_START_SUCCESS:
@@ -372,7 +372,6 @@ public class WorkAttendanceActivity extends Activity {
    		  request.addHeader("Accept","application/json");
 		  //request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
 		  request.setHeader("Content-Type", "application/json; charset=utf-8");
-   		  JSONObject param = new JSONObject();
    		  TokenInfo info = new TokenInfo();
 		  CommonRequestHeader header = new CommonRequestHeader();
 		  header.addRequestHeader(CommonRequestHeader.REQUEST_COLLECTOR_GET_WORK_CODE, readAccount(), readToken());
@@ -469,7 +468,6 @@ public class WorkAttendanceActivity extends Activity {
 		  request.addHeader("Accept","application/json");
 		  //request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
 		  request.setHeader("Content-Type", "application/json; charset=utf-8");
-		  JSONObject param = new JSONObject();
 		  LocationInfo info = new LocationInfo();
 		  CommonRequestHeader header = new CommonRequestHeader();
 		  header.addRequestHeader(CommonRequestHeader.REQUEST_COLLECTOR_GET_LOCATION_STATE_CODE, readAccount(), readToken());
@@ -560,7 +558,6 @@ public class WorkAttendanceActivity extends Activity {
    		  request.addHeader("Accept","application/json");
 		  //request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
 		  request.setHeader("Content-Type", "application/json; charset=utf-8");
-   		  JSONObject param = new JSONObject();
    		  ClockInfo info = new ClockInfo();
 		  CommonRequestHeader header = new CommonRequestHeader();
 		  header.addRequestHeader(CommonRequestHeader.REQUEST_COLLECTOR_WORK_CLOCK_CODE, readAccount(), readToken());

@@ -4,12 +4,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 import com.example.parking.R;
-import com.example.parking.R.color;
-import com.example.parking.R.id;
-import com.example.parking.R.layout;
 
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -21,15 +17,11 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.text.format.DateFormat;
-import android.text.format.DateUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.DatePicker.OnDateChangedListener;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,12 +37,12 @@ public class ParkingHistorySearchActivity extends FragmentActivity {
     private static final String FILE_NAME_TOKEN = "save_pref_token";
 	private Fragment mFinishedPaymentStateMobileWechatFragment;
 	private Fragment mFinishedPaymentStateMobileAliFragment;
-	private Fragment mFinishedPaymentStateCashFragment;
+	private Fragment mFinishedPaymentStatePosFragment;
 	private Fragment mFinishedPaymentStateAccountFragment;
 	private Fragment mUnfinishedPaymentStateLeaveFragment;
 	private TextView mFinishedPaymentStateMobileWechatTV;
 	private TextView mFinishedPaymentStateMobileAliTV;
-	private TextView mFinishedPaymentStateCashTV;
+	private TextView mFinishedPaymentStatePosTV;
 	private TextView mFinishedPaymentStateAccountTV;
 	private TextView mUnfinishedPaymentStateLeaveTV;
 	//private Spinner mHistoryDateSP;
@@ -95,12 +87,12 @@ public class ParkingHistorySearchActivity extends FragmentActivity {
         setContentView(R.layout.activity_parking_history_search);
         mFinishedPaymentStateMobileWechatTV = (TextView) findViewById(R.id.tv_payment_state_finished_mobile_wechat_history);
         mFinishedPaymentStateMobileAliTV = (TextView) findViewById(R.id.tv_payment_state_finished_mobile_ali_history);
-        mFinishedPaymentStateCashTV = (TextView) findViewById(R.id.tv_payment_state_finished_cash_history);
+        mFinishedPaymentStatePosTV = (TextView) findViewById(R.id.tv_payment_state_finished_pos_history);
         mFinishedPaymentStateAccountTV = (TextView) findViewById(R.id.tv_payment_state_finished_account_history);
         mUnfinishedPaymentStateLeaveTV = (TextView) findViewById(R.id.tv_payment_state_unfinished_leave_history);
         mFinishedPaymentStateMobileWechatTV.setOnClickListener(mTabClickListener); 
         mFinishedPaymentStateMobileAliTV.setOnClickListener(mTabClickListener);
-        mFinishedPaymentStateCashTV.setOnClickListener(mTabClickListener); 
+        mFinishedPaymentStatePosTV.setOnClickListener(mTabClickListener); 
         mFinishedPaymentStateAccountTV.setOnClickListener(mTabClickListener); 
         mUnfinishedPaymentStateLeaveTV.setOnClickListener(mTabClickListener);
         mDisplayDateTV = (TextView)findViewById(R.id.tv_display_date); 
@@ -142,9 +134,9 @@ public class ParkingHistorySearchActivity extends FragmentActivity {
         }else if(resId==R.id.tv_payment_state_finished_mobile_ali_history){
         	mFinishedPaymentStateMobileAliFragment = new HistoryRecordFragment(TYPE_FINISHED_PAYMENT_STATE_MOBILE,date);  
         	transaction.replace(R.id.history_payment_container, mFinishedPaymentStateMobileAliFragment);
-        }else if(resId==R.id.tv_payment_state_finished_cash_history){
-        	mFinishedPaymentStateCashFragment = new HistoryRecordFragment(TYPE_FINISHED_PAYMENT_STATE_CASH,date);  
-        	transaction.replace(R.id.history_payment_container, mFinishedPaymentStateCashFragment);
+        }else if(resId==R.id.tv_payment_state_finished_pos_history){
+        	mFinishedPaymentStatePosFragment = new HistoryRecordFragment(TYPE_FINISHED_PAYMENT_STATE_CASH,date);  
+        	transaction.replace(R.id.history_payment_container, mFinishedPaymentStatePosFragment);
         }else if(resId==R.id.tv_payment_state_finished_account_history){
         	mFinishedPaymentStateAccountFragment = new HistoryRecordFragment(TYPE_FINISHED_PAYMENT_STATE_ACCOUNT,date);  
         	transaction.replace(R.id.history_payment_container, mFinishedPaymentStateAccountFragment);
@@ -160,8 +152,8 @@ public class ParkingHistorySearchActivity extends FragmentActivity {
         	transaction.hide(mFinishedPaymentStateMobileWechatFragment);
         }else if(mFinishedPaymentStateMobileAliFragment!=null){
         	transaction.hide(mFinishedPaymentStateMobileAliFragment);
-        }else if(mFinishedPaymentStateCashFragment!=null){
-        	transaction.hide(mFinishedPaymentStateCashFragment);
+        }else if(mFinishedPaymentStatePosFragment!=null){
+        	transaction.hide(mFinishedPaymentStatePosFragment);
         }else if(mFinishedPaymentStateAccountFragment!=null){
         	transaction.hide(mFinishedPaymentStateAccountFragment);
         }else if(mUnfinishedPaymentStateLeaveFragment!=null){
@@ -175,8 +167,8 @@ public class ParkingHistorySearchActivity extends FragmentActivity {
 		mFinishedPaymentStateMobileWechatTV.setBackgroundResource(R.color.gray);
 		mFinishedPaymentStateMobileAliTV.setSelected(false);  
 		mFinishedPaymentStateMobileAliTV.setBackgroundResource(R.color.gray);
-		mFinishedPaymentStateCashTV.setSelected(false);
-		mFinishedPaymentStateCashTV.setBackgroundResource(R.color.gray);
+		mFinishedPaymentStatePosTV.setSelected(false);
+		mFinishedPaymentStatePosTV.setBackgroundResource(R.color.gray);
 		mFinishedPaymentStateAccountTV.setSelected(false);
 		mFinishedPaymentStateAccountTV.setBackgroundResource(R.color.gray);
 		mUnfinishedPaymentStateLeaveTV.setSelected(false);  
@@ -190,9 +182,9 @@ public class ParkingHistorySearchActivity extends FragmentActivity {
         	mFinishedPaymentStateMobileAliTV.setSelected(true);  
         	mFinishedPaymentStateMobileAliTV.setBackgroundResource(R.color.orange);
             break;
-        case R.id.tv_payment_state_finished_cash_history:  
-        	mFinishedPaymentStateCashTV.setSelected(true);  
-        	mFinishedPaymentStateCashTV.setBackgroundResource(R.color.orange);
+        case R.id.tv_payment_state_finished_pos_history:  
+        	mFinishedPaymentStatePosTV.setSelected(true);  
+        	mFinishedPaymentStatePosTV.setBackgroundResource(R.color.orange);
             break;
         case R.id.tv_payment_state_finished_account_history:  
         	mFinishedPaymentStateAccountTV.setSelected(true);  

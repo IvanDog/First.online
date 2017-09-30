@@ -211,13 +211,13 @@
                     android:layout_height="50dp"
                     android:padding="3dp"
                     android:clickable="true"/>
-                <ImageView 
+<!--                 <ImageView 
                      android:id="@+id/iv_photo_second_arriving" 
                      android:src="@drawable/ic_photo_background_64px"
                      android:layout_width="50dp" 
                      android:layout_height="50dp"
                      android:padding="3dp"
-                     android:clickable="true"/>
+                     android:clickable="true"/> -->
             </LinearLayout>
        </LinearLayout>
         <LinearLayout 

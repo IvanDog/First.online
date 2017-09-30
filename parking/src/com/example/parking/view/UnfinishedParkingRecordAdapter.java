@@ -32,8 +32,11 @@ public class UnfinishedParkingRecordAdapter extends BaseAdapter {
      * @author Administrator 
      */  
     public final class Zujian{  
+    	private TextView licenseNumberTV; 
+    	private TextView startTimeTV;
+    	private TextView leaveTimeTV;
     	private TextView parkNumberTV;
-    	private TextView licensenumberTV; 
+    	private TextView paymentBillTV;
     }  
     @Override  
     public int getCount() {  
@@ -60,16 +63,22 @@ public class UnfinishedParkingRecordAdapter extends BaseAdapter {
         if(convertView==null){  
             zujian=new Zujian();  
             //获得组件，实例化组件  
-            convertView=layoutInflater.inflate(R.layout.list_parking_detail, null);  
-            zujian.parkNumberTV = (TextView)convertView.findViewById(R.id.tv_parkingnumber);  
-            zujian.licensenumberTV=(TextView)convertView.findViewById(R.id.tv_licenseplatenumber);  
+            convertView=layoutInflater.inflate(R.layout.list_unfinished_parking_detail, null);  
+            zujian.licenseNumberTV=(TextView)convertView.findViewById(R.id.tv_licensePlateNumber_unfinished); 
+            zujian.startTimeTV=(TextView)convertView.findViewById(R.id.tv_startTime_unfinished); 
+            zujian.leaveTimeTV = (TextView)convertView.findViewById(R.id.tv_leaveTime_unfinished); 
+            zujian.parkNumberTV = (TextView)convertView.findViewById(R.id.tv_park_number_unfinished);  
+            zujian.paymentBillTV = (TextView)convertView.findViewById(R.id.tv_payment_bill_unfinished);  
             convertView.setTag(zujian);  
         }else{  
             zujian=(Zujian)convertView.getTag();  
         }  
         //绑定数据  
+        zujian.licenseNumberTV.setText((String)data.get(position).get("licensePlateNumber"));
+        zujian.startTimeTV.setText((String)data.get(position).get("startTime"));
+        zujian.leaveTimeTV.setText((String)data.get(position).get("leaveTime"));
         zujian.parkNumberTV.setText((String)data.get(position).get("parkNumber"));
-        zujian.licensenumberTV.setText((String)data.get(position).get("licensePlateNumber"));
+        zujian.paymentBillTV.setText((String)data.get(position).get("expense"));
         return convertView;
     }  
 

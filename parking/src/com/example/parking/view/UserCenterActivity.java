@@ -24,8 +24,10 @@ import com.example.parking.R.drawable;
 import com.example.parking.R.id;
 import com.example.parking.R.layout;
 import com.example.parking.R.string;
+import com.example.parking.common.JacksonJsonUtil;
 import com.example.parking.info.CommonRequestHeader;
 import com.example.parking.info.CommonResponse;
+import com.example.parking.info.LogoutInfo;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -172,17 +174,18 @@ public class UserCenterActivity extends Activity {
                   HttpConnectionParams.SO_TIMEOUT, 5000); // 请求超时设置,"0"代表永不超时  
 		  httpClient.getParams().setIntParameter(  
                   HttpConnectionParams.CONNECTION_TIMEOUT, 5000);// 连接超时设置,"0"代表永不超时
-		  String strurl = "http://" + 	this.getString(R.string.ip) + ":8080/park/collector/userCenter/logout";
+		  String strurl = "http://" + 	this.getString(R.string.ip) + "/itspark/collector/userCenter/logout";
 		  HttpPost request = new HttpPost(strurl);
 		  request.addHeader("Accept","application/json");
 		  //request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
 		  request.setHeader("Content-Type", "application/json; charset=utf-8");
-		  JSONObject param = new JSONObject();
+		  LogoutInfo info = new LogoutInfo();
 		  CommonRequestHeader header = new CommonRequestHeader();
 		  header.addRequestHeader(CommonRequestHeader.REQUEST_COLLECTOR_LOGOUT_CODE, readAccount(), readToken());
-		  param.put("header", header);
-		  StringEntity se = new StringEntity(param.toString(), "UTF-8");
-		  request.setEntity(se);
+		  info.setHeader(header);
+		  StringEntity se = new StringEntity(JacksonJsonUtil.beanToJson(info), "UTF-8");
+		  Log.e(LOG_TAG,"clientLogin-> param is " + JacksonJsonUtil.beanToJson(info));
+		  request.setEntity( se);//发送数据
 		  try{
 			  HttpResponse httpResponse = httpClient.execute(request);//获得响应
 			  int code = httpResponse.getStatusLine().getStatusCode();
@@ -194,7 +197,7 @@ public class UserCenterActivity extends Activity {
 				  toastWrapper(res.getResMsg());
 				  if(resCode.equals("100")){
 					  return true;
-				  }else if(resCode.equals("201")){
+				  }else{
 					  return false;
 				  }
 			  }else{

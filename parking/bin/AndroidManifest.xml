@@ -46,9 +46,9 @@
         <activity
             android:name="com.example.parking.view.LoginActivity"
             android:theme="@style/LabelTheme"
-            android:label="录停车"
+            android:label="易停车"
             android:windowSoftInputMode="adjustPan|stateHidden" >
-            <intent-filter>  
+             <intent-filter>  
             <action android:name="android.intent.action.MAIN" />  
             <category android:name="android.intent.category.LAUNCHER" />  
             </intent-filter>
@@ -62,6 +62,15 @@
             android:name="com.example.parking.view.InputLicenseActivity"
             android:theme="@style/LabelTheme"
             android:label="输入牌照" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.parking.view.MainActivity" >
+            </meta-data>
+        </activity>
+         <activity
+            android:name="com.example.parking.view.UnfinishedParkingRecordActivity"
+            android:theme="@style/LabelTheme"
+            android:label="欠费缴纳" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.parking.view.MainActivity" >
@@ -130,6 +139,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.parking.view.LeavingActivity" >
             </meta-data>
+        </activity>
+        <activity 
+            android:name="com.example.parking.view.CaptureActivity"
+             android:label="二维码扫描" android:configChanges="orientation|keyboardHidden" 
+             android:screenOrientation="portrait" android:windowSoftInputMode="stateAlwaysHidden">
         </activity>
         <activity
             android:name="com.example.parking.view.MobilePaymentSuccessActivity"

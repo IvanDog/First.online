@@ -8,6 +8,7 @@ import com.example.parking.R.layout;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -41,59 +42,70 @@ public class CarTypeFragment extends Fragment{
         mCarTypeBT = (Button) getActivity().findViewById(R.id.bt_type_car);
         mBusTypeBT = (Button) getActivity().findViewById(R.id.bt_type_bus);
         mTruckTypeB = (Button) getActivity().findViewById(R.id.bt_type_truck);
-        mCarTypeBT.setOnClickListener(mOnClickListener);  
-        mBusTypeBT.setOnClickListener(mOnClickListener); 
-        mTruckTypeB.setOnClickListener(mOnClickListener);;
-    }
-
-    OnClickListener mOnClickListener = new OnClickListener() {  
-        @Override  
-        public void onClick(View v) {
-        	int resId = v.getId();
-            switch (resId) {  
-                case R.id.bt_type_car:
-                	if(mBusTypeBT.isSelected()){
+        mCarTypeBT.setOnClickListener(
+    	    new OnClickListener(){
+    		    public void onClick(View v) {
+            	    if(mCarTypeBT.isSelected()){
+            		    Log.e("yifan","1");
+                	    mCarTypeBT.setSelected(false);
+                	    ((InputLicenseActivity)getActivity()).setCarType(null);
+            	    }else{
+            		    Log.e("yifan","2");
+                	    if(mBusTypeBT.isSelected()){
                 		mBusTypeBT.setSelected(false);
-                		mBusTypeBT.setBackgroundColor(color.gray);
                 	}
                 	if(mTruckTypeB.isSelected()){
                 		mTruckTypeB.setSelected(false);
-                		mTruckTypeB.setBackgroundColor(color.gray);
                 	}
                 	mCarTypeBT.setSelected(true);
-                	mCarTypeBT.setBackgroundColor(color.orange);
                 	((InputLicenseActivity)getActivity()).setCarType(mCarTypeBT.getText().toString());
-                    break;  
-                case R.id.bt_type_bus:  
-                	if(mCarTypeBT.isSelected()){
-                		mCarTypeBT.setSelected(false);
-                		mCarTypeBT.setBackgroundColor(color.gray);
+            	}
+    		}
+        });
+    
+        mBusTypeBT.setOnClickListener(
+        	    new OnClickListener(){
+        		    public void onClick(View v) {
+                	    if(mBusTypeBT.isSelected()){
+                		    Log.e("yifan","1");
+                		    mBusTypeBT.setSelected(false);
+                    	    ((InputLicenseActivity)getActivity()).setCarType(null);
+                	    }else{
+                		    Log.e("yifan","2");
+                    	    if(mCarTypeBT.isSelected()){
+                    		mCarTypeBT.setSelected(false);
+                    	}
+                    	if(mTruckTypeB.isSelected()){
+                    		mTruckTypeB.setSelected(false);
+                    	}
+                    	mBusTypeBT.setSelected(true);
+                    	((InputLicenseActivity)getActivity()).setCarType(mBusTypeBT.getText().toString());
                 	}
-                	if(mTruckTypeB.isSelected()){
-                		mTruckTypeB.setSelected(false);
-                		mTruckTypeB.setBackgroundColor(color.gray);
+        		}
+        });
+    
+        mTruckTypeB.setOnClickListener(
+        	    new OnClickListener(){
+        		    public void onClick(View v) {
+                	    if(mTruckTypeB.isSelected()){
+                		    Log.e("yifan","1");
+                		    mTruckTypeB.setSelected(false);
+                    	    ((InputLicenseActivity)getActivity()).setCarType(null);
+                	    }else{
+                		    Log.e("yifan","2");
+                    	    if(mCarTypeBT.isSelected()){
+                    		    mCarTypeBT.setSelected(false);
+                    	    }
+                    	if(mBusTypeBT.isSelected()){
+                    		mBusTypeBT.setSelected(false);
+                    	}
+                    	mBusTypeBT.setSelected(true);
+                    	((InputLicenseActivity)getActivity()).setCarType(mTruckTypeB.getText().toString());
                 	}
-                	mBusTypeBT.setSelected(true);
-                	mBusTypeBT.setBackgroundColor(color.orange);
-                	((InputLicenseActivity)getActivity()).setCarType(mBusTypeBT.getText().toString());
-                    break;
-                case R.id.bt_type_truck:  
-                	if(mCarTypeBT.isSelected()){
-                		mCarTypeBT.setSelected(false);
-                		mCarTypeBT.setBackgroundColor(color.gray);
-                	}
-                	if(mBusTypeBT.isSelected()){
-                		mBusTypeBT.setSelected(false);
-                		mBusTypeBT.setBackgroundColor(color.gray);
-                	}
-                	mTruckTypeB.setSelected(true);
-                	mTruckTypeB.setBackgroundColor(color.orange);
-                	((InputLicenseActivity)getActivity()).setCarType(mTruckTypeB.getText().toString());
-                    break;
-               }
-        }  
-    };
-
+        		}
+        });
+    }
+    
     @Override
     public void onStart() {
         super.onStart();

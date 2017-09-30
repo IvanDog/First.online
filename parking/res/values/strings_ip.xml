@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Strings related to IP -->
-    <string name="ip">10.150.27.26:8080</string>
+    <string name="ip">10.150.27.33:8080</string>
 </resources>

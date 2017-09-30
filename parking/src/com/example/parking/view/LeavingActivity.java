@@ -105,6 +105,8 @@ public class LeavingActivity extends Activity {
 		mParkNumber=bundle.getString("parkNumber");
 		mLicensePlateNumber = bundle.getString("licensePlateNumber");
 		mCarType = bundle.getString("carType");
+        mParkingRecordID = bundle.getString("parkingRecordID");
+        mLeaveTime = bundle.getString("leaveTime");
 		//mLicensePlateNumberTV.setText("牌照:" + mLicensePlateNumber);
 		mStartTimeTV=(TextView)findViewById(R.id.tv_start_time_leaving);
 		mLeaveTimeTV=(TextView)findViewById(R.id.tv_leave_time_leaving);
@@ -115,7 +117,7 @@ public class LeavingActivity extends Activity {
 		mPosPaymentTypeRB=(RadioButton)findViewById(R.id.rb_pos_payment_leaving);
 		mPosPaymentTypeRB.setEnabled(false);
 		mAlipayPaymentTypeRB=(RadioButton)findViewById(R.id.rb_alipay_payment_leaving);
-		mAlipayPaymentTypeRB.setEnabled(false);
+		//mAlipayPaymentTypeRB.setEnabled(false);
 		mWechatpayPaymentRB=(RadioButton)findViewById(R.id.rb_wechatpay_payment_leaving);
 		mWechatpayPaymentRB.setEnabled(false);
 		mPaymentTypeRG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() { 
@@ -196,7 +198,7 @@ public class LeavingActivity extends Activity {
 	            	Toast.makeText(getApplicationContext(), (String)msg.obj, Toast.LENGTH_SHORT).show();
 	            	break;
                 case EVENT_DISPLAY_INFORMATION:
-                	mUserNumberTV.setText("工号:" + readCollector("parkNumber"));
+                	mUserNumberTV.setText("工号:" + readCollector("collectorNumber"));
                 	mLicensePlateNumberTV.setText("牌照:" + mLicensePlateNumber);
                 	mStartTimeTV.setText("入场：" + mStartTime);
                 	mLeaveTimeTV.setText("离场：" + mLeaveTime);
@@ -280,8 +282,10 @@ public class LeavingActivity extends Activity {
 		  }else if(mParkingRecordID!=null && !"".equals(mParkingRecordID)){
 			  info.setParkingRecordID(mParkingRecordID);
 		  }
-          CharSequence sysTimeStr = DateFormat.format("yyyy-MM-dd HH:mm:ss", System.currentTimeMillis());
-          mLeaveTime = sysTimeStr + "";
+		  if(mLeaveTime==null){
+	          CharSequence sysTimeStr = DateFormat.format("yyyy-MM-dd HH:mm:ss", System.currentTimeMillis());
+	          mLeaveTime = sysTimeStr + "";
+		  }
           info.setLeaveTime(mLeaveTime);
 		  StringEntity se = new StringEntity( JacksonJsonUtil.beanToJson(info), "UTF-8");
 		  Log.e(LOG_TAG,"clientQueryExpense-> param is " + JacksonJsonUtil.beanToJson(info));
@@ -389,7 +393,7 @@ public class LeavingActivity extends Activity {
 			  info.setParkingRecordID(String.valueOf(mParkingRecordID));
 			  info.setTradeRecordID(mTradeRecordID);
 			  info.setPaymentPattern(convertPayPattToInteger(paymentPattern));
-			  info.setPaidMoney(mExpense);
+			  info.setPaidMoney(mExpense.replace("元", ""));
 			  StringEntity se = new StringEntity(JacksonJsonUtil.beanToJson(info), "UTF-8");
 			  Log.e(LOG_TAG,"clientPay-> param is " + JacksonJsonUtil.beanToJson(info));
 			  request.setEntity(se);
@@ -474,11 +478,11 @@ public class LeavingActivity extends Activity {
 				return 3;
 			}else if("微信扫码支付".equals(paymentPattern)){
 				return 4;
-			}else if("支付宝扫码支付".equals(paymentPattern)){
+			}else if("支付宝扫码付".equals(paymentPattern)){
 				return 5;
 			}else if("微信刷卡支付".equals(paymentPattern)){
 				return 6;
-			}else if("支付宝条码支付".equals(paymentPattern)){
+			}else if("支付宝条码付".equals(paymentPattern)){
 				return 7;
 			}else if("余额支付".equals(paymentPattern)){
 				return 8;

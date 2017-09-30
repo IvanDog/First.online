@@ -162,12 +162,11 @@ public class ParkingSpaceActivity extends Activity {
                   HttpConnectionParams.SO_TIMEOUT, 5000); // 请求超时设置,"0"代表永不超时  
 		  httpClient.getParams().setIntParameter(  
                   HttpConnectionParams.CONNECTION_TIMEOUT, 5000);// 连接超时设置 
-		  String strurl = "http://" + this.getString(R.string.ip) + ":8080/itspark/collector/queryParkingSpace/query";
+		  String strurl = "http://" + this.getString(R.string.ip) + "/itspark/collector/queryParkingSpace/query";
 		  HttpPost request = new HttpPost(strurl);
 		  request.addHeader("Accept","application/json");
 			//request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
 		  request.setHeader("Content-Type", "application/json; charset=utf-8");
-		  JSONObject param = new JSONObject();
 		  ParkLotQueryInfo info = new ParkLotQueryInfo();
 		  CommonRequestHeader header = new CommonRequestHeader();
 		  header.addRequestHeader(CommonRequestHeader.REQUEST_COLLECTOR_QUERY_PARKING_SPACE_CODE, readAccount(), readToken());
@@ -183,6 +182,7 @@ public class ParkingSpaceActivity extends Activity {
 				  String strResult = EntityUtils.toString(httpResponse.getEntity());
 				  Log.e(LOG_TAG,"clientParkingQuery->strResult is " + strResult);
 				  CommonResponse res = new CommonResponse(strResult);
+				  toastWrapper(res.getResMsg());
 				  if(res.getResCode().equals("100")){
 					  mList = res.getDataList();
 					  mIdleLocationNumber = Integer.parseInt(String.valueOf(res.getPropertyMap().get("idleLocationNumber")));
@@ -293,6 +293,18 @@ public class ParkingSpaceActivity extends Activity {
         String str = pref.getString("collectorNumber", "");
         return str;
     }
+    
+	/**
+	 * 封装Toast
+	 * */
+	 private void toastWrapper(final String str) {
+	      runOnUiThread(new Runnable() {
+	          @Override
+	           public void run() {
+	               Toast.makeText(ParkingSpaceActivity.this, str, Toast.LENGTH_SHORT).show();
+	           }
+	      });
+	 }
     /*public List<Map<String, Object>> getData(){  
     List<Map<String, Object>> list=new ArrayList<Map<String,Object>>();  
     for (int i = 1; i <= MAX_LOCATION_SIZE; i++) {  

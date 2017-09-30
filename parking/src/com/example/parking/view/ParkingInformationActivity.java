@@ -322,7 +322,7 @@ public class ParkingInformationActivity extends Activity {
 	      info.setParkingLocation(mLocationNumberSP.getSelectedItem().toString());
 	      info.setCarType(mCarTypeSP.getSelectedItem().toString());
 	      info.setParkType(mParkingTypeSP.getSelectedItem().toString());
-	      info.setEnterTime(mStartTimeTV.getText().toString());
+	      info.setEnterTime(mStartTimeTV.getText().toString().replace("入场时间：", ""));
 	      info.setEnterImage(converImageToByte(mEnterImage));
 		  StringEntity se = new StringEntity( JacksonJsonUtil.beanToJson(info), "UTF-8");
 		  Log.e(LOG_TAG,"clientInsert-> param is " + JacksonJsonUtil.beanToJson(info));
