@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="carTypeArray">
+     <item>小客车</item>  
+     <item>大客车</item>  
+     <item>货车</item>  
+    </string-array>
+    <string-array name="historyDateArray">
+     <item>2017-04-24</item>  
+     <item>2017-04-25</item>  
+     <item>2017-04-26</item>  
+     <item>2017-04-27</item>  
+     <item>2017-04-28</item>  
+     <item>2017-04-29</item>  
+     <item>2017-04-30</item>  
+     <item>2017-05-01</item>  
+     <item>2017-05-02</item>  
+     <item>2017-05-03</item>
+    <item>2017-05-04</item>  
+     <item>2017-05-05</item>    
+    </string-array>
+    <string-array name="parkingLocationArray">
+     <item>1</item>  
+     <item>2</item>
+     <item>3</item>  
+     <item>4</item>  
+     <item>5</item>  
+     <item>6</item>  
+     <item>7</item>  
+     <item>8</item>  
+     <item>9</item>  
+     <item>10</item>    
+    </string-array>
+    <string-array name="parkingTypeArray">
+     <item>普通停车</item>  
+     <item>免费停车</item>  
+    </string-array>
+    <string-array name="paymentTypeArray">
+     <item>现金</item>  
+     <item>移动支付</item>    
+    </string-array>
+    <color name="blue">#99CCFF</color>
+    <color name="gray">#CCCCCC</color>
+    <color name="green">#99CC66</color>
+    <color name="orange">#E94509</color>
+    <color name="possible_result_points">#c0ffff00</color>
+    <color name="result_view">#b0000000</color>
+    <color name="viewfinder_mask">#60000000</color>
+    <color name="white">#FFFFFF</color>
+    <item name="about_version_code" type="id">false</item>
+    <item name="auto_focus" type="id"/>
+    <item name="decode" type="id"/>
+    <item name="decode_failed" type="id"/>
+    <item name="decode_succeeded" type="id"/>
+    <item name="encode_failed" type="id"/>
+    <item name="encode_succeeded" type="id"/>
+    <item name="gridview" type="id"/>
+    <item name="launch_product_query" type="id"/>
+    <item name="quit" type="id"/>
+    <item name="restart_preview" type="id"/>
+    <item name="return_scan_result" type="id"/>
+    <item name="search_book_contents_failed" type="id"/>
+    <item name="search_book_contents_succeeded" type="id"/>
+    <item name="split" type="id">false</item>
+    <item name="webview" type="id"/>
+    <string name="A">A</string>
+    <string name="Anhui">皖</string>
+    <string name="B">B</string>
+    <string name="Beijing">京</string>
+    <string name="C">C</string>
+    <string name="Chongqing">渝</string>
+    <string name="D">D</string>
+    <string name="E">E</string>
+    <string name="F">F</string>
+    <string name="Fujian">闽</string>
+    <string name="G">G</string>
+    <string name="Gansu">甘</string>
+    <string name="Guangdong">粤</string>
+    <string name="Guangxi">桂</string>
+    <string name="Guizhou">黔</string>
+    <string name="H">H</string>
+    <string name="Hainan">琼</string>
+    <string name="Hebei">冀</string>
+    <string name="Heilongjiang">黑</string>
+    <string name="Henan">豫</string>
+    <string name="Hubei">鄂</string>
+    <string name="Hunan">湘</string>
+    <string name="I">I</string>
+    <string name="J">J</string>
+    <string name="Jiangsu">苏</string>
+    <string name="Jiangxi">赣</string>
+    <string name="Jilin">吉</string>
+    <string name="K">K</string>
+    <string name="L">L</string>
+    <string name="Liaoning">辽</string>
+    <string name="M">M</string>
+    <string name="N">N</string>
+    <string name="Neimenggu">蒙</string>
+    <string name="Ningxia">宁</string>
+    <string name="O">O</string>
+    <string name="P">P</string>
+    <string name="Q">Q</string>
+    <string name="Qinghai">青</string>
+    <string name="R">R</string>
+    <string name="S">S</string>
+    <string name="Shandong">鲁</string>
+    <string name="Shanghai">沪</string>
+    <string name="Shanxi">晋</string>
+    <string name="Shanxixi">陕</string>
+    <string name="Sichuan">川</string>
+    <string name="T">T</string>
+    <string name="Tianjin">津</string>
+    <string name="U">U</string>
+    <string name="V">V</string>
+    <string name="W">W</string>
+    <string name="X">X</string>
+    <string name="Xinjiang">新</string>
+    <string name="Xizang">藏</string>
+    <string name="Y">Y</string>
+    <string name="Yunnan">云</string>
+    <string name="Z">Z</string>
+    <string name="Zhejiang">浙</string>
+    <string name="action_sign_in_register">注册</string>
+    <string name="action_sign_in_short">登录</string>
+    <string name="alipayPayment">支付宝</string>
+    <string name="app_name">录停车</string>
+    <string name="arrivingButton">车辆\n到达</string>
+    <string name="attendancelocation">天津市八里台工业园区</string>
+    <string name="attendanceworkendtime">下班时间 17:30</string>
+    <string name="attendanceworkstarttime">上班时间 9:00</string>
+    <string name="back">返回上级</string>
+    <string name="backspace">删</string>
+    <string name="button4">历史\n查询</string>
+    <string name="button5">考勤\n签到</string>
+    <string name="button6">个人\n中心</string>
+    <string name="camera">拍照</string>
+    <string name="can_not_find_version_name">找不到版本名</string>
+    <string name="cancelLeaving">返回</string>
+    <string name="cancelPrint">返回</string>
+    <string name="cancelresetpasswd">取消</string>
+    <string name="carType">小客车</string>
+    <string name="carTypeLeaving">车辆类型：小客车</string>
+    <string name="carTypePrint">车辆类型: 小型客车</string>
+    <string name="carTypeTitleArriving">车辆类型: </string>
+    <string name="cartype">类别</string>
+    <string name="chargeStandardPrint">收费依据:[2017]天津市停车收费1号文件</string>
+    <string name="charge_standard_fixed">收费依据:[2017]天津市停车收费1号文件</string>
+    <string name="confirmLeaving">确认离场</string>
+    <string name="confirmPaymentLeaving">确认订单</string>
+    <string name="confirmPrint">确认打印</string>
+    <string name="confirmresetpasswd">确定</string>
+    <string name="date">日期:2017.04.25</string>
+    <string name="dateTitle">日期：</string>
+    <string name="deleteimage">删除 </string>
+    <string name="eight">8</string>
+    <string name="error_email_required">请输入邮箱地址</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="error_incorrect_email">邮箱不存在</string>
+    <string name="error_incorrect_password">密码错误</string>
+    <string name="error_invalid_email">非法邮箱地址</string>
+    <string name="error_invalid_password">密码过短</string>
+    <string name="error_passwd_required">请输入密码</string>
+    <string name="escapeLeaving">逃费</string>
+    <string name="expenseLeaving">结算费用: 5元</string>
+    <string name="expenseTotalPrint">费用总计: 5元</string>
+    <string name="expense_fixed">5元</string>
+    <string name="feeScaleLeaving">收费标准: 5元/次</string>
+    <string name="feeScalePrint">收费标准: 5元/次</string>
+    <string name="fee_scale_fixed">5元/次</string>
+    <string name="five">5</string>
+    <string name="four">4</string>
+    <string name="free_expense_fixed">0元</string>
+    <string name="idleparkingnumber">空闲：8</string>
+    <string name="ip">10.150.27.33:8080</string>
+    <string name="leave">确认离场</string>
+    <string name="leaveTimePrint">离场时间: 2017.04.24 16:25:36</string>
+    <string name="leavingButton">车辆\n离开</string>
+    <string name="letter">字母</string>
+    <string name="licenseNumberLeaving">牌照: 津HG9025</string>
+    <string name="licensePlateNumberLeaving">车辆号：津HG9025</string>
+    <string name="licensePlateNumberPrint">车牌号:津HG9025</string>
+    <string name="licensePlateNumberTitle">牌照号码: </string>
+    <string name="location">地区</string>
+    <string name="locationNumberLeaving">泊位号：6</string>
+    <string name="locationNumberPrint">泊位号: 6</string>
+    <string name="location_state">考勤范围内</string>
+    <string name="locationstate">当前位置: 考勤范围内</string>
+    <string name="login_progress_signing_in">登录中…</string>
+    <string name="menu_forgot_password">找回密码</string>
+    <string name="messagecenter">消息中心</string>
+    <string name="mobile_payment_card">刷卡支付</string>
+    <string name="mobile_payment_scan">扫码支付</string>
+    <string name="mobile_payment_type_alipay">支付宝</string>
+    <string name="mobile_payment_type_wechatpay">微信</string>
+    <string name="netSettlementPayment">联网结算</string>
+    <string name="newpasswdtitle">修改密码:</string>
+    <string name="next">下一步</string>
+    <string name="nine">9</string>
+    <string name="number">数字</string>
+    <string name="ok">确定</string>
+    <string name="oldpasswdtitle">原密码:</string>
+    <string name="one">1</string>
+    <string name="park_name_fixed">易华录停车场</string>
+    <string name="park_number_fixed">P1234</string>
+    <string name="parkingInformation">停车信息</string>
+    <string name="parkingInformationTitleArriving">入场信息</string>
+    <string name="parkingLocation">001</string>
+    <string name="parkingLocationTitleArriving">泊位编号: </string>
+    <string name="parkingName">易华录停车场</string>
+    <string name="parkingNameLeaving">易华录停车场</string>
+    <string name="parkingNamePrint">停车场: 天津市津南区易华录停车场</string>
+    <string name="parkingNumber">车场编号：1234</string>
+    <string name="parkingNumberLeaving">车场编号：1234</string>
+    <string name="parkingNumberPrint">车场编号: P1234</string>
+    <string name="parkingSpaceButton">泊位\n管理</string>
+    <string name="parkingTimePrint">泊车时长: 2小时</string>
+    <string name="parkingType">普通停车</string>
+    <string name="parkingTypeLeaving">泊车类型：普通停车</string>
+    <string name="parkingTypePrint">泊车类型: 普通停车</string>
+    <string name="parkingTypeTitleArriving">停车类型: </string>
+    <string name="parkingdetails">泊位详情</string>
+    <string name="parknumber">车场编号:P1234</string>
+    <string name="paymentInformationTitle">结算信息</string>
+    <string name="paymentInformationTitleLeaving">收费信息: </string>
+    <string name="paymentSuccess">收款成功</string>
+    <string name="paymentSuccessNotify">恭喜您，成功收款5元！</string>
+    <string name="paymentTypeTitleLeaving">支付方式: </string>
+    <string name="payment_state_finished_account">余额支付</string>
+    <string name="payment_state_finished_mobile_ali">支付宝支付</string>
+    <string name="payment_state_finished_mobile_wechat">微信支付</string>
+    <string name="payment_state_finished_pos">POS机支付</string>
+    <string name="payment_state_unfinished_leave">逃费</string>
+    <string name="payment_success_notify_fixed">恭喜您，成功收款</string>
+    <string name="photoTitleArriving">入场图片: </string>
+    <string name="posPayment">pos机</string>
+    <string name="printLeaving">打印凭条</string>
+    <string name="printPreview">打印凭条</string>
+    <string name="printPreviewTitle">打印预览</string>
+    <string name="prompt_email">邮箱</string>
+    <string name="prompt_password">密码</string>
+    <string name="recordOfToday">今日记录</string>
+    <string name="renewpasswdtitle">确认密码:</string>
+    <string name="resetpasswd">重置密码</string>
+    <string name="scan">扫描牌照</string>
+    <string name="scan_text">将二维码放入框内</string>
+    <string name="search">查询</string>
+    <string name="seven">7</string>
+    <string name="six">6</string>
+    <string name="startTimePrint">入场时间: 2017.04.24 14:50:55</string>
+    <string name="superviseTelephonePrint">监督电话: 4008 110 630</string>
+    <string name="supervise_telephone_fixed">监督电话: 4008 110 630</string>
+    <string name="three">3</string>
+    <string name="timeLeaving">停车时长: 1:34:41</string>
+    <string name="totalparkingnumber">总数：10</string>
+    <string name="two">2</string>
+    <string name="type_bus">大客车</string>
+    <string name="type_car">小客车</string>
+    <string name="type_truck">货车</string>
+    <string name="unfinishedLeaving">未缴费</string>
+    <string name="userNumberLeaving">收费员: 101884</string>
+    <string name="userNumberPrint">收费员工号: 101884</string>
+    <string name="user_number_fixed">101884</string>
+    <string name="usercenter">用户中心</string>
+    <string name="usernumber">收费员工号:101884</string>
+    <string name="wechatpayPayment">微信</string>
+    <string name="work_end_location_fixed">天津市津南区八里台工业园区</string>
+    <string name="work_end_time_fixed">下班时间:17:30</string>
+    <string name="work_start_location_fixed">天津市津南区八里台工业园区</string>
+    <string name="work_start_time_fixed">上班时间:9:00</string>
+    <string name="work_time_fixed">9:00-17:30</string>
+    <string name="zero">0</string>
+    <style name="AppBaseTheme" parent="android:Theme.Holo.Light">
+        
+    </style>
+    <style name="AppTheme" parent="AppBaseTheme">
+        
+    </style>
+    <style name="CustomWindowTitleBackground">
+        <item name="android:background">#E94509</item>
+    </style>
+    <style name="LabelTheme" parent="android:Theme.Holo.Light">
+    <item name="android:windowTitleSize">50dp</item>
+    <item name="android:windowTitleBackgroundStyle">@style/CustomWindowTitleBackground</item>
+    <item name="android:actionBarStyle">@style/my_actionbar_style</item>
+    <item name="android:homeAsUpIndicator">@drawable/ic_keyboard_backspace_black_24dp</item> 
+    </style>
+    <style name="LoginFormContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">16dp</item>
+    </style>
+    <style name="my_actionbar_style" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">#E94509</item>
+         <item name="android:displayOptions">showTitle</item>
+    </style>
+</resources>

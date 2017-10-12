@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="/home/gouyifan/StudioProjects/parking/app/libs/jackson-core-2.5.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="19.1.0"
+        sha1="b2ece1bd57ac7b4c315b7505b65ac79cb1da4270">
+        <dex dex="/home/gouyifan/StudioProjects/parking/app/build/intermediates/pre-dexed/debug/jackson-core-2.5.0_f7d25908ae1332a1da37b9a194764c10ab3a82e1.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/gouyifan/StudioProjects/parking/app/libs/zxing.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="19.1.0"
+        sha1="e88c14e6e7daa0fa65172a62b54ee6a16ff4162d">
+        <dex dex="/home/gouyifan/StudioProjects/parking/app/build/intermediates/pre-dexed/debug/zxing_af2530a345bc244e622082604eaab07760471c89.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/gouyifan/StudioProjects/parking/app/libs/jackson-annotations-2.5.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="19.1.0"
+        sha1="a2a55a3375bc1cef830ca426d68d2ea22961190e">
+        <dex dex="/home/gouyifan/StudioProjects/parking/app/build/intermediates/pre-dexed/debug/jackson-annotations-2.5.0_64142c71f7141deb0ab2ce349ee8d2c00ed8467e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/gouyifan/StudioProjects/parking/app/libs/jackson-module-jaxb-annotations-2.5.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="19.1.0"
+        sha1="92209d3d0dba86b68d0e2dd6ae81f1f063d60570">
+        <dex dex="/home/gouyifan/StudioProjects/parking/app/build/intermediates/pre-dexed/debug/jackson-module-jaxb-annotations-2.5.0_4dcf417079aa96b532f30b24ed1973da899b9dc2.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/gouyifan/StudioProjects/parking/app/libs/AMap2DMap_4.2.0_AMapSearch_5.0.0_AMapLocation_3.4.0_20170427.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="19.1.0"
+        sha1="8f9ae59f123241ab1147d1ab4802d67aea7291ee">
+        <dex dex="/home/gouyifan/StudioProjects/parking/app/build/intermediates/pre-dexed/debug/AMap2DMap_4.2.0_AMapSearch_5.0.0_AMapLocation_3.4.0_20170427_4a7818892dec7ec8db6ae7d0a6d11bed01ab9707.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/gouyifan/adt-bundle-linux-x86_64/sdk/extras/android/m2repository/com/android/support/support-v4/18.0.0/support-v4-18.0.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="19.1.0"
+        sha1="44ec51e9d395a47aab135e5e1b556c0007442156">
+        <dex dex="/home/gouyifan/StudioProjects/parking/app/build/intermediates/pre-dexed/debug/support-v4-18.0.0_3addef9df5ebd2a11da9170ac04645938132fa83.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/gouyifan/StudioProjects/parking/app/libs/ddiapi.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="19.1.0"
+        sha1="29c9779692f2773b4a83b47d7257a60589899eb2">
+        <dex dex="/home/gouyifan/StudioProjects/parking/app/build/intermediates/pre-dexed/debug/ddiapi_af897786789b907012f7ef88085308d18fe2768a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/gouyifan/StudioProjects/parking/app/libs/jackson-databind-2.5.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="19.1.0"
+        sha1="489b7552dd3322b63f694122d16ce62c21c303b5">
+        <dex dex="/home/gouyifan/StudioProjects/parking/app/build/intermediates/pre-dexed/debug/jackson-databind-2.5.0_14a69944a53c9e89a2ff3164a1209aa5cb3f59ec.jar" />
+    </item>
+
+</items>

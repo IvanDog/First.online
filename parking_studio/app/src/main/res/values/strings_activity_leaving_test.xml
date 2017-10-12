@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Strings related to leaving -->
+    <string name="leave">确认离场</string>
+    <string name="back">返回上级</string>
+</resources>

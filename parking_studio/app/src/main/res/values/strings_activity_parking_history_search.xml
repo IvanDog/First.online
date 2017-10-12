@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dateTitle">日期：</string>
+    <string name="search">查询</string>
+    <string name="payment_state_finished_mobile_wechat">微信支付</string>
+    <string name="payment_state_finished_mobile_ali">支付宝支付</string>
+    <string name="payment_state_finished_pos">POS机支付</string>
+    <string name="payment_state_finished_account">余额支付</string>
+    <string name="payment_state_unfinished_leave">逃费</string>
+</resources>

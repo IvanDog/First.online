@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textSize="20sp" 
+        android:stretchColumns="*"
+        android:weightSum="3" >
+       <TableRow
+            android:id="@+id/carTypeTableRow1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:padding="30dp"
+            android:layout_weight="1" >
+            <Button
+                android:id="@+id/bt_type_car"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" 
+                android:background="@drawable/button_selector"
+                android:text="@string/type_car"/>          
+      </TableRow>
+       <TableRow
+            android:id="@+id/lcarTypeTableRow2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:padding="30dp"
+            android:layout_weight="1" >
+             <Button
+                android:id="@+id/bt_type_bus"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" 
+                android:background="@drawable/button_selector"
+                android:text="@string/type_bus"/>             
+        </TableRow>
+        <TableRow
+            android:id="@+id/carTypeTableRow3"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:padding="30dp"
+            android:layout_weight="1" >
+               <Button
+                android:id="@+id/bt_type_truck"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" 
+                android:background="@drawable/button_selector"
+                android:text="@string/type_truck"/>
+        </TableRow>
+</TableLayout>

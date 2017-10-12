@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Strings related to arriving -->
+    <string name="printPreviewTitle">打印预览</string>
+    <string name="userNumberPrint">收费员工号: 101884</string>
+    <string name="parkingNamePrint">停车场: 天津市津南区易华录停车场</string>
+    <string name="parkingNumberPrint">车场编号: P1234</string>
+    <string name="locationNumberPrint">泊位号: 6</string>
+    <string name="licensePlateNumberPrint">车牌号:津HG9025</string>
+    <string name="carTypePrint">车辆类型: 小型客车</string>
+    <string name="parkingTypePrint">泊车类型: 普通停车</string>
+    <string name="startTimePrint">入场时间: 2017.04.24 14:50:55</string>
+    <string name="leaveTimePrint">离场时间: 2017.04.24 16:25:36</string>
+    <string name="parkingTimePrint">泊车时长: 2小时</string>
+    <string name="expenseTotalPrint">费用总计: 5元</string>
+    <string name="feeScalePrint">收费标准: 5元/次</string>
+    <string name="chargeStandardPrint">收费依据:[2017]天津市停车收费1号文件</string>
+    <string name="superviseTelephonePrint">监督电话: 4008 110 630</string>
+    <string name="confirmPrint">确认打印</string>
+    <string name="cancelPrint">返回</string>
+</resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="parkingInformationTitleArriving">入场信息</string>
+        <string name="licensePlateNumberTitle">牌照号码: </string>
+    <string name="carTypeTitleArriving">车辆类型: </string>
+    <string name="carType">小客车</string>
+    <string name="parkingTypeTitleArriving">停车类型: </string>
+    <string name="parkingLocationTitleArriving">泊位编号: </string>
+    <string name="parkingType">普通停车</string>
+    <string name="parkingLocation">001</string>
+    <string name="parkingName">易华录停车场</string>
+    <string name="parkingNumber">车场编号：1234</string>
+    <string name="ok">确定</string>
+    <string name="camera">拍照</string>
+    <string name="photoTitleArriving">入场图片: </string>
+    <string name="deleteimage">删除 </string>
+</resources>

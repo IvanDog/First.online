@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/drawable-hdpi-v4/list_type.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/drawable-hdpi/list_type.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/drawable-hdpi-v4/ic_background_login_parking.jpg",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/drawable-hdpi/ic_background_login_parking.jpg"
+    }
+]

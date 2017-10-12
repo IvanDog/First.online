@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+        <ListView   
+            android:id="@+id/list_record_history"  
+            android:layout_width="match_parent"  
+            android:background="#EBEBEB"
+            android:divider="#E94509"        
+            android:dividerHeight="1dp" 
+            android:layout_height="wrap_content">            
+     </ListView>
+     <TextView
+        android:id="@+id/tv_notify_history_record_list_empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:text="无停车记录"
+        android:textColor="#FFFFFF"
+        android:textSize="25sp"
+        android:visibility="gone"/>
+</RelativeLayout>

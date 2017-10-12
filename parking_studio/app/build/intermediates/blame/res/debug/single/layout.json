@@ -1,0 +1,150 @@
+[
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/activity_parking_information.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/activity_parking_information.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/dialog_passwd_set.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/dialog_passwd_set.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/list_message_center.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/list_message_center.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/fragment_location.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/fragment_location.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/dialog_photo_entry.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/dialog_photo_entry.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/activity_user_center.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/activity_user_center.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/activity_parking_space_management.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/activity_parking_space_management.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/list_record_today.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/list_record_today.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/fragment_car_type.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/fragment_car_type.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/activity_capture.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/activity_capture.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/activity_mobile_payment.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/activity_mobile_payment.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/activity_parking_space_detail.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/activity_parking_space_detail.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/activity_input_license.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/activity_input_license.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/activity_main.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/activity_main.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/list_record_history.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/list_record_history.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/fragment_number.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/fragment_number.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/activity_leaving_test.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/activity_leaving_test.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/list_function_user_center.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/list_function_user_center.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/activity_reset_passwd.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/activity_reset_passwd.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/activity_capture_title.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/activity_capture_title.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/activity_parking_history_search.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/activity_parking_history_search.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/list_unfinished_parking_detail.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/list_unfinished_parking_detail.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/activity_login.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/activity_login.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/activity_payment_success.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/activity_payment_success.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/activity_unfinished_record.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/activity_unfinished_record.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/list_message_center_hide.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/list_message_center_hide.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/fragment_parking_space_detail.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/fragment_parking_space_detail.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/activity_today_record.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/activity_today_record.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/fragment_record_today.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/fragment_record_today.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/list_parking_detail.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/list_parking_detail.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/activity_message_center.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/activity_message_center.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/fragment_record_history.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/fragment_record_history.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/activity_leaving.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/activity_leaving.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/activity_print_preview.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/activity_print_preview.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/fragment_mobile_payment.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/fragment_mobile_payment.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/fragment_letter.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/fragment_letter.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/layout/activity_attendance.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/layout/activity_attendance.xml"
+    }
+]

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textSize="20sp" 
+        android:stretchColumns="*"
+        android:weightSum="4" >
+        <TableRow
+            android:id="@+id/numberTableRow1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" >
+            <Button
+                android:id="@+id/numberButton1"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" 
+                android:text="@string/one"/>
+            <Button
+                android:id="@+id/numberButton2"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" 
+                android:text="@string/two"/>
+             <Button
+                android:id="@+id/numberButton3"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" 
+                android:text="@string/three"/>
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/numberTableRow2"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" >
+            <Button
+                android:id="@+id/numberButton4"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" 
+                android:text="@string/four"/>
+             <Button
+                android:id="@+id/numberButton5"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" 
+                android:text="@string/five"/>
+             <Button
+                android:id="@+id/numberButton6"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" 
+                android:text="@string/six"/>
+        </TableRow>
+        
+        <TableRow
+            android:id="@+id/numberTableRow3"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" >
+            <Button
+                android:id="@+id/numberButton7"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" 
+               android:text="@string/seven"/>
+            <Button
+                android:id="@+id/numberButton8"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" 
+                android:text="@string/eight"/>
+             <Button
+                android:id="@+id/numberButton9"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" 
+                android:text="@string/nine"/>
+        </TableRow>
+  
+        <TableRow
+            android:id="@+id/numberTableRow4"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" >
+            <Button
+                android:id="@+id/numberButton0"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1" 
+                android:text="@string/zero"/>
+             <ImageButton
+                android:id="@+id/bt_back_space_number"
+                android:src="@drawable/ic_keyboard_backspace_black_24dp"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="2" 
+                android:scaleType="center"/>
+        </TableRow>
+</TableLayout>

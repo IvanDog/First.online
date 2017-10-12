@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Strings related to arriving -->
+    <string name="userNumberLeaving">收费员: 101884</string>
+    <string name="licenseNumberLeaving">牌照: 津HG9025</string>
+    <string name="timeLeaving">停车时长: 1:34:41</string>
+    <string name="feeScaleLeaving">收费标准: 5元/次</string>
+    <string name="expenseLeaving">结算费用: 5元</string>
+    <string name="paymentTypeTitleLeaving">支付方式: </string>
+    <string name="paymentInformationTitleLeaving">收费信息: </string>
+      <string name="posPayment">pos机</string>
+     <string name="netSettlementPayment">联网结算</string>
+      <string name="alipayPayment">支付宝</string>
+      <string name="wechatpayPayment">微信</string>
+    <string name="unfinishedLeaving">未缴费</string>
+     <string name="printLeaving">打印凭条</string>
+      <string name="confirmPaymentLeaving">确认订单</string>
+      <string name="escapeLeaving">逃费</string>
+      <string name="paymentInformationTitle">结算信息</string>
+</resources>

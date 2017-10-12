@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+        Base application theme, dependent on API level. This theme is replaced
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+    -->
+    <style name="AppBaseTheme" parent="android:Theme.Holo.Light">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style>
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+
+    <style name="LoginFormContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">16dp</item>
+    </style>
+     
+    <style name="CustomWindowTitleBackground">
+        <item name="android:background">#E94509</item>
+    </style>
+     
+    
+    <style name="my_actionbar_style" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">#E94509</item>
+         <item name="android:displayOptions">showTitle</item>
+    </style>
+    
+     <style name="LabelTheme" parent="android:Theme.Holo.Light">
+    <item name="android:windowTitleSize">50dp</item>
+    <item name="android:windowTitleBackgroundStyle">@style/CustomWindowTitleBackground</item>
+    <item name="android:actionBarStyle">@style/my_actionbar_style</item>
+    <item name="android:homeAsUpIndicator">@drawable/ic_keyboard_backspace_black_24dp</item> 
+    </style> 
+</resources>

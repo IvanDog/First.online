@@ -1,0 +1,22 @@
+[
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/drawable/edittext_background.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/drawable/edittext_background.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/drawable/button_selector.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/drawable/button_selector.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/drawable/button_style_un_pressed.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/drawable/button_style_un_pressed.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/drawable/button_style_pressed.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/drawable/button_style_pressed.xml"
+    },
+    {
+        "merged": "/home/gouyifan/StudioProjects/parking/app/build/intermediates/res/merged/debug/drawable/mm_title_back_btn.xml",
+        "source": "/home/gouyifan/StudioProjects/parking/app/src/main/res/drawable/mm_title_back_btn.xml"
+    }
+]

@@ -1,0 +1,107 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".LoginActivity" >
+
+    <!-- Login progress -->
+
+    <RelativeLayout
+        android:id="@+id/login_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:background = "@drawable/ic_background_login_parking"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/login_status_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="sans-serif-light"
+            android:text="@string/login_progress_signing_in"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </RelativeLayout>
+
+    <!-- Login form -->
+
+    <ScrollView
+        android:id="@+id/login_form"
+        android:background = "@drawable/ic_background_login_parking"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            style="@style/LoginFormContainer"
+            android:focusable="true"  
+            android:focusableInTouchMode="true"
+            android:layout_gravity="bottom"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+                android:hint="@string/prompt_email"
+                android:inputType="textEmailAddress"
+                android:maxLines="1"
+                android:singleLine="true" />
+
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+                android:hint="@string/prompt_password"
+                android:imeActionId="@+id/login"
+                android:imeActionLabel="@string/action_sign_in_short"
+                android:imeOptions="actionUnspecified"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                android:singleLine="true" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">      
+                <CheckBox
+                    android:id="@+id/ck_userinfo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="10dp"
+                    android:text="记住账号"/>
+                <CheckBox
+                    android:id="@+id/ck_password"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginRight="10dp"
+                    android:layout_alignParentRight="true"
+                    android:text="记住密码"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/sign_in_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:paddingLeft="32dp"
+                    android:paddingRight="32dp"
+                    android:text="@string/action_sign_in_short" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</merge>

@@ -1,0 +1,8 @@
+<resources>
+    <string name="resetpasswd">重置密码</string>
+    <string name="oldpasswdtitle">原密码:</string>
+    <string name="newpasswdtitle">修改密码:</string>
+    <string name="renewpasswdtitle">确认密码:</string>
+    <string name="confirmresetpasswd">确定</string>
+    <string name="cancelresetpasswd">取消</string>
+</resources>

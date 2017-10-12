@@ -1,0 +1,10 @@
+<resources>
+
+    <string name="parknumber">车场编号:P1234</string>
+    <string name="date">日期:2017.04.25</string>
+    <string name="usernumber">收费员工号:101884</string>
+    <string name="attendanceworkstarttime">上班时间 9:00</string>
+    <string name="attendanceworkendtime">下班时间 17:30</string>
+    <string name="attendancelocation">天津市八里台工业园区</string>
+    <string name="locationstate">当前位置: 考勤范围内</string>
+</resources>

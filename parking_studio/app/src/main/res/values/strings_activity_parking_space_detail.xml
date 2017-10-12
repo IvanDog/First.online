@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="parkingInformation">停车信息</string>
+    <string name="recordOfToday">今日记录</string>
+    <string name="parkingNameLeaving">易华录停车场</string>
+    <string name="parkingNumberLeaving">车场编号：1234</string>
+     <string name="licensePlateNumberLeaving">车辆号：津HG9025</string>
+     <string name="carTypeLeaving">车辆类型：小客车</string>
+    <string name="parkingTypeLeaving">泊车类型：普通停车</string>
+    <string name="locationNumberLeaving">泊位号：6</string>
+    <string name="confirmLeaving">确认离场</string>
+    <string name="cancelLeaving">返回</string>
+</resources>
