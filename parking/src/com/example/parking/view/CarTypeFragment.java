@@ -46,11 +46,9 @@ public class CarTypeFragment extends Fragment{
     	    new OnClickListener(){
     		    public void onClick(View v) {
             	    if(mCarTypeBT.isSelected()){
-            		    Log.e("yifan","1");
                 	    mCarTypeBT.setSelected(false);
                 	    ((InputLicenseActivity)getActivity()).setCarType(null);
             	    }else{
-            		    Log.e("yifan","2");
                 	    if(mBusTypeBT.isSelected()){
                 		mBusTypeBT.setSelected(false);
                 	}
@@ -99,7 +97,7 @@ public class CarTypeFragment extends Fragment{
                     	if(mBusTypeBT.isSelected()){
                     		mBusTypeBT.setSelected(false);
                     	}
-                    	mBusTypeBT.setSelected(true);
+                    	mTruckTypeB.setSelected(true);
                     	((InputLicenseActivity)getActivity()).setCarType(mTruckTypeB.getText().toString());
                 	}
         		}

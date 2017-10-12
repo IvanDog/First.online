@@ -150,8 +150,15 @@
                     android:layout_height="wrap_content"  
                     android:drawableRight="@drawable/ic_wechat_32px"
                     android:drawablePadding="5sp"
-                    android:text="@string/wechatpayPayment"/>  
-              </RadioGroup>  
+                    android:text="@string/wechatpayPayment"/>
+                   <RadioButton
+                    android:id="@+id/rb_unfinished_payment_leaving"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:drawableRight="@drawable/ic_unfinished_payment_32px"
+                     android:drawablePadding="5sp"
+                     android:text="@string/unfinishedLeaving"/>
+               </RadioGroup>
 
         </LinearLayout>
         <!-- <Button 

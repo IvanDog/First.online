@@ -77,14 +77,18 @@ public class MobilePaymentFragment extends Fragment {
 			mParkType =   intent.getExtras().getString("parkType");
 	    	mFragmentView = (View)mView.findViewById(R.id.fm_mobile_payment);
 	    	mPaymentIV=(ImageView)mView.findViewById(R.id.iv_two_dimensions_code);
-	    	if(mPayType==PAYMENT_TYPE_ALIPAY){
-	    		mFragmentView.setBackgroundResource(R.color.blue);
-	    		mPaymentIV.setBackgroundResource(R.drawable.ic_alipay_two_dimensions_code);
-	    	}else if(mPayType==PAYMENT_TYPE_WECHATPAY){
-	    		mFragmentView.setBackgroundResource(R.color.green);
-		    	Drawable drawable =new BitmapDrawable(createQRCodeBitmap(mCodeUrl));
-		    	mPaymentIV.setBackgroundDrawable(drawable);
-	    	}
+            if(mCodeUrl!=null){
+                if(mPayType==PAYMENT_TYPE_ALIPAY){
+                    mFragmentView.setBackgroundResource(R.color.blue);
+                    mPaymentIV.setBackgroundResource(R.drawable.ic_alipay_two_dimensions_code);
+                    Drawable drawable =new BitmapDrawable(createQRCodeBitmap(mCodeUrl));
+                    mPaymentIV.setBackgroundDrawable(drawable);
+                }else if(mPayType==PAYMENT_TYPE_WECHATPAY){
+                    mFragmentView.setBackgroundResource(R.color.green);
+                    Drawable drawable =new BitmapDrawable(createQRCodeBitmap(mCodeUrl));
+                    mPaymentIV.setBackgroundDrawable(drawable);
+                }
+            }
 	        return mView;
 	    }
 

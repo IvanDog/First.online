@@ -55,10 +55,12 @@ public class LeavingActivity extends Activity {
 	private static final int PAYMENT_TYPE_POS=201;
 	private static final int PAYMENT_TYPE_ALIPAY=202;
 	private static final int PAYMENT_TYPE_WECHATPAY=203;
+	private static final int PAYMENT_TYPE_UNFINISHED=204;
 	public static final int EVENT_DISPLAY_QUERY_RESULT = 301;
 	public static final int EVENT_DISPLAY_REQUEST_TIMEOUT = 302;
 	public static final int EVENT_DISPLAY_CONNECT_TIMEOUT = 303;
 	public static final int EVENT_DISPLAY_INFORMATION = 401;
+	public static final int EVENT_ORDER_SUCCESS = 501;
 	public static String LOG_TAG = "LeavingActivity";
     private static final String FILE_NAME_COLLECTOR = "save_pref_collector";
     private static final String FILE_NAME_TOKEN = "save_pref_token";
@@ -78,6 +80,7 @@ public class LeavingActivity extends Activity {
 	private RadioButton  mPosPaymentTypeRB;
 	private RadioButton mAlipayPaymentTypeRB;
 	private RadioButton mWechatpayPaymentRB;
+	private RadioButton mUnfinishedPaymentRB;
 	private int mPaymentType;
 	private String mCarType;
 	private String mParkType;
@@ -120,6 +123,8 @@ public class LeavingActivity extends Activity {
 		//mAlipayPaymentTypeRB.setEnabled(false);
 		mWechatpayPaymentRB=(RadioButton)findViewById(R.id.rb_wechatpay_payment_leaving);
 		mWechatpayPaymentRB.setEnabled(false);
+		mUnfinishedPaymentRB=(RadioButton)findViewById(id.rb_unfinished_payment_leaving);
+		//mUnfinishedPaymentRB.setEnabled(false);
 		mPaymentTypeRG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() { 
 			@Override 
 			public void onCheckedChanged(RadioGroup group, int checkedId){
@@ -129,7 +134,9 @@ public class LeavingActivity extends Activity {
 		        	mPaymentType = PAYMENT_TYPE_ALIPAY; 
 			    }else if (mWechatpayPaymentRB.getId() == checkedId){
 		        	mPaymentType = PAYMENT_TYPE_WECHATPAY; 
-			    }
+			    }else if (mUnfinishedPaymentRB.getId() == checkedId){
+					mPaymentType = PAYMENT_TYPE_UNFINISHED;
+				}
 			    mConfirmPaymentBT.setEnabled(true);
 			  } 
 			});
@@ -138,39 +145,8 @@ public class LeavingActivity extends Activity {
 		mConfirmPaymentBT.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v){
-				if(mPaymentType==PAYMENT_TYPE_POS){
-					//TODO
-				}else if(mPaymentType==PAYMENT_TYPE_ALIPAY){
-					Intent intent = new Intent(LeavingActivity.this,MobilePaymentActivity.class);
-					Bundle bundle = new Bundle();
-					bundle.putInt("paytype", PAYMENT_TYPE_ALIPAY);
-					bundle.putString("parkNumber", mParkNumber);
-            		bundle.putString("licensePlateNumber", mLicensePlateNumber);
-            		bundle.putString("parkingRecordID", mParkingRecordID);
-            		bundle.putString("tradeRecordID", mTradeRecordID);
-            		bundle.putString("carType", mCarType);
-            		bundle.putString("parkType", mParkType);
-            		bundle.putString("startTime", mStartTime);
-            		bundle.putString("leaveTime", mLeaveTime);
-            		bundle.putString("paidMoney", mExpense);
-					intent.putExtras(bundle);
-					startActivity(intent);
-				}else if(mPaymentType==PAYMENT_TYPE_WECHATPAY){
-					Intent intent = new Intent(LeavingActivity.this,MobilePaymentActivity.class);
-					Bundle bundle = new Bundle();
-					bundle.putInt("paytype", PAYMENT_TYPE_WECHATPAY);
-					bundle.putString("parkNumber", mParkNumber);
-            		bundle.putString("licensePlateNumber", mLicensePlateNumber);
-            		bundle.putString("parkingRecordID", mParkingRecordID);
-            		bundle.putString("tradeRecordID", mTradeRecordID);
-            		bundle.putString("carType", mCarType);
-            		bundle.putString("parkType", mParkType);
-            		bundle.putString("startTime", mStartTime);
-            		bundle.putString("leaveTime", mLeaveTime);
-            		bundle.putString("paidMoney", mExpense);
-            		intent.putExtras(bundle);
-					startActivity(intent);
-				}
+				mPayTask = new UserPayTask("未付");
+				mPayTask.execute((Void) null);
 			}
 		});
 		mQueryTask = new UserQueryTask();
@@ -205,6 +181,50 @@ public class LeavingActivity extends Activity {
             		mFeeScaleTV.setText("收费标准:" + mFeeScale);
                 	mExpenseTV.setText("费用总计:" + mExpense);
                 	break;
+				case EVENT_ORDER_SUCCESS:
+					if(mPaymentType==PAYMENT_TYPE_POS){
+						//TODO
+					}else if(mPaymentType==PAYMENT_TYPE_ALIPAY){
+						Intent intent = new Intent(LeavingActivity.this,MobilePaymentActivity.class);
+						Bundle bundle = new Bundle();
+						bundle.putInt("paytype", PAYMENT_TYPE_ALIPAY);
+						bundle.putString("parkNumber", mParkNumber);
+						bundle.putString("licensePlateNumber", mLicensePlateNumber);
+						bundle.putString("parkingRecordID", mParkingRecordID);
+						bundle.putString("tradeRecordID", mTradeRecordID);
+						bundle.putString("carType", mCarType);
+						bundle.putString("parkType", mParkType);
+						bundle.putString("startTime", mStartTime);
+						bundle.putString("leaveTime", mLeaveTime);
+						bundle.putString("paidMoney", mExpense);
+						bundle.putString("feeScale",mFeeScale);
+						intent.putExtras(bundle);
+						startActivity(intent);
+					}else if(mPaymentType==PAYMENT_TYPE_WECHATPAY){
+						Intent intent = new Intent(LeavingActivity.this,MobilePaymentActivity.class);
+						Bundle bundle = new Bundle();
+						bundle.putInt("paytype", PAYMENT_TYPE_WECHATPAY);
+						bundle.putString("parkNumber", mParkNumber);
+						bundle.putString("licensePlateNumber", mLicensePlateNumber);
+						bundle.putString("parkingRecordID", mParkingRecordID);
+						bundle.putString("tradeRecordID", mTradeRecordID);
+						bundle.putString("carType", mCarType);
+						bundle.putString("parkType", mParkType);
+						bundle.putString("startTime", mStartTime);
+						bundle.putString("leaveTime", mLeaveTime);
+						bundle.putString("paidMoney", mExpense);
+						bundle.putString("feeScale",mFeeScale);
+						intent.putExtras(bundle);
+						startActivity(intent);
+					}else if(mPaymentType==PAYMENT_TYPE_UNFINISHED){
+						Intent intentBack = new Intent();
+						intentBack.setAction("BackMain");
+						sendBroadcast(intentBack);
+						Intent intent = new Intent(LeavingActivity.this,MainActivity.class);
+						startActivity(intent);
+						finish();
+						break;
+					}
                 default:
                     break;
             }
@@ -337,7 +357,7 @@ public class LeavingActivity extends Activity {
     }
 	
     /**
-	 * 查询j结算信息Task
+	 * 查询结算信息Task
 	 * 
 	 */
 	public class UserQueryTask extends AsyncTask<Void, Void, Boolean> {
@@ -410,6 +430,7 @@ public class LeavingActivity extends Activity {
 			          mHandler.sendMessage(msg);
 					  if(res.getResCode().equals("100")){
 						  mPaymentPattern = paymentPattern;
+						  mTradeRecordID = (String)res.getPropertyMap().get("tradeRecordID");
 						  return true;
 					  }else{
 				          return false;
@@ -459,6 +480,11 @@ public class LeavingActivity extends Activity {
 
 			@Override
 			protected void onPostExecute(final Boolean success) {
+				if(success){
+					Message msg = new Message();
+					msg.what=EVENT_ORDER_SUCCESS;
+					mHandler.sendMessage(msg);
+				}
 				mPayTask = null;
 			}
 

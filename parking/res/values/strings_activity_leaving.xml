@@ -12,8 +12,9 @@
      <string name="netSettlementPayment">联网结算</string>
       <string name="alipayPayment">支付宝</string>
       <string name="wechatpayPayment">微信</string>
+    <string name="unfinishedLeaving">未缴费</string>
      <string name="printLeaving">打印凭条</string>
-      <string name="confirmPaymentLeaving">确认支付</string>
+      <string name="confirmPaymentLeaving">确认订单</string>
       <string name="escapeLeaving">逃费</string>
       <string name="paymentInformationTitle">结算信息</string>
 </resources>

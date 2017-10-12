@@ -30,24 +30,26 @@ public class MobilePaymentSuccessActivity extends Activity {
 	private Button mPrintPreviewBT;
 	private Button mPaymentSuccessBT;
     private String mLicensePlateNumber;
-	private int mLocationNumber;
+	//private int mLocationNumber;
 	private String mCarType;
 	private String mParkType;
 	private String mStartTime;
 	private String mLeaveTime;
 	private String mExpense;
+    private String mFeeScale;
 	@Override  
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);  
         setContentView(R.layout.activity_payment_success);
     	Intent intent = getIntent();
     	mLicensePlateNumber=intent.getExtras().getString("licenseplate");
- 		mLocationNumber = intent.getExtras().getInt("locationnumber");
+ 		//mLocationNumber = intent.getExtras().getInt("locationnumber");
  		mCarType =  intent.getExtras().getString("cartype");
  		mParkType = intent.getExtras().getString("parktype");
  		mStartTime = intent.getExtras().getString("starttime");
  		mLeaveTime = intent.getExtras().getString("leavetime");
 		mExpense=intent.getExtras().getString("expense");
+        mFeeScale = intent.getExtras().getString("feescale");
  		mPaymentSuccessNotifyTV=(TextView)findViewById(R.id.tv_payment_success_notify);
  		mPaymentSuccessNotifyTV.setText(this.getString(R.string.payment_success_notify_fixed) + mExpense);
         mPrintPreviewBT=(Button)findViewById(R.id.bt_print_preview_mobile_payment_success);
@@ -59,12 +61,14 @@ public class MobilePaymentSuccessActivity extends Activity {
         		Bundle bundle = new Bundle();
         		bundle.putInt("paytype", PAYMENT_TYPE_MOBILE);
         		bundle.putString("licenseplate", mLicensePlateNumber);
-        		bundle.putInt("locationnumber", mLocationNumber);
+        		//bundle.putInt("locationnumber", mLocationNumber);
         		bundle.putString("cartype", mCarType);
         		bundle.putString("parktype", mParkType);
         		bundle.putString("starttime", mStartTime);
         		bundle.putString("leavetime", mLeaveTime);
         		bundle.putString("expense", mExpense);
+                bundle.putString("expense", mExpense);
+                bundle.putString("feescale", mFeeScale);
         		intent.putExtras(bundle);
         		startActivity(intent);
         	}

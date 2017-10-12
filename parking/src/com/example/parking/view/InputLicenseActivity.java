@@ -295,6 +295,7 @@ public class InputLicenseActivity extends FragmentActivity {
 					Intent arrivingIntent = new Intent(InputLicenseActivity.this,ParkingInformationActivity.class);
 					Bundle arrivingBundle = new Bundle();
 					arrivingBundle.putString("licensePlateNumber",mLicensePlateET.getText().toString());
+					arrivingBundle.putString("carType", mCarType);
 					arrivingIntent.putExtras(arrivingBundle);
 					startActivity(arrivingIntent);
 	            	break;
@@ -393,6 +394,7 @@ public class InputLicenseActivity extends FragmentActivity {
 					  if(res.getPropertyMap().get("parkingEnterID")!=null){
 						  mParkingEnterID = (String)res.getPropertyMap().get("parkingEnterID");
 					  }
+                      mUnfinishedFlag = 0;
 					  return true;
 				  }else if(resCode.equals("204")){
 					  mUnFinishedRecordList = res.getDataList();

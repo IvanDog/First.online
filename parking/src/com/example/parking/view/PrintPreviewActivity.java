@@ -47,7 +47,7 @@ public class PrintPreviewActivity extends Activity {
 	private TextView mChargeStandardTV;
 	private TextView mSuperviseTelephoneTV;
 	private int mPayType;
-	private int mLocationNumber;
+	//private int mLocationNumber;
 	private String mCarType;
 	private String mParkType;
 	private String mStartTime;
@@ -70,14 +70,14 @@ public class PrintPreviewActivity extends Activity {
 		mUserNumberTV = (TextView) findViewById(R.id.tv_user_number_print);
 		mUserNumberTV.setText("工号:" + readCollector("collectorNumber"));
 		mLicensePlateNumber=bundle.getString("licenseplate");
-		mLocationNumber = bundle.getInt("locationnumber");
+		//mLocationNumber = bundle.getInt("locationnumber");
 		mCarType=bundle.getString("cartype");
 		mParkType=bundle.getString("parktype");
 		mStartTime=bundle.getString("starttime");
 		mLeaveTime=bundle.getString("leavetime");
 		mExpense=bundle.getString("expense");
 		mUserNumberTV=(TextView)findViewById(R.id.tv_user_number_print);
-		mLocationNumberTV=(TextView)findViewById(R.id.tv_location_number_print);
+		//mLocationNumberTV=(TextView)findViewById(R.id.tv_location_number_print);
 		mLicenseNumberTV=(TextView)findViewById(R.id.tv_license_number_print);
 		mCarTypeTV=(TextView)findViewById(R.id.tv_car_type_print);
 		mParkTypeTV=(TextView)findViewById(R.id.tv_parking_type_print);
@@ -86,13 +86,13 @@ public class PrintPreviewActivity extends Activity {
 		mExpenseTotalTV=(TextView)findViewById(R.id.tv_expense_total_print);
 		mFeeScaleTV=(TextView)findViewById(R.id.tv_fee_scale_print);
 		mLicenseNumberTV.setText("车牌号:" + mLicensePlateNumber);
-		mLocationNumberTV.setText("泊位号:" + mLocationNumber);
+		//mLocationNumberTV.setText("泊位号:" + mLocationNumber);
     	mCarTypeTV.setText("车辆类型:" + mCarType);
         mParkTypeTV.setText("泊车类型:" + mParkType);
         mStartTimeTV.setText("入场时间:" + mStartTime);
         mLeaveTimeTV.setText("离场时间:" + mLeaveTime);
 		mExpenseTotalTV.setText("费用总计:" + mExpense);
-		mFeeScaleTV.setText("收费标准:" +readCollector("feeScale"));
+		mFeeScaleTV.setText("收费标准:" +bundle.getString("feescale"));
 		mChargeStandardTV=(TextView)findViewById(R.id.tv_charge_standard_print);
 		mChargeStandardTV.setText(readCollector("chargeStandard"));
 		mSuperviseTelephoneTV=(TextView)findViewById(R.id.tv_supervise_telephone_print);
@@ -116,18 +116,12 @@ public class PrintPreviewActivity extends Activity {
 		mCancelPrintBT.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v){
-				if(mPayType==PAYMENT_TYPE_CASH || mPayType == PAYMENT_TYPE_NETWORK){
-                    Intent intentBack = new Intent();
-                    intentBack.setAction("BackMain");
-                    sendBroadcast(intentBack);
-					Intent intent = new Intent(PrintPreviewActivity.this,MainActivity.class);
-					startActivity(intent);
-					finish();
-				}else if(mPayType==PAYMENT_TYPE_MOBILE || mPayType==PAYMENT_TYPE_ALIPAY || mPayType==PAYMENT_TYPE_WECHATPAY){
-					Intent intent = new Intent(PrintPreviewActivity.this,MobilePaymentSuccessActivity.class);
-					startActivity(intent);
-					finish();
-				}
+				Intent intentBack = new Intent();
+				intentBack.setAction("BackMain");
+				sendBroadcast(intentBack);
+				Intent intent = new Intent(PrintPreviewActivity.this,MainActivity.class);
+				startActivity(intent);
+				finish();
 			}
 		});
         getActionBar().setDisplayHomeAsUpEnabled(true);

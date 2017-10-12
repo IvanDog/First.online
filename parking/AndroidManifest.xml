@@ -67,15 +67,6 @@
                 android:value="com.example.parking.view.MainActivity" >
             </meta-data>
         </activity>
-         <activity
-            android:name="com.example.parking.view.UnfinishedParkingRecordActivity"
-            android:theme="@style/LabelTheme"
-            android:label="欠费缴纳" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.parking.view.MainActivity" >
-            </meta-data>
-        </activity>
         <activity
             android:name="com.example.parking.view.ParkingInformationActivity"
             android:theme="@style/LabelTheme"
@@ -119,6 +110,15 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.parking.view.MainActivity" >
+            </meta-data>
+        </activity>
+        <activity
+            android:name="com.example.parking.view.UnfinishedParkingRecordActivity"
+            android:theme="@style/LabelTheme"
+            android:label="欠费缴纳" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.parking.view.InputLicenseActivity" >
             </meta-data>
         </activity>
         <activity

@@ -13,12 +13,12 @@
         android:background="#EBEBEB"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
-        android:paddingTop="5dp"
-        android:paddingBottom="8dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
         android:gravity="center"
         android:textSize="14sp"
         android:textColor="@color/orange"/>
-      <LinearLayout 
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="2"
@@ -31,6 +31,8 @@
             android:background="#EBEBEB"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
             android:layout_gravity="center_horizontal"
             android:textSize="12sp"
             android:textColor="@color/orange"/>
@@ -41,6 +43,8 @@
             android:background="#EBEBEB"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
             android:layout_gravity="center_horizontal"
             android:textSize="12sp"
             android:textColor="@color/orange"/>
@@ -53,6 +57,8 @@
        android:background="#EBEBEB"
        android:paddingLeft="2dp"
        android:paddingRight="2dp"
+       android:paddingTop="3dp"
+       android:paddingBottom="3dp"
        android:gravity="center"
        android:textSize="12sp"
        android:textColor="@color/orange"/>
@@ -64,6 +70,8 @@
        android:background="#EBEBEB"
        android:paddingLeft="5dp"
        android:paddingRight="5dp"
+       android:paddingTop="3dp"
+       android:paddingBottom="3dp"
        android:gravity="center"
        android:textSize="12sp"
        android:textColor="@color/orange"/>

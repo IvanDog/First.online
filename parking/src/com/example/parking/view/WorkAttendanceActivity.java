@@ -172,11 +172,11 @@ public class WorkAttendanceActivity extends Activity {
             	   mLocationStateTV.setText("当前位置:" + (String)msg.obj);
             	   break;
                 case EVENT_DISPLAY_TIME_START:
-                    CharSequence sysTimeStrStart = DateFormat.format("HH:mm", System.currentTimeMillis());
+                    CharSequence sysTimeStrStart = DateFormat.format("HH:mm:ss", System.currentTimeMillis());
                     mAttendanceBT.setText("上班打卡\n" + sysTimeStrStart);
                     break;
                 case EVENT_DISPLAY_TIME_END:
-                    CharSequence sysTimeStrEnd = DateFormat.format("HH:mm", System.currentTimeMillis());
+                    CharSequence sysTimeStrEnd = DateFormat.format("HH:mm:ss", System.currentTimeMillis());
                     mAttendanceBT.setText("下班打卡\n" + sysTimeStrEnd);
                     break;
                 case EVENT_ATTENDANCE_START_SUCCESS:

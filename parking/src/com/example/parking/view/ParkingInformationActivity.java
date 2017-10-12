@@ -52,6 +52,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -66,11 +67,14 @@ public class ParkingInformationActivity extends Activity {
 	public static final int EVENT_DISPLAY_CONNECT_TIMEOUT = 303;
 	public static String LOG_TAG = "ParkingInformationActivity";
 	private String mLicensePlateNumber;
+	private String mCarType;
 	private TextView mParkNameTV;
 	private TextView mParkNumberTV;
-	private Spinner mCarTypeSP;
+	private TextView mCarTypeTV;
+	//private Spinner mCarTypeSP;
 	private Spinner mParkingTypeSP;
-	private Spinner mLocationNumberSP;
+	private EditText mParkingLocationET;
+	//private Spinner mLocationNumberSP;
 	private TextView mLicensePlateNumberTV;
 	private TextView mStartTimeTV;
 	private Button mOkBT;
@@ -89,14 +93,18 @@ public class ParkingInformationActivity extends Activity {
 		mParkNumberTV = (TextView) findViewById(R.id.tv_parking_number);
 		mParkNumberTV.setText("车场编号:" + readCollector("parkNumber"));
 		mParkNameTV.setText(readCollector("parkName"));
-		mCarTypeSP = (Spinner) findViewById(R.id.sp_car_type);
+		//mCarTypeSP = (Spinner) findViewById(R.id.sp_car_type);
+		mCarTypeTV = (TextView) findViewById(id.tv_car_type);
 		mParkingTypeSP = (Spinner) findViewById(R.id.sp_parking_type);
-		mLocationNumberSP = (Spinner) findViewById(R.id.sp_parking_location);
+		//mLocationNumberSP = (Spinner) findViewById(R.id.sp_parking_location);
+		mParkingLocationET = (EditText) findViewById(id.et_parking_location);
 		mLicensePlateNumberTV = (TextView) findViewById(R.id.tv_license_plate_number);
 		Intent intent = getIntent();
 		Bundle bundle = intent.getExtras();
 		mLicensePlateNumber = bundle.getString("licensePlateNumber");
 		mLicensePlateNumberTV.setText(mLicensePlateNumber);
+		mCarType = bundle.getString("carType");
+		mCarTypeTV.setText(mCarType);
 		mStartTimeTV=(TextView) findViewById(R.id.tv_start_time_arriving);
 		new TimeThread().start();
 		mOkBT=(Button) findViewById(R.id.bt_confirm_arriving);
@@ -123,26 +131,30 @@ public class ParkingInformationActivity extends Activity {
 		mEnterImageIV.setOnClickListener(new Button.OnClickListener(){
 			@Override
 			public void onClick(View v){
-				LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
-				View imgEntryView = inflater.inflate(R.layout.dialog_photo_entry, null); // 加载自定义的布局文件
-				final AlertDialog dialog = new AlertDialog.Builder(ParkingInformationActivity.this).create();
-				ImageView img = (ImageView)imgEntryView.findViewById(R.id.iv_large_image);
-				Button deleteBT = (Button)imgEntryView.findViewById(R.id.bt_delete_image);
-				img.setImageBitmap(mEnterImage);
-				dialog.setView(imgEntryView); // 自定义dialog
-				dialog.show();
-				imgEntryView.setOnClickListener(new OnClickListener() {
-				    public void onClick(View paramView) {
-				        dialog.cancel();
-				    }
-			    });
-				deleteBT.setOnClickListener(new OnClickListener() {
-				    public void onClick(View paramView) {
-				    	mEnterImage = null;
-				    	mEnterImageIV.setImageResource(drawable.ic_photo_background_64px);
-				        dialog.cancel();
-				    }
-			    });
+				if(mEnterImage!=null){
+					LayoutInflater inflater = LayoutInflater.from(getApplicationContext());
+					View imgEntryView = inflater.inflate(R.layout.dialog_photo_entry, null); // 加载自定义的布局文件
+					final AlertDialog dialog = new AlertDialog.Builder(ParkingInformationActivity.this).create();
+					ImageView img = (ImageView)imgEntryView.findViewById(R.id.iv_large_image);
+					Button deleteBT = (Button)imgEntryView.findViewById(R.id.bt_delete_image);
+					img.setImageBitmap(mEnterImage);
+					dialog.setView(imgEntryView); // 自定义dialog
+					dialog.show();
+					imgEntryView.setOnClickListener(new OnClickListener() {
+						public void onClick(View paramView) {
+							dialog.cancel();
+						}
+					});
+					deleteBT.setOnClickListener(new OnClickListener() {
+						public void onClick(View paramView) {
+							mEnterImage = null;
+							mEnterImageIV.setImageResource(drawable.ic_photo_background_64px);
+							dialog.cancel();
+						}
+					});
+				}else{
+					Toast.makeText(getApplicationContext(), "请添加图片",Toast.LENGTH_SHORT).show();
+				}
 			}
         });
 		getActionBar().setDisplayHomeAsUpEnabled(true); 
@@ -319,8 +331,10 @@ public class ParkingInformationActivity extends Activity {
 	      info.setHeader(header);
 	      info.setParkNumber(readCollector("parkNumber"));
 	      info.setLicensePlateNumber(mLicensePlateNumber);
-	      info.setParkingLocation(mLocationNumberSP.getSelectedItem().toString());
-	      info.setCarType(mCarTypeSP.getSelectedItem().toString());
+	      //info.setParkingLocation(mLocationNumberSP.getSelectedItem().toString());
+		  info.setParkingLocation(mParkingLocationET.getText().toString());
+	      //info.setCarType(mCarTypeSP.getSelectedItem().toString());
+		  info.setCarType(mCarType);
 	      info.setParkType(mParkingTypeSP.getSelectedItem().toString());
 	      info.setEnterTime(mStartTimeTV.getText().toString().replace("入场时间：", ""));
 	      info.setEnterImage(converImageToByte(mEnterImage));

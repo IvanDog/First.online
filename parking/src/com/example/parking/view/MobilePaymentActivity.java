@@ -23,7 +23,7 @@ import com.example.parking.common.JacksonJsonUtil;
 import com.example.parking.info.CommonRequestHeader;
 import com.example.parking.info.CommonResponse;
 import com.example.parking.info.PaymentInfo;
-
+import com.example.parking.info.QueryResultInfo;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -52,6 +52,8 @@ public class MobilePaymentActivity extends FragmentActivity {
 	public static final int EVENT_DISPLAY_REQUEST_TIMEOUT = 302;
 	public static final int EVENT_DISPLAY_CONNECT_TIMEOUT = 303;
 	public static final int EVENT_SCAN_MODE = 304;
+    public static final int EVENT_QUERY_RESULT = 401;
+    public static final int EVENT_PAYMENT_SUCCESS = 402;
 	    
     private static final String FILE_NAME_COLLECTOR = "save_pref_collector";
     private static final String FILE_NAME_TOKEN = "save_pref_token";
@@ -75,6 +77,7 @@ public class MobilePaymentActivity extends FragmentActivity {
 	private String mCodeUrl;
 	private String mAuthCode;
 	private UserPayTask mPayTask = null;
+    private UserQueryResultTask mQueryResultTask = null;
 	private OnClickListener mTabClickListener = new OnClickListener() {
         @Override  
         public void onClick(View v) {  
@@ -102,6 +105,7 @@ public class MobilePaymentActivity extends FragmentActivity {
 		mLeaveTime =   intent.getExtras().getString("leaveTime");
 		mPaidMoney =   intent.getExtras().getString("paidMoney");
 		mParkType =   intent.getExtras().getString("parkType");
+		mFeeScale = intent.getExtras().getString("feeScale");
         setContentView(R.layout.activity_mobile_payment);
         mScanTitleTV = (TextView) findViewById(R.id.tv_mobile_payment_scan);
         mCardTitleTV = (TextView) findViewById(R.id.tv_mobile_payment_card);
@@ -205,7 +209,7 @@ public class MobilePaymentActivity extends FragmentActivity {
 	 * 发起支付
 	 * */
 	public boolean clientPay(String paymentPattern) throws ParseException, IOException, JSONException{
-		Log.e("clientUpdatePaymentPattern","enter clientUpdatePaymentPattern");  
+		Log.e(LOG_TAG,"clientPay->enter clientUpdatePaymentPattern");  
 		HttpClient httpClient = new DefaultHttpClient();
 		  httpClient.getParams().setIntParameter(  
                   HttpConnectionParams.SO_TIMEOUT, 5000); // 请求超时设置,"0"代表永不超时  
@@ -225,7 +229,7 @@ public class MobilePaymentActivity extends FragmentActivity {
 		  info.setTradeRecordID(convertString(mTradeRecordID));
 		  info.setPaymentPattern(convertPayPattToInteger(paymentPattern));
 		  info.setPaidMoney(mPaidMoney.replace("元", ""));
-		  if(mPaymentPattern==6 || mPaymentPattern ==7){//“微信刷卡支付”或“支付宝条码付”
+		  if(convertPayPattToInteger(paymentPattern)==6 || convertPayPattToInteger(paymentPattern) ==7){//“微信刷卡支付”或“支付宝条码付”
 			  info.setAuthCode(mAuthCode);
 		  }
 		  StringEntity se = new StringEntity(JacksonJsonUtil.beanToJson(info), "UTF-8");
@@ -297,9 +301,12 @@ public class MobilePaymentActivity extends FragmentActivity {
 		@Override
 		protected void onPostExecute(final Boolean success) {
 			if(success){
-			    Message msg = new Message();
-			    msg.what=EVENT_SCAN_MODE;
-			    mHandler.sendMessage(msg);
+			    Message msgScan = new Message();
+				msgScan.what=EVENT_SCAN_MODE;
+			    mHandler.sendMessage(msgScan);
+				Message msgQuery = new Message();
+				msgQuery.what=EVENT_QUERY_RESULT;
+				mHandler.sendMessage(msgQuery);
 			}
 			mPayTask = null;
 		}
@@ -309,7 +316,107 @@ public class MobilePaymentActivity extends FragmentActivity {
 			mPayTask = null;
 		}
 	}
-	
+
+    /**
+     * 发起支付结果查询
+     * */
+    public boolean clientQueryResult(String orderID) throws ParseException, IOException, JSONException{
+        Log.e(LOG_TAG,"clientQueryResult->enter clientUpdatePaymentPattern");
+        HttpClient httpClient = new DefaultHttpClient();
+        httpClient.getParams().setIntParameter(
+                HttpConnectionParams.SO_TIMEOUT, 5000); // 请求超时设置,"0"代表永不超时
+        httpClient.getParams().setIntParameter(
+                HttpConnectionParams.CONNECTION_TIMEOUT, 5000);// 连接超时设置
+        String strurl = "http://" + this.getString(R.string.ip) + "/itspark/collector/leavingInformation/queryResult";
+        HttpPost request = new HttpPost(strurl);
+        request.addHeader("Accept","application/json");
+        request.setHeader("Content-Type", "application/json; charset=utf-8");
+        QueryResultInfo info = new QueryResultInfo();
+        CommonRequestHeader header = new CommonRequestHeader();
+        header.addRequestHeader(CommonRequestHeader.REQUEST_COLLECTOR_PAY_CODE, readAccount(), readToken());
+        info.setHeader(header);
+        info.setOrderID(orderID);
+        StringEntity se = new StringEntity(JacksonJsonUtil.beanToJson(info), "UTF-8");
+        Log.e(LOG_TAG,"clientQueryResult-> param is " + JacksonJsonUtil.beanToJson(info));
+        request.setEntity(se);
+        try{
+            HttpResponse httpResponse = httpClient.execute(request);//获得响应
+            int code = httpResponse.getStatusLine().getStatusCode();
+            if(code==HttpStatus.SC_OK){
+                String strResult = EntityUtils.toString(httpResponse.getEntity());
+                Log.e(LOG_TAG,"clientQueryResult->strResult is " + strResult);
+                CommonResponse res = new CommonResponse(strResult);
+                if(res.getResCode().equals("100")){
+                    return true;
+                }else{
+                    return false;
+                }
+            }else{
+                Log.e(LOG_TAG, "clientQueryResult->error code is " + Integer.toString(code));
+                return false;
+            }
+        }catch(InterruptedIOException e){
+            if(e instanceof ConnectTimeoutException){
+                Message msg = new Message();
+                msg.what=EVENT_DISPLAY_CONNECT_TIMEOUT;
+                msg.obj= "连接超时";
+                mHandler.sendMessage(msg);
+            }else if(e instanceof InterruptedIOException){
+                Message msg = new Message();
+                msg.what=EVENT_DISPLAY_REQUEST_TIMEOUT;
+                msg.obj="请求超时";
+                mHandler.sendMessage(msg);
+            }
+        }finally{
+            httpClient.getConnectionManager().shutdown();
+        }
+        return false;
+    }
+
+    /**
+     * 查询支付结果Task
+     *
+     */
+    public class UserQueryResultTask extends AsyncTask<Void, Void, Boolean> {
+        private String ordrID = null;
+        public UserQueryResultTask(String ordrID){
+            this.ordrID = ordrID;
+        }
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try{
+                Log.e(LOG_TAG,"UserQueryResultTask->doInBackground");
+                int queryCount = 20;
+                while(queryCount-->0){
+                    if(clientQueryResult(ordrID)){
+                        return true;
+                    }
+                    Thread.sleep(3000);
+                }
+                return clientQueryResult(ordrID);
+            }catch(Exception e){
+                Log.e(LOG_TAG,"UserQueryResultTask->exists exception ");
+                e.printStackTrace();
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(final Boolean success) {
+            if(success){
+			    Message msg = new Message();
+			    msg.what=EVENT_PAYMENT_SUCCESS;
+			    mHandler.sendMessage(msg);
+            }
+            mQueryResultTask = null;
+        }
+
+        @Override
+        protected void onCancelled() {
+            mQueryResultTask = null;
+        }
+    }
+
 	private Handler mHandler = new Handler() {
         @Override
         public void handleMessage (Message msg) {
@@ -331,6 +438,23 @@ public class MobilePaymentActivity extends FragmentActivity {
 	               	transaction.replace(R.id.mobile_payment_container, mPaymentFragment);
 	                transaction.commit();//一定要记得提交事务  
 	            	break;
+                case EVENT_QUERY_RESULT:
+                    mQueryResultTask = new UserQueryResultTask(mTradeRecordID);
+                    mQueryResultTask.execute((Void) null);
+                    break;
+                case EVENT_PAYMENT_SUCCESS:
+                    Intent intent = new Intent(MobilePaymentActivity.this, MobilePaymentSuccessActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("licenseplate", mLicensePlateNumber);
+                    bundle.putString("cartype", mCarType);
+                    bundle.putString("parktype", mParkType);
+                    bundle.putString("starttime", mStartTime);
+                    bundle.putString("leavetime", mLeaveTime);
+                    bundle.putString("expense", mPaidMoney);
+					bundle.putString("feescale",mFeeScale);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    break;
                 default:
                     break;
             }
