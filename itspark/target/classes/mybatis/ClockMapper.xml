@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ehl.itspark.data.dao.ClockDao">
+  <resultMap id="clockMap" type="com.ehl.itspark.data.entity.ClockEntity">
+    <id column="C_ID" jdbcType="INTEGER" property="id" />
+    <result column="C_NO" jdbcType="VARCHAR" property="no"/>
+    <result column="C_PARK_NO" jdbcType="VARCHAR" property="parkNo" />
+    <result column="C_EMPLOYEE_NO" jdbcType="VARCHAR" property="employeeNo" />
+    <result column="C_TYPE" jdbcType="INTEGER" property="type" />
+    <result column="C_CLOCK_TIME" jdbcType="TIMESTAMP" property="clockTime"/>
+    <result column="C_LOCATION_STATE" jdbcType="INTEGER" property="locationState" />
+  </resultMap>
+  
+	<insert id="save" parameterType="hashmap">
+		INSERT INTO t_clock (C_NO,C_PARK_NO,C_EMPLOYEE_NO,C_TYPE,C_CLOCK_TIME,C_LOCATION_STATE) 
+		VALUES(
+		#{no, jdbcType=VARCHAR},
+		#{parkNo, jdbcType=VARCHAR},
+		#{employeeNo, jdbcType=VARCHAR},
+		#{type, jdbcType=INTEGER},
+		#{clockTime, jdbcType=TIMESTAMP},
+		#{locationState, jdbcType=INTEGER}
+		)	
+	</insert>
+</mapper>

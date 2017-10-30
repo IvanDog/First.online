@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ehl.itspark.data.dao.CarDao">
+  <resultMap id="carMap" type="com.ehl.itspark.data.entity.CarEntity">
+    <id column="C_ID" jdbcType="INTEGER" property="id" />
+    <result column="C_PLATE" jdbcType="VARCHAR" property="plate" />
+    <result column="C_VIN" jdbcType="VARCHAR" property="vin" />
+    <result column="C_ENGIN_NO" jdbcType="VARCHAR" property="engineNo" />
+    <result column="C_OWNER_NO" jdbcType="VARCHAR" property="ownerNo" />
+     <result column="C_CAR_TYPE" jdbcType="VARCHAR" property="carType" />
+  </resultMap>
+  
+  <select id="count" parameterType="hashmap" resultType="long">
+		select count(*) <include refid="pageFind"/>
+	</select>
+	
+  <select id="findAll" parameterType="hashmap" resultMap="carMap">
+		<include refid="PaginationCommonMapper.pagingStart"/>
+			select  C_ID, C_PLATE, C_VIN, C_ENGIN_NO, C_OWNER_NO,C_CAR_TYPE <include refid="pageFind"/> 			
+		<include refid="PaginationCommonMapper.pagingEnd"/>
+	</select>
+	
+	<sql id="pageFind">
+		from t_car t 
+        <where>
+        	<if test="plate != null and plate != ''">and t.C_PLATE = #{plate, jdbcType=VARCHAR}</if>
+        	<if test="carType != null and carType != ''">and t.C_CAR_TYPE = #{carType, jdbcType=VARCHAR}</if>
+        	<if test="ownerNo != null and ownerNo != '' ">and t.C_OWNER_NO = #{ownerNo, jdbcType=VARCHAR}</if>
+        </where>
+        order by t.c_id desc
+	</sql>
+  
+  <delete id="deleteByPlate" parameterType="hashmap">
+    delete from t_car
+    where C_PLATE = #{plate, jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="save" parameterType="hashmap">
+    insert into t_car (C_ID, C_PLATE, C_VIN, 
+      C_ENGIN_NO, C_OWNER_NO, C_CAR_TYPE)
+    values (#{id,jdbcType=INTEGER}, #{plate,jdbcType=VARCHAR}, #{vin,jdbcType=VARCHAR}, 
+      #{engineNo,jdbcType=VARCHAR}, #{ownerNo,jdbcType=VARCHAR}, #{carType,jdbcType=VARCHAR})
+  </insert>
+  
+  <update id="updateByPlate" parameterType="hashmap">
+    update t_car
+    set C_VIN = #{vin,jdbcType=VARCHAR},
+      C_ENGIN_NO = #{engineNo,jdbcType=VARCHAR},
+      C_OWNER_NO = #{ownerNo,jdbcType=VARCHAR}
+    where C_PLATE = #{plate,jdbcType=VARCHAR} and C_CAR_TYPE = #{carType,jdbcType=VARCHAR}
+  </update>
+  
+</mapper>

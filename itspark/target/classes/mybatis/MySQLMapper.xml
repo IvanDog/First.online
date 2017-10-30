@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- Common Mapper -->
+<mapper namespace="PaginationCommonMapper">
+	<!-- Paging Start -->
+	<sql id="pagingStart"> </sql>
+	
+	<!-- Paging End -->
+	<sql id="pagingEnd">
+		<if test="start != null and end != null">
+			limit ${start}, ${end}
+		</if>
+	</sql>
+
+	<!-- query result Sort information -->
+	<sql id="sortInfo">
+		<if test=" sort != null and sort != '' and dir != null and dir != ''">
+			ORDER BY ${sort} ${dir}
+		</if>
+	</sql>
+</mapper>

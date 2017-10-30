@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ehl.itspark.data.dao.ShiftworkDao">
+	<resultMap id="workMap" type="com.ehl.itspark.data.entity.ShiftworkEntity">
+		<id column="C_ID" property="id"/>
+		<result column="C_NAME" property="name"/>
+		<result column="C_SIGN_IN" property="signIn"/>
+		<result column="C_SIGNIN_REMAIN" property="signInRemain"/>
+		<result column="C_SIGN_OUT" property="signOut"/>
+		<result column="C_SIGNOUT_REMAIN" property="signOutRemain"/>
+		<result column="C_SIGN_LON" property="signLon"/>
+		<result column="C_SIGN_LAT" property="signLat"/>
+		<result column="C_ADDR_RADIUS" property="addrRadius"/>
+		<result column="C_PARK_NO" property="parkNo"/>
+		<result column="C_PARK_NAME" property="parkName"/>
+	</resultMap>
+	
+	<insert id="save" parameterType="hashmap">
+		insert into t_shiftwork(C_NAME,C_SIGN_IN,C_SIGNIN_REMAIN,C_SIGN_OUT,C_SIGNOUT_REMAIN,C_SIGN_LON,C_SIGN_LAT,C_ADDR_RADIUS,C_PARK_NO,C_PARK_NAME) 
+		values(
+		#{name,jdbcType=VARCHAR},
+		#{signIn,jdbcType=TIME},
+		#{signInRemain,jdbcType=INTEGER},
+		#{signOut,jdbcType=TIME},
+		#{signOutRemain,jdbcType=INTEGER},
+		#{signLon,jdbcType=DOUBLE},
+		#{signLat,jdbcType=DOUBLE},
+		#{addrRadius,jdbcType=INTEGER},
+		#{parkNo,jdbcType=VARCHAR},
+		#{parkName,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<update id="update" parameterType="hashmap">
+		update t_shiftwork set 
+		C_NAME=#{name,jdbcType=VARCHAR},
+		C_SIGN_IN=#{signIn,jdbcType=TIME},
+		C_SIGNIN_REMAIN=#{signInRemain,jdbcType=INTEGER},
+		C_SIGN_OUT=#{signOut,jdbcType=TIME},
+		C_SIGNOUT_REMAIN=#{signOutRemain,jdbcType=INTEGER},
+		C_SIGN_LON=#{signLon,jdbcType=DOUBLE},
+		C_SIGN_LAT=#{signLat,jdbcType=DOUBLE},
+		C_ADDR_RADIUS=#{addrRadius,jdbcType=INTEGER},
+		C_PARK_NO=#{parkNo,jdbcType=VARCHAR},
+		C_PARK_NAME=#{parkName,jdbcType=VARCHAR} 
+		where C_ID=#{id,jdbcType=INTEGER}
+	</update>
+	
+	<delete id="deleteById" parameterType="hashmap">
+		delete from t_shiftwork where C_ID=#{id,jdbcType=INTEGER}
+	</delete>
+	
+	<select id="findById" parameterType="hashmap" resultMap="workMap">
+		select C_ID, C_NAME,C_SIGN_IN,C_SIGNIN_REMAIN,C_SIGN_OUT,C_SIGNOUT_REMAIN,C_SIGN_LON,C_SIGN_LAT,C_ADDR_RADIUS,C_PARK_NO,C_PARK_NAME from t_shiftwork  where C_ID=#{id,jdbcType=INTEGER}
+	</select>
+	
+	<select id="count" parameterType="hashmap" resultType="long">
+		select count(*) <include refid="pageFind"/>
+	</select>
+	
+	<select id="findList" parameterType="hashmap" resultMap="workMap">
+		<include refid="PaginationCommonMapper.pagingStart"/>
+		select C_ID, C_NAME,C_SIGN_IN,C_SIGNIN_REMAIN,C_SIGN_OUT,C_SIGNOUT_REMAIN,C_SIGN_LON,C_SIGN_LAT,C_ADDR_RADIUS,C_PARK_NO,C_PARK_NAME <include refid="pageFind"/>
+		<include refid="PaginationCommonMapper.pagingEnd"/>
+	</select>
+	
+	<sql id="pageFind">
+		from t_shiftwork 
+        <where>
+        	<if test="id != null">and c_id = #{id, jdbcType=INTEGER}</if>
+        	<if test="name != null and name != '' ">and C_NAME = #{name, jdbcType=VARCHAR}</if>
+        </where>
+        order by c_id desc
+	</sql>
+</mapper>

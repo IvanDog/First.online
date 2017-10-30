@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ehl.itspark.data.dao.PersonDao">
+	 
+	<resultMap type="com.ehl.itspark.data.entity.PersonEntity" id="personMap">
+		<id column="C_ID" jdbcType="INTEGER" property="id"/>
+		<result column="C_NO" jdbcType="VARCHAR" property="no"/>
+		<result column="C_NAME" jdbcType="VARCHAR" property="name"/>
+		<result column="C_IDENTIFY" jdbcType="VARCHAR" property="iden"/>
+		<result column="C_PHOTO" jdbcType="BLOB" typeHandler="org.apache.ibatis.type.BlobTypeHandler" property="photo"/>
+		<result column="C_PHONE" jdbcType="VARCHAR" property="phone"/>
+		<result column="C_POST_NO" jdbcType="INTEGER" property="postNo"/>
+		<result column="C_POST_NAME" jdbcType="VARCHAR" property="postName"/>
+		<result column="C_PARK_NO" jdbcType="INTEGER" property="parkNo"/>
+		<result column="C_PARK_NAME" jdbcType="VARCHAR" property="parkName"/>
+	</resultMap>
+	
+	<insert id="save" parameterType="hashmap">
+		INSERT INTO t_person (C_NO,C_NAME,C_IDENTIFY,C_PHOTO,C_PHONE,C_POST_NO,C_POST_NAME,C_PARK_NO,C_PARK_NAME) 
+		VALUES(
+		#{no, jdbcType=VARCHAR},
+		#{name, jdbcType=VARCHAR},
+		#{iden, jdbcType=VARCHAR},
+		#{photo, jdbcType=BLOB,typeHandler=org.apache.ibatis.type.BlobTypeHandler},
+		#{phone, jdbcType=VARCHAR},
+		#{postNo, jdbcType=VARCHAR},
+		#{postName, jdbcType=VARCHAR},
+		#{parkNo, jdbcType=VARCHAR},
+		#{parkName, jdbcType=VARCHAR}
+		)
+	</insert>
+	<update id="update" parameterType="hashmap">
+		UPDATE t_person
+		<trim prefix="set" suffixOverrides=","> 
+			<if test="name != null and name != ''">C_NAME=#{name, jdbcType=VARCHAR},</if>
+			<if test="iden != null and iden != ''">C_IDENTIFY=#{iden, jdbcType=VARCHAR},</if>
+			<if test="photo != null ">C_PHOTO=#{photo, jdbcType=BLOB,typeHandler=org.apache.ibatis.type.BlobTypeHandler},</if>
+			<if test="phone != null and phone != ''">C_PHONE=#{phone, jdbcType=VARCHAR},</if>
+			<if test="postNo != null and postNo != ''">C_POST_NO=#{postNo, jdbcType=VARCHAR},</if>
+			<if test="postName != null and postName != ''">C_POST_NAME=#{postName, jdbcType=VARCHAR},</if>
+			<if test="parkNo != null and parkNo != ''">C_PARK_NO=#{parkNo, jdbcType=VARCHAR},</if>
+			<if test="parkName != null and parkName != ''">C_PARK_NAME=#{parkName, jdbcType=VARCHAR},</if>
+		</trim>
+		WHERE C_NO=#{no, jdbcType=VARCHAR}
+	</update>
+	
+	<delete id="delete" parameterType="hashmap">
+		delete  from t_person where c_no=#{no, jdbcType=VARCHAR}
+	</delete>
+	<select id="count" parameterType="hashmap" resultType="long">
+		select count(*) <include refid="pageFind"/>
+	</select>
+	
+	<select id="findAll" parameterType="hashmap" resultMap="personMap">
+		<include refid="PaginationCommonMapper.pagingStart"/>
+			select  t.C_ID,t.c_no,t.C_NAME,t.C_IDENTIFY,t.C_PHOTO,t.C_PHONE,t.C_POST_NO,t.C_POST_NAME,t.C_PARK_NO,t.C_PARK_NAME <include refid="pageFind"/> 			
+		<include refid="PaginationCommonMapper.pagingEnd"/>
+	</select>
+	
+	<sql id="pageFind">
+		from t_person t 
+        <where>
+        	<if test="id != null ">and t.c_id = #{id, jdbcType=INTEGER}</if>
+        	<if test="no != null and no != '' ">and t.c_no = #{no, jdbcType=VARCHAR}</if>
+        	<if test="name != null and name != '' ">and t.C_NAME = #{name, jdbcType=VARCHAR}</if>
+        	<if test="postNo != null and postNo != '' ">and t.C_POST_NO = #{postNo, jdbcType=VARCHAR}</if>
+        	<if test="postName != null and postName != '' ">and t.C_POST_NAME = #{postName, jdbcType=VARCHAR}</if>
+        	<if test="parkNo != null and parkNo != '' ">and t.C_PARK_NO = #{parkNo, jdbcType=VARCHAR}</if>
+        	<if test="parkName != null and parkName != '' ">and t.C_PARK_NAME = #{parkName, jdbcType=VARCHAR}</if>
+        </where>
+        order by t.c_id desc
+	</sql>
+	
+</mapper>

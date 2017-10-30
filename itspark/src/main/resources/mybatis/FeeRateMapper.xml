@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ehl.itspark.data.dao.FeeRateDao">
+	 
+	<resultMap type="com.ehl.itspark.data.entity.FeeRateEntity" id="feeMap">
+		<id column="C_ID" jdbcType="INTEGER" property="id"/>
+		<result column="C_FEENO" jdbcType="VARCHAR" property="no"/>
+		<result column="C_PARKNO" jdbcType="VARCHAR" property="parkNo"/>
+		<result column="C_PARKNAME" jdbcType="VARCHAR" property="parkName"/>
+		<result column="C_CHARGE_TYPE" jdbcType="INTEGER" property="type"/>
+		<result column="C_CARTYPE" jdbcType="INTEGER" property="plateType"/>
+		<result column="C_FREE_TIME" jdbcType="INTEGER" property="freeTimeLen"/>
+		<result column="C_FEE_COUNT" jdbcType="DECIMAL" property="feeByCount"/>
+		<result column="C_FEE_TIME" jdbcType="DECIMAL" property="feeByTime"/>
+		<result column="C_TIME_LOOP" jdbcType="INTEGER" property="timeLen"/>
+		<result column="C_MAXFEE" jdbcType="DECIMAL" property="maxFee"/>
+		<result column="C_DESC" jdbcType="VARCHAR" property="descript"/>
+		<result column="C_IMG" jdbcType="VARCHAR" property="feeImg"/>
+	</resultMap>
+	
+	<insert id="save" parameterType="hashmap"  useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_chargerules (C_FEENO,C_PARKNO,C_PARKNAME,C_CHARGE_TYPE,C_CARTYPE,C_FREE_TIME,C_FEE_COUNT,C_FEE_TIME,
+		C_TIME_LOOP,C_MAXFEE,C_DESC,C_IMG) 
+		VALUES(
+		#{no, jdbcType=VARCHAR},
+		#{parkNo, jdbcType=VARCHAR},
+		#{parkName, jdbcType=VARCHAR},
+		#{type, jdbcType=INTEGER},
+		#{plateType, jdbcType=INTEGER},
+		#{freeTimeLen, jdbcType=INTEGER},
+		#{feeByCount, jdbcType=DECIMAL},
+		#{feeByTime, jdbcType=DECIMAL},
+		#{timeLen, jdbcType=INTEGER},
+		#{maxFee, jdbcType=DECIMAL},
+		#{descript, jdbcType=VARCHAR},
+		#{feeImg, jdbcType=VARCHAR})
+	</insert>
+	
+	<update id="update" parameterType="hashmap">
+		UPDATE t_chargerules SET 
+		C_PARKNO=#{parkNo, jdbcType=VARCHAR},
+		C_PARKNAME=#{parkName, jdbcType=VARCHAR},
+		C_CHARGE_TYPE=#{type, jdbcType=INTEGER},
+		C_CARTYPE=#{plateType, jdbcType=INTEGER},
+		C_FREE_TIME=#{freeTimeLen, jdbcType=INTEGER},
+		C_FEE_COUNT=#{feeByCount, jdbcType=DECIMAL},
+		C_FEE_TIME=#{feeByTime, jdbcType=DECIMAL},
+		C_TIME_LOOP=#{timeLen, jdbcType=INTEGER},
+		C_MAXFEE=#{maxFee, jdbcType=DECIMAL},
+		C_DESC=#{descript, jdbcType=VARCHAR},
+		C_IMG=#{feeImg, jdbcType=VARCHAR}
+		WHERE C_FEENO=#{no, jdbcType=VARCHAR}
+	</update>
+	<delete id="delete" parameterType="hashmap">
+		delete  from t_chargerules where C_ID=#{id, jdbcType=INTEGER}
+	</delete>
+	<select id="count" parameterType="hashmap" resultType="long">
+		select count(*) <include refid="pageFind"/>
+	</select>
+	
+	<select id="findAll" parameterType="hashmap" resultMap="feeMap">
+		<include refid="PaginationCommonMapper.pagingStart"/>
+			select C_ID, C_FEENO,C_PARKNO,C_PARKNAME,C_CHARGE_TYPE,C_CARTYPE,C_FREE_TIME,C_FEE_COUNT,C_FEE_TIME,
+		C_TIME_LOOP,C_MAXFEE,C_DESC,C_IMG <include refid="pageFind"/> 			
+		<include refid="PaginationCommonMapper.pagingEnd"/>
+	</select>
+	
+	<sql id="pageFind">
+		from t_chargerules 
+        <where>
+        	<if test="no != null and no != '' ">and C_FEENO = #{no, jdbcType=VARCHAR}</if>
+        	<if test="parkNo != null and parkNo != '' ">and C_PARKNO = #{parkNo, jdbcType=VARCHAR}</if>
+        	<if test="plateType != null">and C_CARTYPE = #{plateType, jdbcType=INTEGER}</if>
+        </where>
+        order by c_id desc
+	</sql>
+	
+</mapper>

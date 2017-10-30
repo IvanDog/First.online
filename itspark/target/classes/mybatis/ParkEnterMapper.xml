@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ehl.itspark.data.dao.ParkEnterDao">
+  <resultMap id="parkEnterMap" type="com.ehl.itspark.data.entity.ParkEnterEntity">
+    <id column="C_ID" jdbcType="INTEGER" property="id" />
+    <result column="C_FLOW_NO" jdbcType="VARCHAR" property="flowNo" />
+    <result column="C_PLATE" jdbcType="VARCHAR" property="plate" />
+    <result column="C_ENTER_TIME" jdbcType="TIMESTAMP" property="enterTime" />
+    <result column="C_IMAGE" jdbcType="BLOB" property="img" />
+    <result column="C_PARK_NO" jdbcType="VARCHAR" property="parkNo" />
+    <result column="C_PARKLOT" jdbcType="VARCHAR" property="parkLot" />
+    
+    <result column="C_CAR_TYPE" jdbcType="VARCHAR" property="carType" />
+    <result column="C_PARK_TYPE" jdbcType="VARCHAR" property="parkType" />
+  </resultMap>
+  
+  <select id="findByPlateAndCarType" parameterType="hashmap" resultMap="parkEnterMap">
+			select  C_ID, C_FLOW_NO, C_PLATE, C_ENTER_TIME, C_PARK_NO, C_IMAGE,C_PARKLOT,C_CAR_TYPE,C_PARK_TYPE <include refid="pageFind1"/> 			
+	</select>
+	
+	  <select id="findByParkNoAndPlate" parameterType="hashmap" resultMap="parkEnterMap">
+			select  C_ID, C_FLOW_NO, C_PLATE, C_ENTER_TIME, C_PARK_NO, C_IMAGE,C_PARKLOT,C_CAR_TYPE,C_PARK_TYPE <include refid="pageFind2"/> 			
+	</select>
+	
+		<select id="findByParkNoAndFlowNo" parameterType="hashmap" resultMap="parkEnterMap">
+			select  C_ID, C_FLOW_NO, C_PLATE, C_ENTER_TIME, C_PARK_NO, C_IMAGE,C_PARKLOT,C_CAR_TYPE,C_PARK_TYPE <include refid="pageFind3"/> 			
+	</select>
+	
+			<select id="findByParkNoAndParkLot" parameterType="hashmap" resultMap="parkEnterMap">
+			select  C_ID, C_FLOW_NO, C_PLATE, C_ENTER_TIME, C_PARK_NO, C_IMAGE,C_PARKLOT,C_CAR_TYPE,C_PARK_TYPE <include refid="pageFind4"/> 			
+	</select>
+	
+				<select id="findByPlate" parameterType="hashmap" resultMap="parkEnterMap">
+			select  C_ID, C_FLOW_NO, C_PLATE, C_ENTER_TIME, C_PARK_NO, C_IMAGE,C_PARKLOT,C_CAR_TYPE,C_PARK_TYPE <include refid="pageFind5"/> 			
+	</select>
+	
+	<sql id="pageFind1">
+		from t_park_enter t 
+        <where>
+        	<if test="plate != null and plate != ''">and t.C_PLATE = #{plate, jdbcType=VARCHAR}</if>
+        	<if test="carType != null and carType != '' ">and t.C_CAR_TYPE = #{carType, jdbcType=VARCHAR}</if>
+        </where>
+        order by t.C_ENTER_TIME desc
+	</sql>
+  
+  	<sql id="pageFind2">
+		from t_park_enter t 
+        <where>
+        	<if test="parkNo != null and parkNo != ''">and t.C_PARK_NO = #{parkNo, jdbcType=VARCHAR}</if>
+        	<if test="plate != null and plate != '' ">and t.C_PLATE = #{plate, jdbcType=VARCHAR}</if>
+        	<if test="carType != null and carType != '' ">and t.C_CAR_TYPE = #{carType, jdbcType=VARCHAR}</if>
+        </where>
+        order by t.C_ENTER_TIME desc
+	</sql>
+	
+	  	<sql id="pageFind3">
+		from t_park_enter t 
+        <where>
+            <if test="parkNo != null and parkNo != ''">and t.C_PARK_NO = #{parkNo, jdbcType=VARCHAR}</if>
+        	<if test="flowNo != null and flowNo != ''">and t.C_FLOW_NO = #{flowNo, jdbcType=VARCHAR}</if>
+        </where>
+        order by t.C_ENTER_TIME desc
+	</sql>
+	
+		  	<sql id="pageFind4">
+		from t_park_enter t 
+        <where>
+            <if test="parkNo != null and parkNo != ''">and t.C_PARK_NO = #{parkNo, jdbcType=VARCHAR}</if>
+        	<if test="parkLot != null and parkLot != ''">and t.C_PARKLOT = #{parkLot, jdbcType=VARCHAR}</if>
+        </where>
+        order by t.C_ENTER_TIME desc
+	</sql>
+	
+			  	<sql id="pageFind5">
+		from t_park_enter t 
+        <where>
+            <if test="plate != null and plate != ''">and t.C_PLATE = #{plate, jdbcType=VARCHAR}</if>
+        </where>
+        order by t.C_ENTER_TIME desc
+	</sql>
+	
+  <delete id="deleteByPlateAndCarType" parameterType="hashmap">
+    delete from t_park_enter
+    where C_PLATE = #{plate, jdbcType=VARCHAR} and C_CAR_TYPE = #{carType, jdbcType=VARCHAR}
+  </delete>
+  
+    <delete id="deleteByParkNoAndPlate" parameterType="hashmap">
+    delete from t_park_enter
+    where C_PARK_NO = #{parkNo, jdbcType=VARCHAR} and C_PLATE = #{plate, jdbcType=VARCHAR}
+  </delete>
+  
+      <delete id="deleteByParkNoAndFlowNo" parameterType="hashmap">
+    delete from t_park_enter
+    where C_PARK_NO = #{parkNo, jdbcType=VARCHAR} and C_FLOW_NO = #{flowNo, jdbcType=VARCHAR}
+  </delete>
+  
+        <delete id="deleteByParkNoAndParkLot" parameterType="hashmap">
+    delete from t_park_enter
+    where C_PARK_NO = #{parkNo, jdbcType=VARCHAR} and C_PARKLOT = #{parkLot, jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="save" parameterType="hashmap">
+    insert into t_park_enter (C_FLOW_NO, C_PLATE, C_ENTER_TIME, C_PARK_NO, C_IMAGE,C_PARKLOT,C_CAR_TYPE,C_PARK_TYPE)
+    values (#{flowNo,jdbcType=VARCHAR}, #{plate,jdbcType=VARCHAR}, 
+      #{enterTime,jdbcType=TIMESTAMP}, #{parkNo,jdbcType=VARCHAR}, #{img,jdbcType=BLOB},#{parkLot,jdbcType=VARCHAR},
+      #{carType,jdbcType=VARCHAR},#{parkType,jdbcType=VARCHAR}
+      )
+  </insert>
+</mapper>

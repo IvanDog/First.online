@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ehl.itspark.data.dao.ParkRecordDao">
+  <resultMap id="parkRecordMap" type="com.ehl.itspark.data.entity.ParkRecordEntity">
+    <id column="C_ID" jdbcType="INTEGER" property="id" />
+    <result column="C_FLOW_NO" jdbcType="VARCHAR" property="flowNo" />
+    <result column="C_PLATE" jdbcType="VARCHAR" property="plate" />
+    <result column="C_CAR_TYPE" jdbcType="VARCHAR" property="carType" />
+    <result column="C_PARK_TYPE" jdbcType="VARCHAR" property="parkType" />
+    <result column="C_ENTER_TIME" jdbcType="TIMESTAMP" property="enterTime" />
+    <result column="C_PARK_NO" jdbcType="VARCHAR" property="parkNo" />
+    <result column="C_PARKLOT" jdbcType="VARCHAR" property="parkLot" />
+    <result column="C_ENTER_IMAGE" jdbcType="BLOB" property="enterImg" />
+    <result column="C_LEAVE_TIME" jdbcType="TIMESTAMP" property="leaveTime" />
+    <result column="C_LEAVE_IMAGE" jdbcType="BLOB" property="leaveImg" />
+    <result column="C_FLAG" jdbcType="INTEGER" property="flag" />
+    <result column="C_PAYMONEY" jdbcType="DOUBLE" property="payMoney" />
+    <result column="C_PAYMENT_FLAG" jdbcType="INTEGER" property="paymentFlag" />
+    <result column="C_TRADE_FLOW_NO" jdbcType="VARCHAR" property="tradeFlowNo" />
+  </resultMap>
+  
+  <select id="count" parameterType="hashmap" resultType="long">
+		select count(*) <include refid="pageFind"/>
+	</select>
+	
+  <select id="findAll" parameterType="hashmap" resultMap="parkRecordMap">
+		<include refid="PaginationCommonMapper.pagingStart"/>
+			select  C_ID, C_FLOW_NO, C_PLATE, C_ENTER_TIME, C_PARK_NO, C_ENTER_IMAGE, C_LEAVE_TIME, C_LEAVE_IMAGE, 
+    C_FLAG, C_PAYMONEY,C_PARKLOT,C_CAR_TYPE,C_PARK_TYPE,C_PAYMENT_FLAG,C_TRADE_FLOW_NO<include refid="pageFind"/> 			
+		<include refid="PaginationCommonMapper.pagingEnd"/>
+	</select>
+	
+	<sql id="pageFind">
+		from t_park_record t 
+        <where>
+        	<if test="plate != null and plate != ''">and t.C_PLATE = #{plate, jdbcType=VARCHAR}</if>
+        	<if test="carType != null and carType != '' ">and t.C_CAR_TYPE = #{carType, jdbcType=VARCHAR}</if>
+        	<if test="parkNo != null and parkNo != '' ">and t.C_PARK_NO = #{parkNo, jdbcType=VARCHAR}</if>
+        	<if test="flowNo != null and flowNo != '' ">and t.C_FLOW_NO = #{flowNo, jdbcType=VARCHAR}</if>
+        	<if test="parkLot != null and parkLot != '' ">and t.C_PARKLOT = #{parkLot, jdbcType=VARCHAR}</if>
+        	<if test="startTime != null">and t.C_LEAVE_TIME <![CDATA[>=]]> #{startTime, jdbcType=TIMESTAMP}</if>
+        	<if test="endTime != null">and t.C_LEAVE_TIME <![CDATA[<=]]> #{endTime, jdbcType=TIMESTAMP}</if>
+        	<if test="paymentFlag != null ">and t.C_PAYMENT_FLAG = #{paymentFlag, jdbcType=INTEGER}</if>
+        </where>
+        order by t.C_LEAVE_TIME desc
+	</sql>
+  
+  <delete id="deleteByPlate" parameterType="hashmap">
+    delete from t_park_record
+    where C_PLATE = #{plate, jdbcType=VARCHAR}
+  </delete>
+  <insert id="save" parameterType="hashmap">
+    insert into t_park_record (C_FLOW_NO, C_PLATE,
+      C_ENTER_TIME, C_PARK_NO, C_ENTER_IMAGE, 
+      C_LEAVE_TIME, C_LEAVE_IMAGE, C_FLAG, 
+      C_PAYMONEY,C_PARKLOT,
+      C_CAR_TYPE,C_PARK_TYPE,C_PAYMENT_FLAG,C_TRADE_FLOW_NO)
+    values (#{flowNo,jdbcType=VARCHAR}, #{plate,jdbcType=VARCHAR}, 
+      #{enterTime,jdbcType=TIMESTAMP}, #{parkNo,jdbcType=VARCHAR}, #{enterImg,jdbcType=VARCHAR}, 
+      #{leaveTime,jdbcType=TIMESTAMP}, #{leaveImg,jdbcType=VARCHAR}, #{flag,jdbcType=INTEGER}, 
+      #{payMoney,jdbcType=DOUBLE},#{parkLot, jdbcType=VARCHAR}, #{carType,jdbcType=VARCHAR},
+      #{parkType, jdbcType=VARCHAR},#{paymentFlag, jdbcType=INTEGER},#{tradeFlowNo,jdbcType=VARCHAR})
+  </insert>
+  
+  	<update id="updatePayment" parameterType="hashmap">
+		UPDATE t_park_record SET 
+		C_PAYMENT_FLAG=#{paymentFlag, jdbcType=INTEGER}
+		 <include refid="updateWhere"/> 
+	</update>
+	
+	  	<update id="updateTradeFlow" parameterType="hashmap">
+		UPDATE t_park_record SET 
+		C_TRADE_FLOW_NO=#{tradeFlowNo, jdbcType=VARCHAR}
+		 <include refid="updateWhere"/> 
+	</update>
+	
+		<sql id="updateWhere">
+        <where>
+        	<if test="parkNo != null and parkNo != '' ">and C_PARK_NO = #{parkNo, jdbcType=VARCHAR}</if>
+        	<if test="flowNo != null and flowNo != '' ">and C_FLOW_NO = #{flowNo, jdbcType=VARCHAR}</if>
+        </where>
+	    </sql>
+	
+</mapper>

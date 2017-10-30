@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ehl.itspark.data.dao.PersonAccessDao">
+	 
+	<resultMap type="com.ehl.itspark.data.entity.PersonAccessEntity" id="personAccessMap">
+		<id column="C_ID" jdbcType="INTEGER" property="id"/>
+		<result column="C_NO" jdbcType="VARCHAR" property="no"/>
+		<result column="C_NAME" jdbcType="VARCHAR" property="name"/>
+		<result column="C_PWORD" jdbcType="VARCHAR" property="pword"/>
+	</resultMap>
+	
+	<insert id="save" parameterType="hashmap">
+		INSERT INTO t_person_access (C_NO,C_NAME,C_PWORD) 
+		VALUES(
+		#{no, jdbcType=VARCHAR},
+		#{name, jdbcType=VARCHAR},
+		#{pword, jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<update id="updateName" parameterType="hashmap">
+		UPDATE t_person_access SET 
+		C_NAME=#{name, jdbcType=VARCHAR} 
+		WHERE c_no=#{no, jdbcType=VARCHAR}
+	</update>
+	<update id="updatePword" parameterType="hashmap">
+		UPDATE t_person_access SET 
+		C_PWORD=#{pword, jdbcType=VARCHAR} 
+		WHERE c_no=#{no, jdbcType=VARCHAR}
+	</update>
+	<delete id="delete" parameterType="hashmap">
+		delete  from t_person_access where c_no=#{no, jdbcType=VARCHAR}
+	</delete>
+	<select id="count" parameterType="hashmap" resultType="long">
+		select count(*) <include refid="pageFind"/>
+	</select>
+	
+	<select id="findAll" parameterType="hashmap" resultMap="personAccessMap">
+		<include refid="PaginationCommonMapper.pagingStart"/>
+			select  t.C_ID,t.c_no,t.C_NAME,t.C_PWORD <include refid="pageFind"/> 			
+		<include refid="PaginationCommonMapper.pagingEnd"/>
+	</select>
+	
+	<sql id="pageFind">
+		from t_person_access t 
+        <where>
+        	<if test="no != null">and t.c_no = #{no, jdbcType=VARCHAR}</if>
+        	<if test="name != null and name != '' ">and t.C_NAME = #{name, jdbcType=VARCHAR}</if>
+        </where>
+        order by t.c_id desc
+	</sql>
+	
+</mapper>

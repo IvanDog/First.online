@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ehl.itspark.data.dao.CouponDao">
+  <resultMap id="couponMap" type="com.ehl.itspark.data.entity.CouponEntity">
+    <id column="C_ID" jdbcType="INTEGER" property="id" />
+    <result column="C_COUPON_ID" jdbcType="VARCHAR" property="couponID" />
+    <result column="C_COUPON_TITLE" jdbcType="VARCHAR" property="couponTitle" />
+    <result column="C_DENOMINATION" jdbcType="DOUBLE" property="denomination" />
+    <result column="C_START_TIME" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="C_END_TIME" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="C_START_TIME_STR" jdbcType="VARCHAR" property="startTimeStr" />
+    <result column="C_END_TIME_STR" jdbcType="VARCHAR" property="endTimeStr" />
+    <result column="C_COUPON_NOTIFY" jdbcType="VARCHAR" property="couponNotify" />
+    <result column="C_COUPON_DETAIL" jdbcType="VARCHAR" property="couponDetail" />
+    <result column="C_COUPON_STATE" jdbcType="INTEGER" property="couponState" />
+    <result column="C_COUPON_OWNER" jdbcType="VARCHAR" property="couponOwner" />
+    <result column="C_CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="C_REMARK" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  
+  <select id="count" parameterType="hashmap" resultType="long">
+		select count(*) <include refid="pageFind"/>
+	</select>
+	
+  <select id="findAll" parameterType="hashmap" resultMap="couponMap">
+		<include refid="PaginationCommonMapper.pagingStart"/>
+			select  C_ID, C_COUPON_ID, C_COUPON_TITLE, C_DENOMINATION, C_START_TIME, C_END_TIME, 
+			C_COUPON_NOTIFY, C_COUPON_DETAIL, C_COUPON_STATE, C_COUPON_OWNER, C_REMARK<include refid="pageFind"/> 			
+		<include refid="PaginationCommonMapper.pagingEnd"/>
+	</select>
+	
+	<sql id="pageFind">
+		from t_coupon t 
+        <where>
+        	<if test="couponID != null and couponID != ''">and t.C_COUPON_ID = #{couponID, jdbcType=VARCHAR}</if>
+        	<if test="couponState != null ">and t.C_COUPON_STATE = #{couponState, jdbcType=INTEGER}</if>
+        	<if test="couponOwner != null and  couponOwner!=''">and t.C_COUPON_OWNER = #{couponOwner, jdbcType=VARCHAR}</if>
+        	<if test="queryTime != null">and t.C_END_TIME <![CDATA[>=]]> #{queryTime, jdbcType=TIMESTAMP}</if>
+        	<if test="queryTime != null">and t.C_START_TIME <![CDATA[<=]]> #{queryTime, jdbcType=TIMESTAMP}</if>
+        	<if test="expense != null">and t.C_DENOMINATION <![CDATA[<=]]> #{expense, jdbcType=DOUBLE}</if>
+        </where>
+        order by t.C_END_TIME asc
+	</sql>
+  
+    <select id="findRecentCouponIDs" parameterType="hashmap" resultMap="couponMap">
+		<include refid="PaginationCommonMapper.pagingStart"/>
+			select  C_COUPON_ID from t_coupon t 
+			<where>
+        	<if test="queryTime != null">and t.C_CREATE_TIME <![CDATA[>=]]> #{queryTime, jdbcType=TIMESTAMP}</if>
+            </where>
+        order by t.C_CREATE_TIME desc
+		<include refid="PaginationCommonMapper.pagingEnd"/>
+	</select>
+	
+  <delete id="deleteByCouponID" parameterType="hashmap">
+    delete from t_coupon
+    where C_COUPON_ID = #{couponID, jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="save" parameterType="hashmap">
+    insert into t_coupon (C_COUPON_ID, C_COUPON_TITLE, C_DENOMINATION, C_START_TIME, C_END_TIME, 
+			C_COUPON_NOTIFY, C_COUPON_DETAIL, C_COUPON_STATE, C_COUPON_OWNER, C_CREATE_TIME, C_REMARK)
+    values (#{couponID,jdbcType=VARCHAR}, #{couponTitle,jdbcType=VARCHAR}, 
+      #{denomination,jdbcType=DOUBLE}, #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, 
+      #{couponNotify, jdbcType=VARCHAR}, #{couponDetail,jdbcType=VARCHAR},#{couponState, jdbcType=INTEGER}
+      ,#{couponOwner, jdbcType=VARCHAR},#{createTime, jdbcType=TIMESTAMP},#{remark, jdbcType=VARCHAR})
+  </insert>
+  
+  	<update id="update" parameterType="hashmap">
+		UPDATE t_coupon SET 
+		C_COUPON_STATE=#{couponState, jdbcType=INTEGER}
+		 <include refid="updateWhere"/> 
+	</update>
+	
+	  <update id="editor" parameterType="hashmap">
+		UPDATE t_coupon SET 
+		C_COUPON_TITLE=#{couponTitle, jdbcType=VARCHAR},
+		C_DENOMINATION=#{denomination, jdbcType=DOUBLE},
+		C_COUPON_STATE=#{couponState, jdbcType=INTEGER},
+		C_COUPON_DETAIL=#{couponDetail, jdbcType=VARCHAR},
+		C_REMARK=#{remark, jdbcType=VARCHAR},
+		C_START_TIME=#{startTime, jdbcType=TIMESTAMP},
+		C_END_TIME=#{endTime, jdbcType=TIMESTAMP}
+		 <include refid="updateWhere"/> 
+	</update>
+	
+		<sql id="updateWhere">
+        <where>
+        	<if test="couponID != null and couponID != '' ">and C_COUPON_ID = #{couponID, jdbcType=VARCHAR}</if>
+        </where>
+	    </sql>
+	
+</mapper>

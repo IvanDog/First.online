@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ehl.itspark.data.dao.SchedulingCalendarDao">
+  <resultMap id="schedulingCalendarMap" type="com.ehl.itspark.data.entity.SchedulingCalendarEntity">
+    <id column="C_PERSION_ID" jdbcType="INTEGER" property="persionId" />
+    <result column="C_PERSION_NAME" jdbcType="VARCHAR" property="persionName" />
+    <association property="schedulingEntity" column="C_SCHEDULING_ID" javaType="com.ehl.park.cloud.plat.subsystem.data.entity.SchedulingEntity">
+    	<id column="C_ID" property="id"/>
+		<result column="C_SCHEDULING_NAME" property="name"/>
+		<result column="C_MONDAY_ID" property="mondayId"/>
+		<result column="C_MONDAY_NAME" property="mondayName"/>
+		<result column="C_TUESDAY_ID" property="tuesdayId"/>
+		<result column="C_TUESDAY_NAME" property="tuesdayName"/>
+		<result column="C_WEDNESDAY_ID" property="wednesdayId"/>
+		<result column="C_WEDNESDAY_NAME" property="wednesdayName"/>
+		<result column="C_THURSDAY_ID" property="thursdayId"/>
+		<result column="C_THURSDAY_NAME" property="thursdayName"/>
+		<result column="C_FRIDAY_ID" property="fridayId"/>
+		<result column="C_FRIDAY_NAME" property="fridayName"/>
+		<result column="C_SATURDAY_ID" property="saturdayId"/>
+		<result column="C_SATURDAY_NAME" property="saturdayName"/>
+		<result column="C_SUNDAY_ID" property="sundayId"/>
+		<result column="C_SUNDAY_NAME" property="sundayName"/>
+    </association>
+  </resultMap>
+  
+  <resultMap id="shiftworkSchedulingCalendarMap" type="com.ehl.park.cloud.plat.subsystem.data.entity.ShiftworkSchedulingCalendarEntity">
+    <id column="C_ID" property="shiftworkId" />
+    <result column="C_NAME" property="shiftworkName" />
+	<result column="C_MONDAY_COUNT" property="mondayCount"/>
+	<result column="C_TUESDAY_COUNT" property="tuesdayCount"/>
+	<result column="C_WEDNESDAY_COUNT" property="wednesdayCount"/>
+	<result column="C_THURSDAY_COUNT" property="thursdayCount"/>
+	<result column="C_FRIDAY_COUNT" property="fridayCount"/>
+	<result column="C_SATURDAY_COUNT" property="saturdayCount"/>
+	<result column="C_SUNDAY_COUNT" property="sundayCount"/>
+  </resultMap>
+  
+  <select id="findCalendarByShiftworkView" parameterType="hashmap" resultMap="shiftworkSchedulingCalendarMap">
+    select count(case when s.C_MONDAY_ID=#{shiftworkId,jdbcType=INTEGER} then s.C_ID END) C_MONDAY_COUNT,
+	count(case when s.C_TUESDAY_ID=#{shiftworkId,jdbcType=INTEGER} then s.C_ID END) C_TUESDAY_COUNT,
+	count(case when s.C_WEDNESDAY_ID=#{shiftworkId,jdbcType=INTEGER} then s.C_ID END) C_WEDNESDAY_COUNT,
+	count(case when s.C_THURSDAY_ID=#{shiftworkId,jdbcType=INTEGER} then s.C_ID END) C_THURSDAY_COUNT,
+	count(case when s.C_FRIDAY_ID=#{shiftworkId,jdbcType=INTEGER} then s.C_ID END) C_FRIDAY_COUNT,
+	count(case when s.C_SATURDAY_ID=#{shiftworkId,jdbcType=INTEGER} then s.C_ID END) C_SATURDAY_COUNT,
+	count(case when s.C_SUNDAY_ID=#{shiftworkId,jdbcType=INTEGER} then s.C_ID END) C_SUNDAY_COUNT
+	from t_scheduling s
+	left join t_r_scheduling_persion sp
+	on s.C_ID=sp.C_SCHEDULING_ID
+  </select>
+  
+  
+  <select id="countCalendarByPersionView" parameterType="hashmap" resultType="long">
+    select count(*) from t_r_scheduling_persion t1 
+    left join t_scheduling t2 on t1.C_SCHEDULING_ID=t2.C_ID 
+    left join t_shiftwork t3 on t2.C_MONDAY_ID=t3.C_ID 
+    left join t_shiftwork t4 on t2.C_TUESDAY_ID=t4.C_ID 
+    left join t_shiftwork t5 on t2.C_WEDNESDAY_ID=t5.C_ID 
+    left join t_shiftwork t6 on t2.C_THURSDAY_ID=t6.C_ID 
+    left join t_shiftwork t7 on t2.C_FRIDAY_ID=t7.C_ID 
+    left join t_shiftwork t8 on t2.C_SATURDAY_ID=t8.C_ID 
+    left join t_shiftwork t9 on t2.C_SUNDAY_ID=t9.C_ID 
+    <where>
+    	<if test="persionName !=null and persionName !='' ">and t1.C_PERSION_NAME=#{persionName,jdbcType=VARCHAR}</if>
+    </where>
+  </select>
+  
+  <select id="findCalendarByPersionView" parameterType="hashmap" resultMap="schedulingCalendarMap">
+  	<include refid="PaginationCommonMapper.pagingStart"/>
+    select t1.C_PERSION_ID,t1.C_PERSION_NAME,t2.C_ID,t2.C_SCHEDULING_NAME,t2.C_MONDAY_ID,t3.C_NAME C_MONDAY_NAME,
+    t2.C_TUESDAY_ID,t4.C_NAME C_TUESDAY_NAME,t2.C_WEDNESDAY_ID,t5.C_NAME C_WEDNESDAY_NAME,t2.C_THURSDAY_ID,t6.C_NAME C_THURSDAY_NAME,
+    t2.C_FRIDAY_ID,t7.C_NAME C_FRIDAY_NAME,t2.C_SATURDAY_ID,t8.C_NAME C_SATURDAY_NAME,t2.C_SUNDAY_ID,t9.C_NAME C_SUNDAY_NAME  
+    from t_r_scheduling_persion t1 
+    left join t_scheduling t2 on t1.C_SCHEDULING_ID=t2.C_ID 
+    left join t_shiftwork t3 on t2.C_MONDAY_ID=t3.C_ID 
+    left join t_shiftwork t4 on t2.C_TUESDAY_ID=t4.C_ID 
+    left join t_shiftwork t5 on t2.C_WEDNESDAY_ID=t5.C_ID 
+    left join t_shiftwork t6 on t2.C_THURSDAY_ID=t6.C_ID 
+    left join t_shiftwork t7 on t2.C_FRIDAY_ID=t7.C_ID 
+    left join t_shiftwork t8 on t2.C_SATURDAY_ID=t8.C_ID 
+    left join t_shiftwork t9 on t2.C_SUNDAY_ID=t9.C_ID 
+    <where>
+    	<if test="persionName !=null and persionName !='' ">and t1.C_PERSION_NAME=#{persionName,jdbcType=VARCHAR}</if>
+    </where>
+    <include refid="PaginationCommonMapper.pagingEnd"/>
+  </select>
+  
+</mapper>

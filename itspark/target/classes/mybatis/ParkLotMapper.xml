@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ehl.itspark.data.dao.ParkLotDao">
+	 
+	<resultMap type="com.ehl.itspark.data.entity.ParkLotEntity" id="ParkLotMap">
+		<id column="C_ID" jdbcType="INTEGER" property="id"/>
+		<result column="C_NO" jdbcType="VARCHAR" property="no"/>
+		<result column="C_PARK_NO" jdbcType="VARCHAR" property="parkNo"/>
+		<result column="C_TRAN_MODE" jdbcType="INTEGER" property="tranMode"/>
+		<result column="C_STATUS" jdbcType="INTEGER" property="status"/>
+		<result column="C_PLATE" jdbcType="VARCHAR" property="plate"/>
+		<result column="C_UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime"/>
+	</resultMap>
+	
+	<insert id="save" parameterType="hashmap">
+		INSERT INTO t_parklot (C_NO,C_PARK_NO,C_TRAN_MODE,C_STATUS,C_PLATE,C_UPDATE_TIME) 
+		VALUES(
+		#{no, jdbcType=VARCHAR},
+		#{parkNo, jdbcType=VARCHAR},
+		#{tranMode, jdbcType=INTEGER},
+		#{status, jdbcType=INTEGER},
+		#{plate, jdbcType=VARCHAR},
+		#{updateTime, jdbcType=TIMESTAMP}
+		)	
+	</insert>
+	
+	<update id="update" parameterType="hashmap">
+		UPDATE t_parklot SET 
+		C_TRAN_MODE=#{tranMode, jdbcType=INTEGER},
+		C_STATUS=#{status, jdbcType=INTEGER},
+		C_PLATE=#{plate, jdbcType=VARCHAR},
+		C_UPDATE_TIME=#{updateTime, jdbcType=TIMESTAMP}
+		WHERE C_NO=#{no, jdbcType=VARCHAR} and C_PARK_NO=#{parkNo, jdbcType=VARCHAR}
+	</update>
+	
+	<delete id="delete" parameterType="hashmap">
+		delete  from t_parklot WHERE C_NO=#{no, jdbcType=VARCHAR}
+	</delete>
+	
+	<select id="count" parameterType="hashmap" resultType="long">
+		select count(*) <include refid="pageFind"/>
+	</select>
+	
+	<select id="findAll" parameterType="hashmap" resultMap="ParkLotMap">
+		<include refid="PaginationCommonMapper.pagingStart"/>
+			select  t.C_ID,t.C_NO,t.C_PARK_NO,t.C_TRAN_MODE,
+			t.C_STATUS, t.C_PLATE,t.C_UPDATE_TIME <include refid="pageFind"/> 			
+		<include refid="PaginationCommonMapper.pagingEnd"/>
+	</select>
+	
+	<sql id="pageFind">
+		from t_parklot t 
+        <where>
+        	<if test="no != null and no != '' ">and t.c_no = #{no, jdbcType=VARCHAR}</if>
+        	<if test="parkNo != null and parkNo != '' ">and t.C_PARK_NO = #{parkNo, jdbcType=VARCHAR}</if>
+        	<if test="status != null and status != '' ">and t.C_STATUS = #{status, jdbcType=INTEGER}</if>
+        	<if test="plate != null and plate != '' ">and t.C_PLATE = #{plate, jdbcType=VARCHAR}</if>
+        	<if test="startTime != null">and t.c_update_time <![CDATA[>=]]> #{startTime, jdbcType=TIMESTAMP}</if>
+        	<if test="endTime != null">and t.c_update_time <![CDATA[<=]]> #{endTime, jdbcType=TIMESTAMP}</if>
+        </where>
+        order by t.c_id desc
+	</sql>
+	
+</mapper>

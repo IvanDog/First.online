@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ehl.itspark.data.dao.AccountDao">
+  <resultMap id="accountMap" type="com.ehl.itspark.data.entity.AccountEntity">
+    <id column="C_ID" jdbcType="INTEGER" property="id" />
+    <result column="C_ACCOUNT_NO" jdbcType="VARCHAR" property="accountNo" />
+    <result column="C_TYPE" jdbcType="INTEGER" property="type" />
+    <result column="C_BALANCE" jdbcType="DOUBLE" property="balance" />
+    <result column="C_OWNER_NO" jdbcType="VARCHAR" property="ownerNo" />
+     <result column="C_COUPON" jdbcType="INTEGER" property="coupon" />
+  </resultMap>
+  
+  
+  <select id="count" parameterType="hashmap" resultType="long">
+		select count(*) <include refid="pageFind"/>
+	</select>
+	
+  <select id="findAll" parameterType="hashmap" resultMap="accountMap">
+		<include refid="PaginationCommonMapper.pagingStart"/>
+			select  C_ID, C_ACCOUNT_NO, C_TYPE, C_BALANCE, C_OWNER_NO, C_COUPON <include refid="pageFind"/> 			
+		<include refid="PaginationCommonMapper.pagingEnd"/>
+	</select>
+	
+	<sql id="pageFind">
+		from t_account t 
+        <where>
+        	<if test="accountNo != null and accountNo != ''">and t.C_ACCOUNT_NO = #{accountNo, jdbcType=VARCHAR}</if>
+        	<if test="ownerNo != null and ownerNo != '' ">and t.C_OWNER_NO = #{ownerNo, jdbcType=VARCHAR}</if>
+        </where>
+        order by t.c_id desc
+	</sql>
+	
+  
+  <delete id="deleteByAccountNo" parameterType="hashmap">
+    delete from t_account
+    where C_ACCOUNT_NO = #{accountNo, jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="save" parameterType="hashmap">
+    insert into t_account (C_ID, C_ACCOUNT_NO, C_TYPE, 
+      C_BALANCE, C_OWNER_NO,C_COUPON)
+    values (#{id,jdbcType=INTEGER}, #{accountNo,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
+      #{balance,jdbcType=DOUBLE}, #{ownerNo,jdbcType=VARCHAR}, #{coupon,jdbcType=INTEGER})
+  </insert>
+  
+  <update id="updateByAccountNo" parameterType="hashmap">
+    update t_account
+    set C_TYPE = #{type,jdbcType=INTEGER},
+      C_BALANCE = #{balance,jdbcType=DOUBLE},
+      C_OWNER_NO = #{ownerNo,jdbcType=VARCHAR},
+      C_COUPON = #{coupon,jdbcType=INTEGER}
+    where C_ACCOUNT_NO = #{accountNo,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateBalance" parameterType="hashmap">
+    update t_account
+    set C_BALANCE = #{balance,jdbcType=DOUBLE}
+    where C_ACCOUNT_NO = #{accountNo,jdbcType=VARCHAR}
+  </update>
+  
+    <update id="updateCoupon" parameterType="hashmap">
+    update t_account
+    set C_COUPON = #{coupon,jdbcType=INTEGER}
+    where C_ACCOUNT_NO = #{accountNo,jdbcType=VARCHAR}
+  </update>
+</mapper>

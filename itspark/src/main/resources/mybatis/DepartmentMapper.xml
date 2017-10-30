@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ehl.itspark.data.dao.DepartmentDao">
+	 
+	<resultMap type="com.ehl.itspark.data.entity.DepartmentEntity" id="departmentMap">
+		<id column="C_ID" jdbcType="INTEGER" property="id"/>
+		<result column="C_NO" jdbcType="VARCHAR" property="no"/>
+		<result column="C_DEP_NAME" jdbcType="VARCHAR" property="name"/>
+		<result column="C_PNO" jdbcType="VARCHAR" property="parentNo"/>
+		<result column="C_PNAME" jdbcType="VARCHAR" property="parentName"/>
+	</resultMap>
+	
+	<insert id="save" parameterType="hashmap">
+		INSERT INTO t_department (C_NO,C_DEP_NAME,C_PNO,C_PNAME) 
+		VALUES(
+		#{no, jdbcType=INTEGER},
+		#{name, jdbcType=VARCHAR},
+		#{parentNo, jdbcType=VARCHAR},
+		#{parentName, jdbcType=VARCHAR})
+	</insert>
+	
+	<update id="update" parameterType="hashmap">
+		UPDATE t_department SET 
+		C_DEP_NAME=#{name, jdbcType=VARCHAR},
+		C_PNO=#{parentNo, jdbcType=VARCHAR}, 
+		C_PNAME=#{parentName, jdbcType=VARCHAR} 
+		WHERE c_no=#{no, jdbcType=VARCHAR}
+	</update>
+	
+	<delete id="delete" parameterType="hashmap">
+		delete  from t_department where c_no=#{no, jdbcType=VARCHAR}
+	</delete>
+	
+	<select id="count" parameterType="hashmap" resultType="long">
+		select count(*) <include refid="pageFind"/>
+	</select>
+	
+	<select id="findAll" parameterType="hashmap" resultMap="departmentMap">
+		<include refid="PaginationCommonMapper.pagingStart"/>
+			select t.c_id, t.c_no,t.C_DEP_NAME,t.C_PNO,t.C_PNAME <include refid="pageFind"/> 			
+		<include refid="PaginationCommonMapper.pagingEnd"/>
+	</select>
+	
+	<sql id="pageFind">
+		from t_department t 
+        <where>
+        	<if test="no != null">and t.c_no = #{no, jdbcType=VARCHAR}</if>
+        	<if test="name != null and name != '' ">and t.C_DEP_NAME = #{name, jdbcType=VARCHAR}</if>
+        	<if test="parentNo != null and parentNo != '' ">and t.C_PNO = #{parentNo, jdbcType=VARCHAR}</if>
+        	<if test="parentName != null and parentName != '' ">and t.C_PNAME = #{parentName, jdbcType=VARCHAR}</if>
+        </where>
+        order by t.c_id desc
+	</sql>
+	
+</mapper>

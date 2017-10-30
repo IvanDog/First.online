@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ehl.itspark.data.dao.SchedulingDao">
+	<resultMap id="shcedulingMap" type="com.ehl.itspark.data.entity.SchedulingEntity">
+		<id column="C_ID" property="id"/>
+		<result column="C_SCHEDULING_NAME" property="name"/>
+		<result column="C_MONDAY_ID" property="mondayId"/>
+		<result column="C_TUESDAY_ID" property="tuesdayId"/>
+		<result column="C_WEDNESDAY_ID" property="wednesdayId"/>
+		<result column="C_THURSDAY_ID" property="thursdayId"/>
+		<result column="C_FRIDAY_ID" property="fridayId"/>
+		<result column="C_SATURDAY_ID" property="saturdayId"/>
+		<result column="C_SUNDAY_ID" property="sundayId"/>
+	</resultMap>
+	
+	<insert id="save" parameterType="hashmap" useGeneratedKeys="true" keyProperty="id">
+		insert into t_scheduling (C_SCHEDULING_NAME,C_MONDAY_ID,C_TUESDAY_ID,C_WEDNESDAY_ID,C_THURSDAY_ID,C_FRIDAY_ID,C_SATURDAY_ID,C_SUNDAY_ID) 
+		values(
+		#{name,jdbcType=VARCHAR},
+		#{mondayId,jdbcType=INTEGER},
+		#{tuesdayId,jdbcType=INTEGER},
+		#{wednesdayId,jdbcType=INTEGER},
+		#{thursdayId,jdbcType=INTEGER},
+		#{fridayId,jdbcType=INTEGER},
+		#{saturdayId,jdbcType=INTEGER},
+		#{sundayId,jdbcType=INTEGER}
+		)
+	</insert>
+	
+	<insert id="savereleation" parameterType="hashmap" >
+		insert into t_r_scheduling_shiftwork (C_WEEK_DAY,C_SCHEDULING_ID,C_SHIFTWORK_ID) 
+		values(
+		#{weekday,jdbcType=VARCHAR},
+		#{schedulingId,jdbcType=INTEGER},
+		#{shiftworkId,jdbcType=INTEGER}
+		)
+	</insert>
+	<insert id="delleation" parameterType="hashmap" >
+		delete from t_r_scheduling_shiftwork 
+		where C_WEEK_DAY=#{weekday,jdbcType=VARCHAR} and C_SCHEDULING_ID=#{schedulingId,jdbcType=INTEGER}
+	</insert>
+	
+	<update id="update" parameterType="hashmap">
+		update t_scheduling set 
+		C_SCHEDULING_NAME=#{name,jdbcType=VARCHAR},
+		C_MONDAY_ID=#{mondayId,jdbcType=INTEGER},
+		C_TUESDAY_ID=#{tuesdayId,jdbcType=INTEGER},
+		C_WEDNESDAY_ID=#{wednesdayId,jdbcType=INTEGER},
+		C_THURSDAY_ID=#{thursdayId,jdbcType=INTEGER},
+		C_FRIDAY_ID=#{fridayId,jdbcType=INTEGER},
+		C_SATURDAY_ID=#{saturdayId,jdbcType=INTEGER},
+		C_SUNDAY_ID=#{sundayId,jdbcType=INTEGER} 
+		where C_ID=#{id,jdbcType=INTEGER}
+	</update>
+	
+	<delete id="deleteById" parameterType="hashmap">
+		delete from t_scheduling where C_ID=#{id,jdbcType=INTEGER}
+	</delete>
+	
+	<select id="count" parameterType="hashmap" resultType="long">
+		select count(*) <include refid="pageFind"/>
+	</select>
+	
+	<select id="findList" parameterType="hashmap" resultMap="shcedulingMap">
+		<include refid="PaginationCommonMapper.pagingStart"/>
+		select C_ID, C_SCHEDULING_NAME,C_MONDAY_ID,C_TUESDAY_ID,C_WEDNESDAY_ID,C_THURSDAY_ID,C_FRIDAY_ID,C_SATURDAY_ID,C_SUNDAY_ID <include refid="pageFind"/>
+		<include refid="PaginationCommonMapper.pagingEnd"/>
+	</select>
+	
+	<sql id="pageFind">
+		from t_scheduling 
+        <where>
+        	<if test="id != null">and c_id = #{id, jdbcType=INTEGER}</if>
+        	<if test="name != null and name != '' ">and C_SCHEDULING_NAME = #{name, jdbcType=VARCHAR}</if>
+        </where>
+        order by c_id desc
+	</sql>
+</mapper>

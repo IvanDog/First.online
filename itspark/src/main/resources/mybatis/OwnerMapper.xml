@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ehl.itspark.data.dao.OwnerDao">
+  <resultMap id="ownerMap" type="com.ehl.itspark.data.entity.OwnerEntity">
+    <id column="C_ID" jdbcType="INTEGER" property="id" />
+    <result column="C_NO" jdbcType="VARCHAR" property="no" />
+    <result column="C_NAME" jdbcType="VARCHAR" property="name" />
+    <result column="C_PHONE" jdbcType="VARCHAR" property="phone" />
+    <result column="C_IDEN" jdbcType="VARCHAR" property="iden" />
+    <result column="C_PWORD" jdbcType="VARCHAR" property="pword" />
+    <result column="C_PAYMENT_PWORD" jdbcType="VARCHAR" property="payPword" />
+    <result column="C_OWNER_IMAGE" jdbcType="BLOB" property="ownerImg" />
+        <result column="C_FIRST_PLATE" jdbcType="VARCHAR" property="firstLicense" />
+    <result column="C_SECOND_PLATE" jdbcType="VARCHAR" property="secondLicense" />
+  </resultMap>
+  
+  <select id="count" parameterType="hashmap" resultType="long">
+		select count(*) <include refid="pageFind"/>
+	</select>
+	
+  <select id="findAll" parameterType="hashmap" resultMap="ownerMap">
+		<include refid="PaginationCommonMapper.pagingStart"/>
+			select  C_ID, C_NO, C_NAME, C_PHONE, C_IDEN, C_PWORD, C_PAYMENT_PWORD, C_OWNER_IMAGE, C_FIRST_PLATE, C_SECOND_PLATE <include refid="pageFind"/> 			
+		<include refid="PaginationCommonMapper.pagingEnd"/>
+	</select>
+	
+	<sql id="pageFind">
+		from t_owner t 
+        <where>
+        	<if test="no != null and no != ''">and t.C_NO = #{no, jdbcType=VARCHAR}</if>
+        	<if test="name != null and name != '' ">and t.C_NAME = #{name, jdbcType=VARCHAR}</if>
+        	<if test="phone != null and phone != '' ">and t.C_PHONE = #{phone, jdbcType=VARCHAR}</if>
+        </where>
+        order by t.c_id desc
+	</sql>
+  
+  <delete id="deleteByNo" parameterType="hashmap">
+    delete from t_owner
+    where C_NO = #{no, jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="save" parameterType="hashmap">
+    insert into t_owner (C_ID, C_NO, C_NAME, 
+      C_PHONE, C_IDEN, C_PWORD,C_PAYMENT_PWORD,C_OWNER_IMAGE,C_FIRST_PLATE,C_SECOND_PLATE
+      )
+    values (#{id,jdbcType=INTEGER}, #{no,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{iden,jdbcType=VARCHAR}, #{pword,jdbcType=VARCHAR},
+       #{payPword,jdbcType=VARCHAR}, #{ownerImg,jdbcType=BLOB},  #{firstLicense,jdbcType=VARCHAR},#{secondLicense,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  <update id="updateByNo" parameterType="hashmap">
+    update t_owner
+    set C_NAME = #{name,jdbcType=VARCHAR},
+      C_PHONE = #{phone,jdbcType=VARCHAR},
+      C_IDEN = #{iden,jdbcType=VARCHAR},
+      C_PWORD = #{pword,jdbcType=VARCHAR},
+      C_PAYMENT_PWORD = #{payPword,jdbcType=VARCHAR},
+      C_OWNER_IMAGE= #{ownerImg,jdbcType=BLOB},
+      C_FIRST_PLATE = #{firstLicense,jdbcType=VARCHAR},
+      C_SECOND_PLATE = #{secondLicense,jdbcType=VARCHAR}
+    where C_NO = #{no,jdbcType=VARCHAR}
+  </update>
+</mapper>

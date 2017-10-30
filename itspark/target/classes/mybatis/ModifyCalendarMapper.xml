@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ehl.itspark.data.dao.ModifyCalendarDao">
+	<resultMap id="modifyCalendarMap" type="com.ehl.itspark.data.entity.ModifyCalendarEntity">
+		<id column="C_ID" property="id"/>
+		<result column="C_PERSION_ID" property="persionId"/>
+		<result column="C_TIME" property="modifyTime"/>
+		<result column="C_ORI_SHIFTWORK_ID" property="oriShiftworkId"/>
+		<result column="C_NEW_SHIFTWORK_ID" property="newShiftworkId"/>
+		<result column="C_CREATE_TIME" property="createTime"/>
+	</resultMap>
+	
+	<insert id="save" parameterType="hashmap">
+		insert into t_modify_scheduling(C_PERSION_ID,C_TIME,C_ORI_SHIFTWORK_ID,C_NEW_SHIFTWORK_ID,C_CREATE_TIME) 
+		values(
+		#{persionId,jdbcType=INTEGER},
+		#{modifyTime,jdbcType=TIMESTAMP},
+		#{oriShiftworkId,jdbcType=INTEGER},
+		#{newShiftworkId,jdbcType=INTEGER},
+		#{createTime,jdbcType=TIMESTAMP}
+		)
+	</insert>
+	
+	<update id="update" parameterType="hashmap">
+		update t_modify_scheduling set 
+		C_ORI_SHIFTWORK_ID=#{oriShiftworkId,jdbcType=INTEGER},
+		C_NEW_SHIFTWORK_ID=#{newShiftworkId,jdbcType=INTEGER},
+		C_CREATE_TIME=#{createTime,jdbcType=TIMESTAMP} 
+		where C_PERSION_ID=#{id,jdbcType=INTEGER} and C_TIME=#{modifyTime,jdbcType=TIMESTAMP}
+	</update>
+	
+	<select id="findModifyCalendars" parameterType="hashmap" resultMap="modifyCalendarMap">
+		select C_ID, C_PERSION_ID,C_TIME,C_ORI_SHIFTWORK_ID,C_NEW_SHIFTWORK_ID,C_CREATE_TIME 
+		from t_modify_scheduling 
+		<where>
+			<if test="persionId != null">and C_PERSION_ID=#{persionId,jdbcType=INTEGER} </if>
+			<if test="modifyTime != null">and C_TIME=#{modifyTime,jdbcType=TIMESTAMP}</if>
+		</where>
+	</select>
+	
+	<delete id="delete" parameterType="hashmap">
+		delete from t_modify_scheduling where C_PERSION_ID=#{persionId,jdbcType=INTEGER} and C_TIME=#{modifyTime,jdbcType=TIMESTAMP}
+	</delete>
+</mapper>

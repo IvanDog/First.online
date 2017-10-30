@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ehl.itspark.data.dao.ParkInDao">
+
+	<resultMap id="parkMap" type="com.ehl.itspark.data.entity.ParkEntity">
+		<id column="C_ID" jdbcType="INTEGER" property="id"/>
+		<result column="C_NO" jdbcType="VARCHAR" property="no"/>
+		<result column="C_NAME" jdbcType="VARCHAR" property="name"/>
+		<result column="C_LON" jdbcType="DOUBLE" property="lon"/>
+		<result column="C_LAT" jdbcType="DOUBLE" property="lat"/>
+		<result column="C_TOTAL_SPACE" jdbcType="INTEGER" property="totalSpace"/>
+		<result column="C_REMAIN_SPACE" jdbcType="INTEGER" property="remainSpace"/>
+		<result column="C_PIC" jdbcType="VARCHAR" property="picLogo"/>
+		<result column="C_CERT_STATUS" jdbcType="INTEGER" property="certStatus"/>
+		<result column="C_BUSINESS_STATUS" jdbcType="INTEGER" property="businessStatus"/>
+		<result column="C_TYPE" jdbcType="INTEGER" property="type"/>
+		<result column="C_CONSTRUCT" jdbcType="INTEGER" property="construct"/>
+		<result column="C_NATURE" jdbcType="INTEGER" property="nature"/>
+		<result column="C_MANAGE_MODE" jdbcType="INTEGER" property="manageMode"/>
+		<result column="C_BUSINESS_MODE" jdbcType="INTEGER" property="businessMode"/>
+		<result column="C_OPERATE_NATURE" jdbcType="INTEGER" property="operateNature"/>
+		<result column="C_CHARGE_MODE" jdbcType="INTEGER" property="chargeMode"/>
+		<result column="C_PAY_MODE" jdbcType="INTEGER" property="payMode"/>
+		<result column="C_SETTLE_MODE" jdbcType="INTEGER" property="settleMode"/>
+		<result column="C_LOT_TRANMODE" jdbcType="INTEGER" property="lotTranMode"/>
+		<result column="C_BUSINESS_TIME" jdbcType="VARCHAR" property="businessTime"/>
+		<result column="C_CHARGE_NO" jdbcType="VARCHAR" property="chargeNo"/>
+		<result column="C_UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime"/>
+		<result column="C_ADDRESS" jdbcType="VARCHAR" property="address"/>
+		<association property="area" javaType="com.ehl.itspark.data.entity.AreaEntity">
+			<id column="areaId" jdbcType="INTEGER" property="id"/>
+			<result column="areaNo" jdbcType="VARCHAR" property="no"/>
+			<result column="C_AREA_NAME" jdbcType="VARCHAR" property="name"/>
+		</association>
+		<association property="areaType" javaType="com.ehl.itspark.data.entity.AreaTypeEntity">
+			<id column="areaTypeId" jdbcType="INTEGER" property="id"/>
+			<result column="areaTypeNo" jdbcType="VARCHAR" property="no"/>
+			<result column="C_AREA_TYPE" jdbcType="VARCHAR" property="name"/>
+		</association>
+		<association property="department" javaType="com.ehl.itspark.data.entity.DepartmentEntity">
+			<id column="depId" jdbcType="INTEGER" property="id"/>
+			<result column="depNo" jdbcType="VARCHAR" property="no"/>
+			<result column="C_DEP_NAME" jdbcType="VARCHAR" property="name"/>
+			<result column="C_PNO" jdbcType="VARCHAR" property="parentNo"/>
+			<result column="C_PNAME" jdbcType="VARCHAR" property="parentName"/>
+		</association>
+	</resultMap>
+	
+	<insert id="save" parameterType="hashmap">
+		insert into t_park
+		(c_no,c_name,c_lon,c_lat,c_total_space,
+		c_area_no,c_area_type_no,c_dep_no,c_remain_space,
+		c_pic,c_cert_status,c_business_status,c_type,c_construct,c_nature,c_manage_mode,
+		c_business_mode,c_operate_nature,c_charge_mode,c_pay_mode,c_settle_mode,
+		c_lot_tranmode,c_business_time,c_charge_no,c_address,c_update_time) 
+		values
+		(
+		#{no, jdbcType=VARCHAR},
+		#{name, jdbcType=VARCHAR},
+		#{lon, jdbcType=DOUBLE},
+		#{lat, jdbcType=DOUBLE},
+		#{totalSpace, jdbcType=INTEGER},
+		#{area.no, jdbcType=VARCHAR},
+		#{areaType.no, jdbcType=VARCHAR},
+		#{department.no, jdbcType=VARCHAR},
+		#{remainSpace, jdbcType=INTEGER},
+		#{picLogo, jdbcType=VARCHAR},
+		#{certStatus, jdbcType=INTEGER},
+		#{businessStatus, jdbcType=INTEGER},
+		#{type, jdbcType=INTEGER},
+		#{construct, jdbcType=INTEGER},
+		#{nature, jdbcType=INTEGER},
+		#{manageMode, jdbcType=INTEGER},
+		#{businessMode, jdbcType=INTEGER},
+		#{operateNature, jdbcType=INTEGER},
+		#{chargeMode, jdbcType=INTEGER},
+		#{payMode, jdbcType=INTEGER},
+		#{settleMode, jdbcType=INTEGER},
+		#{lotTranMode, jdbcType=INTEGER},
+		#{businessTime, jdbcType=VARCHAR},
+		#{chargeNo, jdbcType=VARCHAR},
+		#{address, jdbcType=VARCHAR},
+		#{updateTime, jdbcType=TIMESTAMP}
+		)
+	</insert>
+	<update id="update" parameterType="hashmap">
+		update t_park set 
+		c_name=#{name, jdbcType=VARCHAR},
+		c_lon=#{lon, jdbcType=DOUBLE},
+		c_lat=#{lat, jdbcType=DOUBLE},
+		c_total_space=#{totalSpace, jdbcType=INTEGER},
+		c_area_no=#{area.no, jdbcType=VARCHAR},
+		c_area_type_no=#{areaType.no, jdbcType=VARCHAR},
+		c_dep_no=#{department.no, jdbcType=VARCHAR},
+		c_remain_space=#{remainSpace, jdbcType=INTEGER},
+		c_pic=#{picLogo, jdbcType=VARCHAR},
+		c_cert_status=#{certStatus, jdbcType=INTEGER},
+		c_business_status=#{businessStatus, jdbcType=INTEGER},
+		c_type=#{type, jdbcType=INTEGER},
+		c_construct=#{construct, jdbcType=INTEGER},
+		c_nature=#{nature, jdbcType=INTEGER},
+		c_manage_mode=#{manageMode, jdbcType=INTEGER},
+		c_business_mode=#{businessMode, jdbcType=INTEGER},
+		c_operate_nature=#{operateNature, jdbcType=INTEGER},
+		c_charge_mode=#{chargeMode, jdbcType=INTEGER},
+		c_pay_mode=#{payMode, jdbcType=INTEGER},
+		c_settle_mode=#{settleMode, jdbcType=INTEGER},
+		c_lot_tranmode=#{lotTranMode, jdbcType=INTEGER},
+		c_business_time=#{businessTime, jdbcType=VARCHAR},
+		c_charge_no=#{chargeNo, jdbcType=VARCHAR},
+		c_address=#{address, jdbcType=VARCHAR}
+		<if test="updateTime != null">
+			,c_update_time=#{updateTime, jdbcType=TIMESTAMP} 
+		</if>
+		where c_no=#{no, jdbcType=VARCHAR}
+	</update>
+	<delete id="delete" parameterType="hashmap">
+		delete  from t_park where c_no=#{no, jdbcType=VARCHAR}
+	</delete>
+	<select id="count" parameterType="hashmap" resultType="long">
+		select count(*) <include refid="pageFind"/>
+	</select>
+	
+	<select id="findAll" parameterType="hashmap" resultMap="parkMap">
+		<include refid="PaginationCommonMapper.pagingStart"/>
+			select  t.c_id,t.c_no,t.c_name,t.c_lon,t.c_lat,t.c_total_space,t.c_remain_space,
+			t.c_pic,t.c_cert_status,t.c_business_status,t.c_type,t.c_construct,t.c_nature,t.c_manage_mode,
+			t.c_business_mode,t.c_operate_nature,t.c_charge_mode,t.c_pay_mode,t.c_settle_mode,
+			t.c_lot_tranmode,t.c_business_time,t.c_charge_no,t.c_address,t.c_update_time,
+			tat.c_id areaTypeId, tat.c_no areaTypeNo,tat.C_AREA_TYPE,
+			td.c_id depId, td.c_no depNo,td.C_DEP_NAME ,td.C_PNO,td.c_pname,
+			ta.c_id areaId,ta.c_no areaNo,ta.c_area_name 
+		<include refid="pageFind"/> 			
+		<include refid="PaginationCommonMapper.pagingEnd"/>
+	</select>
+	
+	<sql id="pageFind">
+		from t_park t 
+		left join t_area ta on t.c_area_no=ta.c_no 
+		left join t_areatype tat on t.c_area_type_no=tat.c_no 
+		left join t_department td on t.c_dep_no=td.c_no
+        <where>
+        	<if test="no != null">and t.c_no = #{no, jdbcType=INTEGER}</if>
+        	<if test="areaNo != null and areaNo != '' ">and t.c_area_no = #{areaNo, jdbcType=VARCHAR}</if>
+        	<if test="areaTypeNo != null and areaTypeNo != '' ">and t.c_area_type_no = #{areaTypeNo, jdbcType=VARCHAR}</if>
+        	<if test="departmentNo != null and departmentNo != '' ">and t.c_dep_no = #{departmentNo, jdbcType=VARCHAR}</if>
+        	<if test="name != null and name != '' ">and t.c_name = #{name, jdbcType=VARCHAR}</if>
+        	<if test="type != null">and t.c_type = #{type, jdbcType=INTEGER}</if>
+        	<if test="startTime != null">and t.c_update_time <![CDATA[>=]]> #{startTime, jdbcType=TIMESTAMP}</if>
+        	<if test="endTime != null">and t.c_update_time <![CDATA[<=]]> #{endTime, jdbcType=TIMESTAMP}</if>
+        </where>
+        order by t.c_id desc
+	</sql>
+</mapper>

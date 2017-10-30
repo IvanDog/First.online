@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ehl.itspark.data.dao.MessageDao">
+  <resultMap id="messageMap" type="com.ehl.itspark.data.entity.MessageEntity">
+    <id column="C_ID" jdbcType="INTEGER" property="id" />
+    <result column="C_MESSAGE_ID" jdbcType="VARCHAR" property="messageID" />
+    <result column="C_MESSAGE_TITLE" jdbcType="VARCHAR" property="messageTitle" />
+    <result column="C_MESSAGE_DETAIL" jdbcType="VARCHAR" property="messageDetail" />
+    <result column="C_MESSAGE_ABSTRACT" jdbcType="VARCHAR" property="messageAbstract" />
+     <result column="C_MESSAGE_STATE" jdbcType="INTEGER" property="messageState" />
+     <result column="C_MESSAGE_OWNER" jdbcType="VARCHAR" property="messageOwner" />
+     <result column="C_MESSAGE_OWNER_TYPE" jdbcType="INTEGER" property="messageOwnerType" />
+     <result column="C_CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  
+  <select id="count" parameterType="hashmap" resultType="long">
+		select count(*) <include refid="pageFind"/>
+	</select>
+	
+  <select id="findAll" parameterType="hashmap" resultMap="messageMap">
+		<include refid="PaginationCommonMapper.pagingStart"/>
+			select  C_ID, C_MESSAGE_ID, C_MESSAGE_TITLE, C_MESSAGE_DETAIL, C_MESSAGE_ABSTRACT, C_MESSAGE_STATE, 
+			C_MESSAGE_OWNER, C_MESSAGE_OWNER_TYPE, C_CREATE_TIME<include refid="pageFind"/> 			
+		<include refid="PaginationCommonMapper.pagingEnd"/>
+	</select>
+	
+	<sql id="pageFind">
+		from t_message t 
+        <where>
+        	<if test="messageID != null and messageID != ''">and t.C_MESSAGE_ID = #{messageID, jdbcType=VARCHAR}</if>
+        	<if test="messageState != null ">and t.C_MESSAGE_STATE = #{messageState, jdbcType=INTEGER}</if>
+        	<if test="messageOwner != null and  messageOwner !=  '' ">and t.C_MESSAGE_OWNER = #{messageOwner, jdbcType=VARCHAR}</if>
+        	<if test="messageOwnerType != null ">and t.C_MESSAGE_OWNER_TYPE = #{messageOwnerType, jdbcType=INTEGER}</if>
+        </where>
+        order by t.C_CREATE_TIME desc
+	</sql>
+  
+    <select id="findRecentMessageIDs" parameterType="hashmap" resultMap="messageMap">
+		<include refid="PaginationCommonMapper.pagingStart"/>
+			select  C_MESSAGE_ID from t_message t 
+			<where>
+        	<if test="queryTime != null">and t.C_CREATE_TIME <![CDATA[>=]]> #{queryTime, jdbcType=TIMESTAMP}</if>
+            </where>
+        order by t.C_CREATE_TIME desc
+		<include refid="PaginationCommonMapper.pagingEnd"/>
+	</select>
+	
+  <delete id="deleteByMessageID" parameterType="hashmap">
+    delete from t_message
+    where C_MESSAGE_ID = #{messageID, jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="save" parameterType="hashmap">
+    insert into t_message (C_MESSAGE_ID, C_MESSAGE_TITLE, C_MESSAGE_DETAIL, C_MESSAGE_ABSTRACT, C_MESSAGE_STATE, 
+			C_MESSAGE_OWNER, C_MESSAGE_OWNER_TYPE, C_CREATE_TIME)
+    values (#{messageID,jdbcType=VARCHAR}, #{messageTitle,jdbcType=VARCHAR}, #{messageDetail,jdbcType=VARCHAR}, #{messageAbstract,jdbcType=VARCHAR}, 
+      #{messageState,jdbcType=INTEGER}, #{messageOwner, jdbcType=VARCHAR},#{messageOwnerType,jdbcType=INTEGER},#{createTime, jdbcType=TIMESTAMP})
+  </insert>
+  
+  	<update id="update" parameterType="hashmap">
+		UPDATE t_message SET 
+		C_MESSAGE_STATE=#{messageState, jdbcType=INTEGER}
+		 <include refid="updateWhere"/> 
+	</update>
+	
+	  <update id="editor" parameterType="hashmap">
+		UPDATE t_message SET 
+		C_MESSAGE_TITLE=#{messageTitle, jdbcType=VARCHAR},
+		C_MESSAGE_DETAIL=#{messageDetail, jdbcType=VARCHAR},
+		C_MESSAGE_ABSTRACT=#{messageAbstract, jdbcType=VARCHAR},
+		C_MESSAGE_STATE=#{messageState, jdbcType=INTEGER},
+		C_MESSAGE_OWNER=#{messageOwner, jdbcType=VARCHAR},
+		C_MESSAGE_OWNER_TYPE=#{messageOwnerType, jdbcType=INTEGER}
+		 <include refid="updateWhere"/> 
+	</update>
+	
+		<sql id="updateWhere">
+        <where>
+        	<if test="messageID != null and messageID != '' ">and C_MESSAGE_ID = #{messageID, jdbcType=VARCHAR}</if>
+        </where>
+	    </sql>
+	
+</mapper>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ehl.itspark.data.dao.TradeRecordDao">
+  <resultMap id="tradeRecordMap" type="com.ehl.itspark.data.entity.TradeRecordEntity">
+    <id column="C_ID" jdbcType="INTEGER" property="id" />
+    <result column="C_FLOW_NO" jdbcType="VARCHAR" property="flowNo" />
+    <result column="C_INDUSTRY_FLAG" jdbcType="VARCHAR" property="industryFlag" />
+    <result column="C_TRAD_TYPE" jdbcType="INTEGER" property="tradeType" />
+    <result column="C_TRAD_FLAG" jdbcType="VARCHAR" property="tradeFlag" />
+    <result column="C_PAYMONEY" jdbcType="DOUBLE" property="payMoney" />
+    <result column="C_PAIDMONEY" jdbcType="DOUBLE" property="paidMoney" />
+    <result column="C_REFUND" jdbcType="DOUBLE" property="refund" />
+    <result column="C_FEE" jdbcType="DOUBLE" property="fee" />
+    <result column="C_RESULT" jdbcType="INTEGER" property="result" />
+    <result column="C_PAYMODE" jdbcType="INTEGER" property="payMode" />
+    <result column="C_ORDER_TIME" jdbcType="TIMESTAMP" property="orderTime" />
+    <result column="C_ORDER_TIME_STR" jdbcType="VARCHAR" property="orderTimeStr" />
+    <result column="C_PAYMENT_TIME" jdbcType="TIMESTAMP" property="paymentTime" />
+    <result column="C_PAYMENT_TIME_STR" jdbcType="VARCHAR" property="paymentStr" />
+    <result column="C_DETAIL" jdbcType="VARCHAR" property="detail" />
+    <result column="C_SERVICE_FLOW" jdbcType="VARCHAR" property="serviceFlow" />
+    <result column="C_SERVICE_ENTITY_FLOW" jdbcType="VARCHAR" property="serviceEntityFlow" />
+    <result column="C_COUPON_ID" jdbcType="VARCHAR" property="couponID" />
+    <result column="C_BILL_ID" jdbcType="VARCHAR" property="billID" />
+  </resultMap>
+  
+  <select id="count" parameterType="hashmap" resultType="long">
+		select count(*) <include refid="pageFind"/>
+	</select>
+	
+  <select id="findAll" parameterType="hashmap" resultMap="tradeRecordMap">
+		<include refid="PaginationCommonMapper.pagingStart"/>
+			select  C_ID, C_FLOW_NO, C_INDUSTRY_FLAG, C_TRAD_TYPE, C_TRAD_FLAG, C_PAYMONEY, C_PAIDMONEY, C_REFUND, C_FEE, C_COUPON_ID,C_RESULT, 
+    C_PAYMODE, C_ORDER_TIME, DATE_FORMAT(C_ORDER_TIME,'%Y-%m-%d %H:%i:%s') C_ORDER_TIME_STR, C_PAYMENT_TIME, DATE_FORMAT(C_PAYMENT_TIME,'%Y-%m-%d %H:%i:%s') C_PAYMENT_TIME_STR, 
+    C_DETAIL, C_SERVICE_FLOW, C_SERVICE_ENTITY_FLOW,C_BILL_ID <include refid="pageFind"/> 			
+		<include refid="PaginationCommonMapper.pagingEnd"/>
+	</select>
+	
+	<sql id="pageFind">
+		from t_trade_record t 
+        <where>
+            <if test="flowNo != null and flowNo != ''">and t.C_FLOW_NO = #{flowNo, jdbcType=VARCHAR}</if>
+        	<if test="industryFlag != null and industryFlag != ''">and t.C_INDUSTRY_FLAG = #{industryFlag, jdbcType=VARCHAR}</if>
+        	 <if test="tradeType !=null">and t.C_TRAD_TYPE = #{tradeType, jdbcType=INTEGER}</if>
+        	<if test="tradeFlag != null and tradeFlag != '' ">and t.C_TRAD_FLAG = #{tradeFlag, jdbcType=VARCHAR}</if>
+        	<if test="serviceEntityFlow != null and serviceEntityFlow != '' ">and t.C_SERVICE_ENTITY_FLOW = #{serviceEntityFlow, jdbcType=VARCHAR}</if>
+        	<if test="result != null and result != '' ">and t.C_RESULT = #{result, jdbcType=INTEGER}</if>
+        	<if test="payMode != null and payMode != '' ">and t.C_PAYMODE = #{payMode, jdbcType=INTEGER}</if>
+        	<if test="startTime != null">and t.C_ORDER_TIME <![CDATA[>=]]> #{startTime, jdbcType=TIMESTAMP}</if>
+        	<if test="endTime != null">and t.C_ORDER_TIME <![CDATA[<=]]> #{endTime, jdbcType=TIMESTAMP}</if>
+        </where>
+        order by t.C_ORDER_TIME desc
+	</sql>
+	
+	
+  <delete id="deleteByFlowNo" parameterType="hashmap">
+    delete from t_trade_record
+    where C_FLOW_NO = #{flowNo,jdbcType=VARCHAR}
+  </delete>
+  
+  <insert id="save" parameterType="hashmap">
+    insert into t_trade_record (C_FLOW_NO, C_INDUSTRY_FLAG, C_TRAD_TYPE,
+      C_TRAD_FLAG, C_PAYMONEY, C_PAIDMONEY, C_REFUND, C_FEE, C_COUPON_ID,
+      C_RESULT, C_PAYMODE, C_ORDER_TIME, 
+      C_PAYMENT_TIME, C_DETAIL, C_SERVICE_FLOW,
+       C_SERVICE_ENTITY_FLOW, C_BILL_ID)
+    values (#{flowNo,jdbcType=VARCHAR}, #{industryFlag,jdbcType=VARCHAR}, #{tradeType,jdbcType=VARCHAR},
+      #{tradeFlag,jdbcType=VARCHAR}, #{payMoney,jdbcType=DOUBLE}, #{paidMoney,jdbcType=DOUBLE},#{refund,jdbcType=DOUBLE}, #{fee,jdbcType=DOUBLE}, #{couponID,jdbcType=VARCHAR}, 
+      #{result,jdbcType=INTEGER}, #{payMode,jdbcType=INTEGER}, #{orderTime,jdbcType=TIMESTAMP}, #{paymentTime,jdbcType=TIMESTAMP}, #{detail,jdbcType=VARCHAR}, #{serviceFlow,jdbcType=VARCHAR},
+      #{serviceEntityFlow,jdbcType=VARCHAR},#{billID,jdbcType=VARCHAR})
+  </insert>
+  
+    	<update id="updateExpense" parameterType="hashmap">
+		UPDATE t_trade_record SET 
+         C_PAYMONEY=#{payMoney, jdbcType=DOUBLE}, C_PAIDMONEY=#{paidMoney, jdbcType=DOUBLE}, C_COUPON_ID=#{couponID, jdbcType=VARCHAR}
+		 <include refid="updateWhere"/> 
+	</update>
+	
+	<update id="updateResult" parameterType="hashmap">
+		UPDATE t_trade_record SET 
+		C_RESULT=#{result, jdbcType=INTEGER}, C_PAYMODE=#{payMode, jdbcType=INTEGER},
+		C_PAYMENT_TIME=#{paymentTime, jdbcType=TIMESTAMP}, C_BILL_ID=#{billID, jdbcType=VARCHAR}
+		 <include refid="updateWhere"/> 
+	</update>
+	
+	<update id="updateRecord" parameterType="hashmap">
+		UPDATE t_trade_record SET 
+		C_TRAD_FLAG=#{tradeFlag,jdbcType=VARCHAR},
+		C_RESULT=#{result, jdbcType=INTEGER}, C_PAYMONEY=#{payMoney,jdbcType=DOUBLE}, 
+		C_PAIDMONEY=#{paidMoney,jdbcType=DOUBLE},C_REFUND=#{refund,jdbcType=DOUBLE}, 
+		C_FEE=#{fee,jdbcType=DOUBLE}, C_DETAIL=#{detail,jdbcType=VARCHAR}, 
+		C_BILL_ID=#{billID, jdbcType=VARCHAR}
+		 <include refid="updateWhere"/> 
+	</update>
+	
+		<sql id="updateWhere">
+        <where>
+        	<if test="flowNo != null and flowNo != '' ">and C_FLOW_NO = #{flowNo, jdbcType=VARCHAR}</if>
+        </where>
+	    </sql>
+	    
+	    <update id="update" parameterType="hashmap">
+		  	update t_trade_record set 
+		  	C_INDUSTRY_FLAG=#{industryFlag,jdbcType=VARCHAR}, 
+		  	C_TRAD_FLAG=#{tradeFlag,jdbcType=VARCHAR},  
+		  	C_TRAD_TYPE=#{tradeType,jdbcType=INTEGER},
+		      
+		  	C_PAYMONEY=#{payMoney,jdbcType=DOUBLE}, 
+		  	C_PAIDMONEY=#{paidMoney,jdbcType=DOUBLE},
+		      
+		  	C_REFUND=#{refund,jdbcType=DOUBLE}, 
+		  	C_FEE=#{fee,jdbcType=DOUBLE}, 
+		     
+		  	C_RESULT= #{result,jdbcType=INTEGER},
+		  	C_PAYMODE= #{payMode,jdbcType=INTEGER}, 
+		  	C_ORDER_TIME=#{orderTime,jdbcType=TIMESTAMP}, 
+		      
+		  	C_PAYMENT_TIME=#{paymentTime,jdbcType=TIMESTAMP}, 
+		  	C_DETAIL=#{detail,jdbcType=VARCHAR}, 
+		  	C_SERVICE_FLOW=#{serviceFlow,jdbcType=VARCHAR}, 
+		      
+		  	C_SERVICE_ENTITY_FLOW=#{serviceEntityFlow,jdbcType=VARCHAR},
+		  	C_COUPON_ID=#{couponID,jdbcType=VARCHAR},
+		  	C_BILL_ID=#{billID,jdbcType=VARCHAR} 
+		  	where C_FLOW_NO = #{flowNo,jdbcType=VARCHAR}
+		  </update>
+</mapper>
