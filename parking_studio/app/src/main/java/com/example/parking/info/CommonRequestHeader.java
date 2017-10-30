@@ -24,6 +24,7 @@ import org.json.JSONObject;
     	public static final int REQUEST_COLLECTOR_QUERY_HISTORY_PARKING_RECORD_CODE = 113;
     	public static final int REQUEST_COLLECTOR_MESSAGE_CENTER_CODE = 114;
     	public static final int REQUEST_COLLECTOR_RESET_PASSWORD_CODE = 115;
+		public static final int REQUEST_COLLECTOR_QUERY_RESULT_CODE = 116;
         /** 
          * 请求码
          */  

@@ -19,7 +19,7 @@
         android:textColor="@color/orange"/>
   <LinearLayout 
       android:layout_width="0dp"
-      android:layout_height="match_parent"
+      android:layout_height="wrap_content"
       android:layout_weight="2"
       android:orientation="vertical" >
         <TextView 
@@ -49,7 +49,7 @@
  </LinearLayout>
  <LinearLayout 
       android:layout_width="0dp"
-      android:layout_height="match_parent"
+      android:layout_height="wrap_content"
       android:layout_weight="1"
       android:orientation="vertical" >
       <TextView 
@@ -57,8 +57,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#EBEBEB"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
             android:paddingTop="3dp"
             android:paddingBottom="3dp"
             android:layout_gravity="center_horizontal"
@@ -69,8 +69,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#EBEBEB"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
             android:paddingTop="3dp"
             android:paddingBottom="3dp"
             android:layout_gravity="center_horizontal"

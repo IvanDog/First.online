@@ -74,13 +74,13 @@ public class TodayRecordListAdapter extends BaseAdapter {
         }  
         //绑定数据  
         zujian.licensePlateNumberTV.setText((String)data.get(position).get("licensePlateNumber"));  
-        zujian.startTimeTV.setText((String)data.get(position).get("startTime"));  
+        zujian.startTimeTV.setText((String)data.get(position).get("startTime"));
         if(data.get(position).get("leaveTime")==null){
         	zujian.leaveTimeTV.setText("");
         }else{
-            zujian.leaveTimeTV.setText( (String)data.get(position).get("leaveTime")); 
+            zujian.leaveTimeTV.setText((String)data.get(position).get("leaveTime"));
         }
-        zujian.paymentStateTV.setText((String)data.get(position).get("paymentPattern"));  
+        zujian.paymentStateTV.setText((String)data.get(position).get("paymentPattern"));
         if(data.get(position).get("expense")==null){
             zujian.paymentBillTV.setText(null); 
         }else{

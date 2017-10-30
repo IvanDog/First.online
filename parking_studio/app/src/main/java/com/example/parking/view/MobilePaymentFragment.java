@@ -3,10 +3,6 @@ package com.example.parking.view;
 import java.util.Hashtable;
 
 import com.example.parking.R;
-import com.example.parking.R.color;
-import com.example.parking.R.drawable;
-import com.example.parking.R.id;
-import com.example.parking.R.layout;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
@@ -21,6 +17,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +41,7 @@ public class MobilePaymentFragment extends Fragment {
  		private String mParkingRecordID;
  		private String mTradeRecordID;
  		private String mLicensePlateNumber;
+	    public static String LOG_TAG = "MobilePaymentFragment";
  		
  	    public MobilePaymentFragment(int payType,String codeUrl){
  	    	mPayType=payType;
@@ -83,6 +81,13 @@ public class MobilePaymentFragment extends Fragment {
                     mPaymentIV.setBackgroundResource(R.drawable.ic_alipay_two_dimensions_code);
                     Drawable drawable =new BitmapDrawable(createQRCodeBitmap(mCodeUrl));
                     mPaymentIV.setBackgroundDrawable(drawable);
+					mPaymentIV.setOnClickListener(new View.OnClickListener() {
+						@Override
+						public void onClick(View view) {
+							Log.e(LOG_TAG, "clientQueryResult-> mPaymentIV is onclick");
+							((MobilePaymentActivity)getActivity()).queryResult();
+						}
+					});
                 }else if(mPayType==PAYMENT_TYPE_WECHATPAY){
                     mFragmentView.setBackgroundResource(R.color.green);
                     Drawable drawable =new BitmapDrawable(createQRCodeBitmap(mCodeUrl));

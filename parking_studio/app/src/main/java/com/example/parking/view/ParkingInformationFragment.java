@@ -295,14 +295,16 @@ public class ParkingInformationFragment extends Fragment {
 	                    mLeaveTimeTV.setText("离场时间：" + sysTimeStr);
 	                    break;
 	                case EVENT_DISPLAY_INFORMATION:
-	        			 mParkNameTV.setText(((ParkingSpaceDetailActivity)getActivity()).readCollector("parkName"));
-	        			 mParkNumberTV.setText("车场编号: " + ((ParkingSpaceDetailActivity)getActivity()).readCollector("parkNumber"));
-	      				 mLicenseNumberTV.setText("车牌号: " + mLicensePlateNumber);
-	      			     mLocationNumberTV.setText("泊位号: " + mLocationNumber);
-	     		    	 mCarTypeTV.setText("车辆类型: " + mCarType);
-	      		         mParkTypeTV.setText("泊车类型: " + mParkType);
-	      		         mStartTimeTV.setText("入场时间: " + mStartTime);
-	      			    new TimeThread().start();
+	                	if((ParkingSpaceDetailActivity)getActivity()!=null){
+							mParkNameTV.setText(((ParkingSpaceDetailActivity)getActivity()).readCollector("parkName"));
+							mParkNumberTV.setText("车场编号: " + ((ParkingSpaceDetailActivity)getActivity()).readCollector("parkNumber"));
+							mLicenseNumberTV.setText("车牌号: " + mLicensePlateNumber);
+							mLocationNumberTV.setText("泊位号: " + mLocationNumber);
+							mCarTypeTV.setText("车辆类型: " + mCarType);
+							mParkTypeTV.setText("泊车类型: " + mParkType);
+							mStartTimeTV.setText("入场时间: " + mStartTime);
+							new TimeThread().start();
+						}
 	                    break;
 	                case EVENT_DISPLAY_QUERY_RESULT:
 	                	Toast.makeText(getActivity(), (String)msg.obj, Toast.LENGTH_SHORT).show();

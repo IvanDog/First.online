@@ -15,10 +15,6 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 
 import com.example.parking.R;
-import com.example.parking.R.color;
-import com.example.parking.R.id;
-import com.example.parking.R.layout;
-import com.example.parking.R.string;
 import com.example.parking.common.JacksonJsonUtil;
 import com.example.parking.info.CommonRequestHeader;
 import com.example.parking.info.CommonResponse;
@@ -120,14 +116,15 @@ public class MobilePaymentActivity extends FragmentActivity {
         registerReceiver(mReceiver, filter); 
 	}
 
-	private void changeSelect(int resId) {  
+	private void changeSelect(int resId) {
+		Log.e(LOG_TAG,"changeSelect");
 		mScanTitleTV.setSelected(false);
 		mScanTitleTV.setBackgroundResource(R.color.gray);
 		mCardTitleTV.setSelected(false);  
 		mCardTitleTV.setBackgroundResource(R.color.gray);
         switch (resId) {  
-        case R.id.tv_mobile_payment_scan:  
-        	mScanTitleTV.setSelected(true);  
+        case R.id.tv_mobile_payment_scan:
+        	mScanTitleTV.setSelected(true);
         	mScanTitleTV.setBackgroundResource(R.color.orange);
             break;  
         case R.id.tv_mobile_payment_card:  
@@ -205,6 +202,7 @@ public class MobilePaymentActivity extends FragmentActivity {
             break;  
         }  
     }
+
     /**
 	 * 发起支付
 	 * */
@@ -247,7 +245,7 @@ public class MobilePaymentActivity extends FragmentActivity {
 		          msg.obj= res.getResMsg();
 		          mHandler.sendMessage(msg);
 				  if(res.getResCode().equals("100")){
-			          mPaymentPattern=convertPayPattToInteger(paymentPattern);
+					  mPaymentPattern=convertPayPattToInteger(paymentPattern);
 			          if(mPaymentPattern==4 || mPaymentPattern==5){//扫码支付
 						  mCodeUrl=(String)res.getPropertyMap().get("code_url");
 			          }
@@ -255,10 +253,10 @@ public class MobilePaymentActivity extends FragmentActivity {
 				  }else{
 			          return false;
 				  } 
-			}else{
-					  Log.e(LOG_TAG, "clientPay->error code is " + Integer.toString(code));
-					  return false;
-		    }
+			    }else{
+				  Log.e(LOG_TAG, "clientPay->error code is " + Integer.toString(code));
+				  return false;
+		        }
 		  }catch(InterruptedIOException e){
 			  if(e instanceof ConnectTimeoutException){
 				  Message msg = new Message();
@@ -304,9 +302,9 @@ public class MobilePaymentActivity extends FragmentActivity {
 			    Message msgScan = new Message();
 				msgScan.what=EVENT_SCAN_MODE;
 			    mHandler.sendMessage(msgScan);
-				Message msgQuery = new Message();
+				/*Message msgQuery = new Message();
 				msgQuery.what=EVENT_QUERY_RESULT;
-				mHandler.sendMessage(msgQuery);
+				mHandler.sendMessage(msgQuery);*/
 			}
 			mPayTask = null;
 		}
@@ -333,9 +331,10 @@ public class MobilePaymentActivity extends FragmentActivity {
         request.setHeader("Content-Type", "application/json; charset=utf-8");
         QueryResultInfo info = new QueryResultInfo();
         CommonRequestHeader header = new CommonRequestHeader();
-        header.addRequestHeader(CommonRequestHeader.REQUEST_COLLECTOR_PAY_CODE, readAccount(), readToken());
+        header.addRequestHeader(CommonRequestHeader.REQUEST_COLLECTOR_QUERY_RESULT_CODE, readAccount(), readToken());
         info.setHeader(header);
-        info.setOrderID(orderID);
+        info.setOrderID(convertString(orderID));
+        info.setType("停车费");
         StringEntity se = new StringEntity(JacksonJsonUtil.beanToJson(info), "UTF-8");
         Log.e(LOG_TAG,"clientQueryResult-> param is " + JacksonJsonUtil.beanToJson(info));
         request.setEntity(se);
@@ -386,7 +385,7 @@ public class MobilePaymentActivity extends FragmentActivity {
         protected Boolean doInBackground(Void... params) {
             try{
                 Log.e(LOG_TAG,"UserQueryResultTask->doInBackground");
-                int queryCount = 20;
+                int queryCount = 10;
                 while(queryCount-->0){
                     if(clientQueryResult(ordrID)){
                         return true;
@@ -417,6 +416,11 @@ public class MobilePaymentActivity extends FragmentActivity {
         }
     }
 
+	public void queryResult(){
+		mQueryResultTask = new UserQueryResultTask(mTradeRecordID);
+		mQueryResultTask.execute((Void) null);
+	}
+
 	private Handler mHandler = new Handler() {
         @Override
         public void handleMessage (Message msg) {
@@ -436,12 +440,15 @@ public class MobilePaymentActivity extends FragmentActivity {
 	                hideFragments(transaction);//隐藏所有fragment  
 	            	mPaymentFragment = new MobilePaymentFragment(mPayType,mCodeUrl);
 	               	transaction.replace(R.id.mobile_payment_container, mPaymentFragment);
-	                transaction.commit();//一定要记得提交事务  
+	                transaction.commit();//一定要记得提交事务
 	            	break;
-                case EVENT_QUERY_RESULT:
-                    mQueryResultTask = new UserQueryResultTask(mTradeRecordID);
-                    mQueryResultTask.execute((Void) null);
-                    break;
+                /*case EVENT_QUERY_RESULT:
+					Log.e(LOG_TAG, "clientQueryResult->mAuthCode is  " + mAuthCode);
+					if(convertString(mAuthCode) != null && !"".equals(convertString(mAuthCode))) {
+						mQueryResultTask = new UserQueryResultTask(mTradeRecordID);
+						mQueryResultTask.execute((Void) null);
+					}
+                    break;*/
                 case EVENT_PAYMENT_SUCCESS:
                     Intent intent = new Intent(MobilePaymentActivity.this, MobilePaymentSuccessActivity.class);
                     Bundle bundle = new Bundle();
@@ -480,7 +487,7 @@ public class MobilePaymentActivity extends FragmentActivity {
     }
     
 	public Integer convertPayPattToInteger(String paymentPattern){
-        if("pos机支付".equals(paymentPattern)){
+            if("pos机支付".equals(paymentPattern)){
 				return 1;
 			}else if("微信支付".equals(paymentPattern)){
 				return 2;
@@ -499,10 +506,12 @@ public class MobilePaymentActivity extends FragmentActivity {
 			}else if("逃费".equals(paymentPattern)){
 				return 9;
 			}else if("未付".equals(paymentPattern)){
-				return 0;
-			}else{
-				return -1;
-			}
+			    return 0;
+		    }else if("其他支付".equals(paymentPattern)){
+			    return 10;
+		    }else{
+			    return -1;
+		    }
 		}
 	
 	public String convertString(String str){

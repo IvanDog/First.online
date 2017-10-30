@@ -7,6 +7,7 @@ package com.example.parking.info;
 public class QueryResultInfo {
     private CommonRequestHeader header;
     private String orderID;
+    private String type;
 
     public CommonRequestHeader getheader() {
         return header;
@@ -22,8 +23,15 @@ public class QueryResultInfo {
         this.orderID= orderID;
     }
 
+    public String getType() {
+        return type;
+    }
+    public void setType(String type) {
+        this.type= type;
+    }
+
     @Override
     public String toString() {
-        return "PaymentInfo [header=" + header +  "orderID=" + orderID + "]";
+        return "PaymentInfo [header=" + header +  "orderID=" + orderID + " type=" + type + "]";
     }
 }

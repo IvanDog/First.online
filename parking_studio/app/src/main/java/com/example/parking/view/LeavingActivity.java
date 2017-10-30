@@ -14,12 +14,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.example.parking.R;
 import com.example.parking.R.id;
-import com.example.parking.R.layout;
-import com.example.parking.R.string;
 import com.example.parking.common.JacksonJsonUtil;
 import com.example.parking.info.CommonRequestHeader;
 import com.example.parking.info.CommonResponse;
@@ -28,10 +25,8 @@ import com.example.parking.info.SettleAccountInfo;
 
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -110,21 +105,17 @@ public class LeavingActivity extends Activity {
 		mCarType = bundle.getString("carType");
         mParkingRecordID = bundle.getString("parkingRecordID");
         mLeaveTime = bundle.getString("leaveTime");
-		//mLicensePlateNumberTV.setText("牌照:" + mLicensePlateNumber);
 		mStartTimeTV=(TextView)findViewById(R.id.tv_start_time_leaving);
 		mLeaveTimeTV=(TextView)findViewById(R.id.tv_leave_time_leaving);
-		//mLeaveTimeTV.setText("离场：" + mLeaveTime);
 		mFeeScaleTV=(TextView)findViewById(R.id.tv_fee_Scale_leaving);
 		mExpenseTV=(TextView)findViewById(R.id.tv_expense_leaving);
 		mPaymentTypeRG=(RadioGroup)findViewById(R.id.rg_payment_type_leaving);
 		mPosPaymentTypeRB=(RadioButton)findViewById(R.id.rb_pos_payment_leaving);
 		mPosPaymentTypeRB.setEnabled(false);
 		mAlipayPaymentTypeRB=(RadioButton)findViewById(R.id.rb_alipay_payment_leaving);
-		//mAlipayPaymentTypeRB.setEnabled(false);
 		mWechatpayPaymentRB=(RadioButton)findViewById(R.id.rb_wechatpay_payment_leaving);
 		mWechatpayPaymentRB.setEnabled(false);
 		mUnfinishedPaymentRB=(RadioButton)findViewById(id.rb_unfinished_payment_leaving);
-		//mUnfinishedPaymentRB.setEnabled(false);
 		mPaymentTypeRG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() { 
 			@Override 
 			public void onCheckedChanged(RadioGroup group, int checkedId){
@@ -152,7 +143,6 @@ public class LeavingActivity extends Activity {
 		mQueryTask = new UserQueryTask();
 		mQueryTask.execute((Void) null);
         getActionBar().setDisplayHomeAsUpEnabled(true);
-		//new SQLThread().start();
         IntentFilter filter = new IntentFilter();  
         filter.addAction("ExitApp");  
         filter.addAction("BackMain");  
@@ -180,30 +170,19 @@ public class LeavingActivity extends Activity {
                 	mLeaveTimeTV.setText("离场：" + mLeaveTime);
             		mFeeScaleTV.setText("收费标准:" + mFeeScale);
                 	mExpenseTV.setText("费用总计:" + mExpense);
+					if("0.0元".equals(mExpense)){
+						mPosPaymentTypeRB.setEnabled(false);
+						mAlipayPaymentTypeRB.setEnabled(false);
+						mWechatpayPaymentRB.setEnabled(false);
+					}
                 	break;
 				case EVENT_ORDER_SUCCESS:
 					if(mPaymentType==PAYMENT_TYPE_POS){
 						//TODO
-					}else if(mPaymentType==PAYMENT_TYPE_ALIPAY){
+					}else if(mPaymentType==PAYMENT_TYPE_ALIPAY || mPaymentType == PAYMENT_TYPE_WECHATPAY){
 						Intent intent = new Intent(LeavingActivity.this,MobilePaymentActivity.class);
 						Bundle bundle = new Bundle();
-						bundle.putInt("paytype", PAYMENT_TYPE_ALIPAY);
-						bundle.putString("parkNumber", mParkNumber);
-						bundle.putString("licensePlateNumber", mLicensePlateNumber);
-						bundle.putString("parkingRecordID", mParkingRecordID);
-						bundle.putString("tradeRecordID", mTradeRecordID);
-						bundle.putString("carType", mCarType);
-						bundle.putString("parkType", mParkType);
-						bundle.putString("startTime", mStartTime);
-						bundle.putString("leaveTime", mLeaveTime);
-						bundle.putString("paidMoney", mExpense);
-						bundle.putString("feeScale",mFeeScale);
-						intent.putExtras(bundle);
-						startActivity(intent);
-					}else if(mPaymentType==PAYMENT_TYPE_WECHATPAY){
-						Intent intent = new Intent(LeavingActivity.this,MobilePaymentActivity.class);
-						Bundle bundle = new Bundle();
-						bundle.putInt("paytype", PAYMENT_TYPE_WECHATPAY);
+						bundle.putInt("paytype", mPaymentType);
 						bundle.putString("parkNumber", mParkNumber);
 						bundle.putString("licensePlateNumber", mLicensePlateNumber);
 						bundle.putString("parkingRecordID", mParkingRecordID);
@@ -223,8 +202,8 @@ public class LeavingActivity extends Activity {
 						Intent intent = new Intent(LeavingActivity.this,MainActivity.class);
 						startActivity(intent);
 						finish();
-						break;
 					}
+					break;
                 default:
                     break;
             }
@@ -240,7 +219,7 @@ public class LeavingActivity extends Activity {
 	             break;  
 	    }  
 	    return super.onOptionsItemSelected(item);  
-	  }  
+	  }
 	
     private BroadcastReceiver mReceiver = new BroadcastReceiver(){  
 		@Override
@@ -250,7 +229,7 @@ public class LeavingActivity extends Activity {
 			}else if(intent.getAction()!=null && intent.getAction().equals("BackMain")){
 				finish();
 			}
-		}            
+		}
     }; 
     
     @Override
@@ -276,6 +255,7 @@ public class LeavingActivity extends Activity {
         String str = pref.getString("collectorNumber", "");
         return str;
     }
+
     /**
 	 * 查询应付金额
 	 * */
@@ -298,9 +278,9 @@ public class LeavingActivity extends Activity {
 		  info.setLicensePlateNumber(mLicensePlateNumber);
 		  info.setCarType(mCarType);
 		  if(mParkingEnterID!=null && !"".equals(mParkingEnterID)){
-			  info.setParkingEnterID(String.valueOf(mParkingEnterID));
+			  info.setParkingEnterID(convertString(mParkingEnterID));
 		  }else if(mParkingRecordID!=null && !"".equals(mParkingRecordID)){
-			  info.setParkingRecordID(mParkingRecordID);
+			  info.setParkingRecordID(convertString(mParkingRecordID));
 		  }
 		  if(mLeaveTime==null){
 	          CharSequence sysTimeStr = DateFormat.format("yyyy-MM-dd HH:mm:ss", System.currentTimeMillis());
@@ -410,8 +390,8 @@ public class LeavingActivity extends Activity {
 			  info.setHeader(header);
 			  info.setParkNumber(mParkNumber);
 			  info.setLicensePlateNumber(mLicensePlateNumber);
-			  info.setParkingRecordID(String.valueOf(mParkingRecordID));
-			  info.setTradeRecordID(mTradeRecordID);
+			  info.setParkingRecordID(convertString(mParkingRecordID));
+			  info.setTradeRecordID(convertString(mTradeRecordID));
 			  info.setPaymentPattern(convertPayPattToInteger(paymentPattern));
 			  info.setPaidMoney(mExpense.replace("元", ""));
 			  StringEntity se = new StringEntity(JacksonJsonUtil.beanToJson(info), "UTF-8");
@@ -435,10 +415,10 @@ public class LeavingActivity extends Activity {
 					  }else{
 				          return false;
 					  } 
-				}else{
-						  Log.e(LOG_TAG, "clientPay->error code is " + Integer.toString(code));
-						  return false;
-			    }
+				  }else{
+					  Log.e(LOG_TAG, "clientPay->error code is " + Integer.toString(code));
+					  return false;
+			      }
 			  }catch(InterruptedIOException e){
 				  if(e instanceof ConnectTimeoutException){
 					  Message msg = new Message();
@@ -458,7 +438,7 @@ public class LeavingActivity extends Activity {
 	    }
 		
 	    /**
-		 * 查询j结算信息Task
+		 * 查询结算信息Task
 		 * 
 		 */
 		public class UserPayTask extends AsyncTask<Void, Void, Boolean> {
@@ -494,7 +474,7 @@ public class LeavingActivity extends Activity {
 			}
 			
 		}
-		
+
 		public Integer convertPayPattToInteger(String paymentPattern){
            if("pos机支付".equals(paymentPattern)){
 				return 1;
@@ -518,5 +498,13 @@ public class LeavingActivity extends Activity {
 				return 0;
 			}
 		}
+
+	public String convertString(String str){
+		if("null".equals(str)){
+			return "";
+		}else{
+			return str;
+		}
+	}
 
 }
